@@ -1,0 +1,11 @@
+{
+    "id": "{FDCB334A-AFFF-4785-9596-D380252CEE4E}",
+    "name": "Archive Control MySQL",
+    "type": 0,
+    "vendor": "",
+    "aliases": ["Archiv MySQL"],
+    "parentRequirements": [],
+    "childRequirements": [],
+    "implemented": [],
+    "prefix": "ACmySQL"
+}

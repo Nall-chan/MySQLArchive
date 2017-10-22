@@ -1,0 +1,98 @@
+{
+    "elements":
+            [
+                {
+                    "name": "Host",
+                    "type": "ValidationTextBox",
+                    "caption": "Host"
+                }, {
+                    "name": "Database",
+                    "type": "ValidationTextBox",
+                    "caption": "Database"
+                }, {
+                    "name": "Username",
+                    "type": "ValidationTextBox",
+                    "caption": "Username"
+                },
+                {
+                    "name": "Password",
+                    "type": "PasswordTextBox",
+                    "caption": "Password"
+                },
+                {
+                    "type": "List",
+                    "name": "Variables",
+                    "rowCount": 20,
+                    "add": true,
+                    "delete": true,
+                    "sort": {
+                        "column": "VariableId",
+                        "direction": "ascending"
+                    },
+                    "columns": [{
+                            "label": "Variable ID",
+                            "name": "VariableId",
+                            "width": "70px",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        }, {
+                            "label": "Variable",
+                            "name": "Variable",
+                            "width": "auto",
+                            "add": "",
+                            "save": false
+                        }, {
+                            "label": "First value",
+                            "name": "FirstTimestamp",
+                            "width": "80px",
+                            "add": "",
+                            "save": false
+                        }, {
+                            "label": "Last value",
+                            "name": "LastTimestamp",
+                            "width": "80px",
+                            "add": "",
+                            "save": false
+                        }, {
+                            "label": "Count",
+                            "name": "Count",
+                            "width": "50px",
+                            "add": "",
+                            "save": false
+                        }, {
+                            "label": "Size",
+                            "name": "Size",
+                            "width": "50px",
+                            "add": "",
+                            "save": false
+                        }
+                    ],
+                    "values": []
+                }
+            ],
+    "status":
+            [
+                {
+                    "code": 102,
+                    "icon": "active",
+                    "caption": "Database connected."
+                },
+                {
+                    "code": 104,
+                    "icon": "inactive",
+                    "caption": "No connection."
+                },
+                {
+                    "code": 202,
+                    "icon": "error",
+                    "caption": "Cannot connect to database."
+                },
+                {
+                    "code": 203,
+                    "icon": "error",
+                    "caption": "Error on create Tables."
+                }
+            ]
+}

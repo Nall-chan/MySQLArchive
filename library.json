@@ -1,0 +1,13 @@
+{
+    "id": "{022D6B3D-0A0C-4AEB-80A1-8BC5DF7CA63C}",
+    "author": "Michael Tr\u00f6ger",
+    "name": "MySQLArchive Library",
+    "url": "https://github.com/Nall-chan/IPSMySQLArchive",
+    "compatibility": {
+        "version": "4.3",
+        "date": 1498241677
+    },
+    "version": "2.01",
+    "build": 123,
+    "date": 1485265527
+}
