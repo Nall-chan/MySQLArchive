@@ -92,7 +92,7 @@
                 {
                     "code": 203,
                     "icon": "error",
-                    "caption": "Error on create Tables."
+                    "caption": "Error on create tables."
                 }
             ]
 }

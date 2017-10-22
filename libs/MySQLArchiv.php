@@ -1,15 +1,15 @@
 <?
 
 /*
- * @addtogroup notrigger
+ * @addtogroup mysqlarchiv
  * @{
  *
- * @package       NoTrigger
+ * @package       MySQLArchiv
  * @file          module.php
  * @author        Michael Tröger <micha@nall-chan.net>
- * @copyright     2016 Michael Tröger
+ * @copyright     2017 Michael Tröger
  * @license       https://creativecommons.org/licenses/by-nc-sa/4.0/ CC BY-NC-SA 4.0
- * @version       2.0
+ * @version       1.0
  *
  */
 
@@ -166,10 +166,13 @@ trait Database
 {
 
     /**
-     *
      * @var mysqli
      */
     private $DB = null;
+
+    /**
+     * @var bool
+     */
     private $isConnected = false;
 
     protected function Login()
@@ -261,10 +264,12 @@ trait Database
         if (!$this->isConnected)
             return false;
 
-        $query = "DELETE FROM var" . $VariableID . " WHERE (timestamp >= from_unixtime(" . $Startzeit . ")) and (timestamp <= from_unixtime(" . $Endzeit . "));";
+        $query = "DELETE FROM var" . $VariableID . " WHERE ((timestamp >= from_unixtime(" . $Startzeit . ")) and (timestamp <= from_unixtime(" . $Endzeit . ")));";
         /* @var $result mysqli_result */
         $result = $this->DB->query($query);
-        return $result->num_rows;
+        if ($result)
+            $result = $this->DB->affected_rows;
+        return $result;
     }
 
     protected function GetLoggedData($VariableID, $Startzeit, $Endzeit, $Limit)
@@ -340,18 +345,6 @@ trait Database
                 $Half = 30;
                 break;
         }
-
-//        $query = "SELECT MIN(value) AS 'Min', MAX(value) AS 'Max', AVG(value) AS 'Avg', timestamp AS 'TimeStamp' " .
-//                "FROM var" . $VariableID . "  WHERE " .
-//                "((timestamp > '" . $Startzeit . "') " .
-//                "AND (timestamp < '" . $Endzeit . "')) " .
-//                "GROUP BY " . $Typ . "(timestamp)";
-        // 5 min
-//SELECT MIN(value) AS 'Min', MAX(value) AS 'Max', AVG(value) AS 'Avg', (floor((unix_timestamp(timestamp) / 300 )) * 300)
-//       as 'myTimeStamp' FROM var22904  WHERE ((timestamp > '2017-10-21 19:40:00' ) AND (timestamp < '2017-10-22 23:40:04')) GROUP BY (floor((unix_timestamp(timestamp) / 300 )) * 300)
-//       
-//       
-        //YYMMDDhhmmss
         $query = "SELECT MIN(value) AS 'Min', MAX(value) AS 'Max', AVG(value) AS 'Avg', " .
                 "UNIX_TIMESTAMP(convert((min(timestamp) div " . $Time . ")*" . $Time . " + " . $Half . ", datetime)) " .
                 "as 'TimeStamp' FROM var" . $VariableID . " " .
@@ -362,11 +355,6 @@ trait Database
         /* @var $result mysqli_result */
         $result = $this->DB->query($query);
         return $result->fetch_all(MYSQLI_ASSOC);
-
-
-        // 1 min
-//        SELECT MIN(value) AS 'Min', MAX(value) AS 'Max', AVG(value) AS 'Avg', (floor((unix_timestamp(timestamp) / 60 )) * 60)
-//       as 'myTimeStamp' FROM var22904  WHERE ((timestamp > '2017-10-21 19:40:00' ) AND (timestamp < '2017-10-22 23:40:04')) GROUP BY (floor((unix_timestamp(timestamp) / 60 )) * 60)
     }
 
     protected function GetVariableTables()

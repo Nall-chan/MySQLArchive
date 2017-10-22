@@ -3,14 +3,14 @@
 require_once(__DIR__ . "/../libs/MySQLArchiv.php");
 
 /**
- * NoTrigger Klasse für die die Überwachung von mehreren Variablen auf fehlende Änderung/Aktualisierung.
- * Erweitert NoTriggerBase.
+ * ArchiveControlMySQL Klasse für die das loggen von Variablen in einer MySQL Datenbank.
+ * Erweitert ipsmodule.
  *
- * @package       NoTrigger
+ * @package       MySQLArchiv
  * @author        Michael Tröger <micha@nall-chan.net>
- * @copyright     2016 Michael Tröger
+ * @copyright     2017 Michael Tröger
  * @license       https://creativecommons.org/licenses/by-nc-sa/4.0/ CC BY-NC-SA 4.0
- * @version       2.0
+ * @version       1.0
  * @example <b>Ohne</b>
  *
  * @property array $Vars
@@ -70,27 +70,9 @@ class ArchiveControlMySQL extends ipsmodule
      */
     public function ApplyChanges()
     {
-
         parent::ApplyChanges();
 
         $ConfigVars = json_decode($this->ReadPropertyString('Variables'), true);
-//        $foundZero = false;
-//        foreach ($ConfigVars as $Index => &$Item)
-//        {
-//            if ($Item['VariableId'] == 0)
-//            {
-//                array_splice($ConfigVars, $Index, 1);
-//                $foundZero = true;
-//            }
-//        }
-//        if ($foundZero)
-//        {
-//            $Variables = json_encode($ConfigVars);
-//            IPS_SetProperty($this->InstanceID, 'Variables', $Variables);
-//            IPS_ApplyChanges($this->InstanceID);
-//            //IPS_Sleep(1000);
-//            return;
-//        }
         $Vars = $this->Vars;
         foreach (array_keys($Vars) as $VarId)
         {
@@ -121,7 +103,7 @@ class ArchiveControlMySQL extends ipsmodule
 
         if (!$this->Login())
         {
-            echo "Error logon Database";
+            echo $this->Translate("Cannot connect to database.");
             $this->SetStatus(IS_EBASE + 2);
             return;
         }
@@ -129,7 +111,7 @@ class ArchiveControlMySQL extends ipsmodule
         {
             if (!$this->CreateDB())
             {
-                echo "Create database failed";
+                echo $this->Translate("Create database failed.");
                 $this->SetStatus(IS_EBASE + 2);
                 $this->Logout();
                 return;
@@ -143,7 +125,7 @@ class ArchiveControlMySQL extends ipsmodule
         }
         if (!$Result)
         {
-            echo "Error on create tables";
+            echo $this->Translate("Error on create tables.");
             $this->SetStatus(IS_EBASE + 3);
             $this->Logout();
             return;
@@ -160,7 +142,6 @@ class ArchiveControlMySQL extends ipsmodule
      */
     public function GetConfigurationForm()
     {
-
         $form = json_decode(file_get_contents(__DIR__ . "/form.json"), true);
 
         $ConfigVars = json_decode($this->ReadPropertyString('Variables'), true);
@@ -174,22 +155,23 @@ class ArchiveControlMySQL extends ipsmodule
             $VarId = $Item['VariableId'];
             if ($Item['VariableId'] == 0)
             {
-                $Item['Variable'] = 'Objekt #0 existiert nicht';
+                $Item['Variable'] = sprintf($this->Translate("Object #%d not exists"), 0);
                 $Item['rowColor'] = "#ff0000";
                 continue;
             }
 
             if (!IPS_ObjectExists($VarId))
             {
-                $Item['Variable'] = 'Objekt #' . $VarId . ' existiert nicht';
+                $Item['Variable'] = sprintf($this->Translate("Object #%d not exists"), $VarId);
                 $Item['rowColor'] = "#ff0000";
             }
             else
             {
                 if (!IPS_VariableExists($VarId))
                 {
-                    $Item['rowColor'] = "#ff0000";
                     $Item['Variable'] = 'Objekt #' . $VarId . ' ist keine Variable';
+                    $Item['Variable'] = sprintf($this->Translate("Object #%d is no variable"), $VarId);
+                    $Item['rowColor'] = "#ff0000";
                 }
                 else
                     $Item['Variable'] = IPS_GetLocation($VarId);
@@ -199,10 +181,10 @@ class ArchiveControlMySQL extends ipsmodule
                 $Result = $this->GetSummary($VarId);
                 if (!$Result)
                 {
-                    $Item['Count'] = 'Unbekannt';
-                    $Item['FirstTimestamp'] = 'Unbekannt';
-                    $Item['LastTimestamp'] = 'Unbekannt';
-                    $Item['Size'] = 'Unbekannt';
+                    $Item['Count'] = $this->Translate('unknown');
+                    $Item['FirstTimestamp'] = $this->Translate('unknown');
+                    $Item['LastTimestamp'] = $this->Translate('unknown');
+                    $Item['Size'] = $this->Translate('unknown');
                 }
                 else
                 {
@@ -217,10 +199,10 @@ class ArchiveControlMySQL extends ipsmodule
             }
             else
             {
-                $Item['Count'] = 'Unbekannt';
-                $Item['FirstTimestamp'] = 'Unbekannt';
-                $Item['LastTimestamp'] = 'Unbekannt';
-                $Item['Size'] = 'Unbekannt';
+                $Item['Count'] = $this->Translate('unknown');
+                $Item['FirstTimestamp'] = $this->Translate('unknown');
+                $Item['LastTimestamp'] = $this->Translate('unknown');
+                $Item['Size'] = $this->Translate('unknown');
             }
             if (in_array($VarId, $Found))
             {
@@ -264,6 +246,15 @@ class ArchiveControlMySQL extends ipsmodule
 
 ################## PRIVATE     
 
+    /**
+     * Werte loggen
+     *
+     * @access private
+     * @param int $Variable VariablenID
+     * @param mixed $NewValue Neuer Wert der Variable
+     * @param bool $HasChanged true wenn neuer Wert vom alten abweicht
+     * @param int $Timestamp Zeitstempel des neuen Wert
+     */
     private function LogValue($Variable, $NewValue, $HasChanged, $Timestamp)
     {
         $Vars = $this->Vars;
@@ -300,6 +291,13 @@ class ArchiveControlMySQL extends ipsmodule
         return $this->Logout();
     }
 
+    /**
+     * Anmelden am MySQL-Server uns auswählen der Datenbank.
+     * Für alle public Methoden, welche Fehler ausgeben sollen.
+     *
+     * @access private
+     * @return bool True bei Erfolg, sonst false.
+     */
     private function LoginAndSelectDB()
     {
         if (!$this->Login())
@@ -307,7 +305,7 @@ class ArchiveControlMySQL extends ipsmodule
             if ($this->DB)
                 trigger_error($this->DB->connect_error, E_USER_NOTICE);
             else
-                trigger_error('No host for database', E_USER_NOTICE);
+                trigger_error($this->Translate('No host for database'), E_USER_NOTICE);
             return false;
         }
         if (!$this->SelectDB())
@@ -320,11 +318,20 @@ class ArchiveControlMySQL extends ipsmodule
 
     ################## PUBLIC
 
+    /**
+     * IPS-Instant-Funktion ACMySQL_ChangeVariableID
+     * Zum überführen von geloggten Daten auf eine neue Variable.
+     *
+     * @access public
+     * @param int $OldVariableID Alte VariablenID
+     * @param int $NewVariableID Neue VariablenID
+     * @return bool True bei Erfolg, sonst false.
+     */
     public function ChangeVariableID(int $OldVariableID, int $NewVariableID)
     {
         if (!IPS_VariableExists($NewVariableID))
         {
-            echo 'NewVariableID is no Variable.';
+            trigger_error($this->Translate('NewVariableID is no variable.'), E_USER_NOTICE);
             return false;
         }
 
@@ -335,21 +342,21 @@ class ArchiveControlMySQL extends ipsmodule
 
         if (array_key_exists($NewVariableID, $Vars))
         {
-            trigger_error('NewVariableID is allready logged.', E_USER_NOTICE);
+            trigger_error($this->Translate('NewVariableID is allready logged.'), E_USER_NOTICE);
             $this->Logout();
             return false;
         }
 
         if (!$this->TableExists($OldVariableID))
         {
-            trigger_error('OldVariableID was not logged.', E_USER_NOTICE);
+            trigger_error($this->Translate('OldVariableID was not logged.'), E_USER_NOTICE);
             $this->Logout();
             return false;
         }
 
         if (IPS_GetVariable($NewVariableID)['VariableType'] != $this->GetLoggedDataTyp($OldVariableID))
         {
-            trigger_error('Old and new Datatyp not match.', E_USER_NOTICE);
+            trigger_error($this->Translate('Old and new Datatyp not match.'), E_USER_NOTICE);
             $this->Logout();
             return false;
         }
@@ -357,7 +364,7 @@ class ArchiveControlMySQL extends ipsmodule
 
         if (!$this->RenameTable($OldVariableID, $NewVariableID))
         {
-            trigger_error('Error on rename table', E_USER_NOTICE);
+            trigger_error($this->Translate('Error on rename table.'), E_USER_NOTICE);
             $this->Logout();
             return false;
         }
@@ -367,7 +374,7 @@ class ArchiveControlMySQL extends ipsmodule
         {
             if ($Item['VariableId'] == $OldVariableID)
             {
-                $Item['VariableId']=  $NewVariableID;
+                $Item['VariableId'] = $NewVariableID;
             }
         }
         $Variables = json_encode($ConfigVars);
@@ -376,6 +383,16 @@ class ArchiveControlMySQL extends ipsmodule
         return true;
     }
 
+    /**
+     * IPS-Instant-Funktion ACMySQL_DeleteVariableData
+     * Zum löschen einer Zeitspanne von Werten.
+     *
+     * @access public
+     * @param int $VariableID VariablenID der zu löschenden Daten.
+     * @param int $Startzeit Startzeitpunkt als UnixTimestamp 
+     * @param int $Endzeit Endzeitpunkt als UnixTimestamp 
+     * @return bool True bei Erfolg, sonst false.
+     */
     public function DeleteVariableData(int $VariableID, int $Startzeit, int $Endzeit)
     {
         if (!$this->LoginAndSelectDB())
@@ -383,7 +400,7 @@ class ArchiveControlMySQL extends ipsmodule
 
         if (!$this->TableExists($VariableID))
         {
-            trigger_error('No data or VariableID found.', E_USER_NOTICE);
+            trigger_error($this->Translate('No data or VariableID found.'), E_USER_NOTICE);
             $this->Logout();
             return false;
         }
@@ -391,7 +408,7 @@ class ArchiveControlMySQL extends ipsmodule
         $Result = $this->DeleteData($VariableID, $Startzeit, $Endzeit);
         if ($Result === false)
         {
-            trigger_error('Error on delete data.', E_USER_NOTICE);
+            trigger_error($this->Translate('Error on delete data.'), E_USER_NOTICE);
             $this->Logout();
             return false;
         }
@@ -399,6 +416,17 @@ class ArchiveControlMySQL extends ipsmodule
         return $Result;
     }
 
+    /**
+     * IPS-Instant-Funktion ACMySQL_GetLoggedValues
+     * Liefert geloggte Daten einer Variable
+     *
+     * @access public
+     * @param int $VariableID VariablenID der zu liefernden Daten.
+     * @param int $Startzeit Startzeitpunkt als UnixTimestamp 
+     * @param int $Endzeit Endzeitpunkt als UnixTimestamp 
+     * @param int $Limit Anzahl der max. Datensätze. Bei 0 wird das HardLimit genutzt.
+     * @return array Datensätze
+     */
     public function GetLoggedValues(int $VariableID, int $Startzeit, int $Endzeit, int $Limit)
     {
         if (($Limit > IPS_GetOption('ArchiveRecordLimit')) or ( $Limit == 0))
@@ -412,14 +440,14 @@ class ArchiveControlMySQL extends ipsmodule
 
         if (!$this->TableExists($VariableID))
         {
-            trigger_error('VariableID was not logged.', E_USER_NOTICE);
+            trigger_error($this->Translate('VariableID was not logged.'), E_USER_NOTICE);
             $this->Logout();
             return false;
         }
         $Result = $this->GetLoggedData($VariableID, $Startzeit, $Endzeit, $Limit);
         if ($Result === false)
         {
-            trigger_error('Error on fetch data.', E_USER_NOTICE);
+            trigger_error($this->Translate('Error on fetch data.'), E_USER_NOTICE);
             $this->Logout();
             return false;
         }
@@ -460,12 +488,30 @@ class ArchiveControlMySQL extends ipsmodule
         return $Result;
     }
 
+    /**
+     * IPS-Instant-Funktion ACMySQL_GetLoggingStatus
+     * Liefert ob eine Variable aktuell geloggt wird.
+     *
+     * @access public
+     * @param int $VariableID Die zu prüfende VariablenID
+     * @return bool True wenn logging aktiv ist.
+     */
     public function GetLoggingStatus(int $VariableID)
     {
         $Vars = $this->Vars;
         return array_key_exists($VariableID, $Vars);
     }
 
+    /**
+     * IPS-Instant-Funktion ACMySQL_SetLoggingStatus
+     * De-/Aktiviert das logging einer Variable.
+     * Wird erst nach IPS_Applychanges($MySQLArchivID) aktiv.
+     *
+     * @access public
+     * @param int $VariableID Die zu loggende VariablenID
+     * @param bool $Aktiv True zum logging aktivieren, false zum deaktivieren.
+     * @return bool True bei Erfolg, sonst false.
+     */
     public function SetLoggingStatus(int $VariableID, bool $Aktiv)
     {
         $Vars = $this->Vars;
@@ -473,26 +519,25 @@ class ArchiveControlMySQL extends ipsmodule
         {
             if (array_key_exists($VariableID, $Vars))
             {
-                trigger_error('VariableID is allready logged.', E_USER_NOTICE);
+                trigger_error($this->Translate('VariableID is allready logged.'), E_USER_NOTICE);
                 return false;
             }
             if (!IPS_VariableExists($VariableID))
             {
-                trigger_error('VariableID is no Variable.', E_USER_NOTICE);
+                trigger_error($this->Translate('VariableID is no Variable.'), E_USER_NOTICE);
                 return false;
             }
             $ConfigVars = json_decode($this->ReadPropertyString('Variables'), true);
             $ConfigVars[] = array('VariableId' => $VariableID);
             $Variables = json_encode($ConfigVars);
             IPS_SetProperty($this->InstanceID, 'Variables', $Variables);
-            //IPS_ApplyChanges($this->InstanceID);
             return true;
         }
         else //deaktivieren
         {
             if (!array_key_exists($VariableID, $Vars))
             {
-                trigger_error('VariableID was not logged.', E_USER_NOTICE);
+                trigger_error($this->Translate('VariableID was not logged.'), E_USER_NOTICE);
                 return false;
             }
             $ConfigVars = json_decode($this->ReadPropertyString('Variables'), true);
@@ -504,7 +549,6 @@ class ArchiveControlMySQL extends ipsmodule
                     $ConfigVars = array_values($ConfigVars);
                     $Variables = json_encode($ConfigVars);
                     IPS_SetProperty($this->InstanceID, 'Variables', $Variables);
-                    //IPS_ApplyChanges($this->InstanceID);
                     return true;
                 }
             }
@@ -512,6 +556,14 @@ class ArchiveControlMySQL extends ipsmodule
         }
     }
 
+    /**
+     * IPS-Instant-Funktion ACMySQL_GetAggregationType
+     * Liefert immer 0, da Typ Zähler nicht unterstützt wird.
+     *
+     * @access public
+     * @param int $VariableID VariablenID der zu liefernden Daten.
+     * @return int 0
+     */
     public function GetAggregationType(int $VariableID)
     {
         if (!$this->LoginAndSelectDB())
@@ -519,13 +571,21 @@ class ArchiveControlMySQL extends ipsmodule
 
         if (!$this->TableExists($VariableID))
         {
-            trigger_error('VariableID is not logged.', E_USER_NOTICE);
+            trigger_error($this->Translate('VariableID is not logged.'), E_USER_NOTICE);
             $this->Logout();
             return false;
         }
         return 0; //Standard, Zähler wird nicht unterstützt
     }
 
+    /**
+     * IPS-Instant-Funktion ACMySQL_GetGraphStatus
+     * Liefert immer true, da diese Funktion nicht unterstützt wird.
+     *
+     * @access public
+     * @param int $VariableID
+     * @return bool immer True, außer VariableID wird nicht geloggt.
+     */
     public function GetGraphStatus(int $VariableID)
     {
         if (!$this->LoginAndSelectDB())
@@ -533,13 +593,22 @@ class ArchiveControlMySQL extends ipsmodule
 
         if (!$this->TableExists($VariableID))
         {
-            trigger_error('VariableID is not logged.', E_USER_NOTICE);
+            trigger_error($this->Translate('VariableID is not logged.'), E_USER_NOTICE);
             $this->Logout();
             return false;
         }
         return true; //wird nur emuliert
     }
 
+    /**
+     * IPS-Instant-Funktion ACMySQL_SetGraphStatus
+     * Liefert immer true, da diese Funktion nicht unterstützt wird.
+     *
+     * @access public
+     * @param int $VariableID VariablenID
+     * @param bool $Aktiv ohne Funktion
+     * @return bool immer True, außer VariableID wird nicht geloggt.
+     */
     public function SetGraphStatus(int $VariableID, bool $Aktiv)
     {
         if (!$this->LoginAndSelectDB())
@@ -547,13 +616,25 @@ class ArchiveControlMySQL extends ipsmodule
 
         if (!$this->TableExists($VariableID))
         {
-            trigger_error('VariableID is not logged.', E_USER_NOTICE);
+            trigger_error($this->Translate('VariableID is not logged.'), E_USER_NOTICE);
             $this->Logout();
             return false;
         }
         return true; //wird nur emuliert
     }
 
+    /**
+     * IPS-Instant-Funktion ACMySQL_GetAggregatedValues
+     * Liefert aggregierte Daten einer geloggte Variable
+     *
+     * @access public
+     * @param int $VariableID VariablenID der zu liefernden Daten.
+     * @param int $Aggregationsstufe
+     * @param int $Startzeit Startzeitpunkt als UnixTimestamp 
+     * @param int $Endzeit Endzeitpunkt als UnixTimestamp 
+     * @param int $Limit Anzahl der max. Datensätze. Bei 0 wird das HardLimit genutzt.
+     * @return array Datensätze
+     */
     public function GetAggregatedValues(int $VariableID, int $Aggregationsstufe, int $Startzeit, int $Endzeit, int $Limit)
     {
         if (($Limit > IPS_GetOption('ArchiveRecordLimit')) or ( $Limit == 0))
@@ -564,7 +645,7 @@ class ArchiveControlMySQL extends ipsmodule
 
         if (($Aggregationsstufe < 0) or ( $Aggregationsstufe > 6))
         {
-            trigger_error('Invalid Aggregationsstage', E_USER_NOTICE);
+            trigger_error($this->Translate('Invalid Aggregationsstage'), E_USER_NOTICE);
             return false;
         }
 
@@ -573,7 +654,7 @@ class ArchiveControlMySQL extends ipsmodule
 
         if (!$this->TableExists($VariableID))
         {
-            trigger_error('VariableID was not logged.', E_USER_NOTICE);
+            trigger_error($this->Translate('VariableID is not logged.'), E_USER_NOTICE);
             $this->Logout();
             return false;
         }
@@ -581,7 +662,7 @@ class ArchiveControlMySQL extends ipsmodule
         $Result = $this->GetAggregatedData($VariableID, $Aggregationsstufe, $Startzeit, $Endzeit, $Limit);
         if ($Result === false)
         {
-            trigger_error('Error on fetch data.', E_USER_NOTICE);
+            trigger_error($this->Translate('Error on fetch data.'), E_USER_NOTICE);
             $this->Logout();
             return false;
         }
@@ -628,9 +709,16 @@ class ArchiveControlMySQL extends ipsmodule
         return $Result;
     }
 
+    /**
+     * IPS-Instant-Funktion ACMySQL_GetAggregationVariables
+     * Liefert eine Übersicht über alle geloggte Daten.
+     *
+     * @access public
+     * @param bool $DatenbankAbfrage ohne Funktion.
+     * @return array Datensätze
+     */
     public function GetAggregationVariables(bool $DatenbankAbfrage)
     {
-
         if (!$this->LoginAndSelectDB())
             return false;
 
