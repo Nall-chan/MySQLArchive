@@ -1,3 +1,9 @@
+[![Version](https://img.shields.io/badge/Symcon-PHPModul-red.svg)](https://www.symcon.de/service/dokumentation/entwicklerbereich/sdk-tools/sdk-php/)
+[![Version](https://img.shields.io/badge/Modul%20Version-1.01-blue.svg)]()
+[![Version](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-green.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)  
+[![Version](https://img.shields.io/badge/Symcon%20Version-4.3%20%3E-green.svg)](https://www.symcon.de/forum/threads/30857-IP-Symcon-4-3-%28Stable%29-Changelog)
+
+
 # IPSMySQLArchiv
 
 Zusätzliches Archiv für MySQL Datenbanken.
@@ -12,10 +18,9 @@ Zusätzliches Archiv für MySQL Datenbanken.
 4. [Vorbereitungen](#4-vorbereitungen)
 5. [Einrichten der Instanz in IPS](#5-einrichten-der--instanz-in-ips)
 6. [PHP-Befehlsreferenz](#6-php-befehlsreferenz) 
-8. [Parameter / Modul-Infos](#8-parameter--modul-infos) 
-9. [Tips & Tricks](#9-tips--tricks) 
-10. [Anhang](#10-anhang)
-11. [Lizenz] (#11-lizenz)
+7. [Parameter / Modul-Infos](#7-parameter--modul-infos) 
+8. [Anhang](#8-anhang)
+9. [Lizenz] (#9-lizenz)
 
 ## 1. Funktionsumfang
 
@@ -66,3 +71,27 @@ Auslesen mit ACMySQL_* PHP-Funktionen (kompatibel mit den AC_* Befehlen).
 Es sind alle IPS Befehle des Original Archive-Control vorhanden.  
 Der Prefix muss nur von AC_ gegen ACMySQL_ ersetzt werden.  
 Da aktuell keine Zähler unterstützt werden, werden diese Rückgabewerte immer mit 0 übergeben.  
+
+## 7. Parameter / Modul-Infos  
+
+
+| Name         | Eigenschaft | Typ     | Standardwert | Funktion                          |
+| :----------: | :---------: | :-----: | :----------: | :-------------------------------: |
+| Host         | Host        | string  |              | Hostname / IP-Adresse             |
+| Datenbank    | Database    | string  | ips          | Name der Datenbank                |
+| Benutzername | Username    | integer |              | Benutzername MySQL                |
+| Passwort     | Password    | string  |              | Passwort MySQL                    |
+| Variablen    | Variables   | string  | {}           | JSON-String mit allen VariablenID |
+
+
+## 8. Anhang
+
+**Changlog:**  
+
+Version 1.01:  
+ - Erstes offizielles Release
+
+## 9. Lizenz
+
+  IPS-Modul:  
+  [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)  
