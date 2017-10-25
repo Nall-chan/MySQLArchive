@@ -20,7 +20,7 @@ Zusätzliches Archiv für MySQL Datenbanken.
 6. [PHP-Befehlsreferenz](#6-php-befehlsreferenz) 
 7. [Parameter / Modul-Infos](#7-parameter--modul-infos) 
 8. [Anhang](#8-anhang)
-9. [Lizenz] (#9-lizenz)
+9. [Lizenz](#9-lizenz)
 
 ## 1. Funktionsumfang
 
