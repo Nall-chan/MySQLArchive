@@ -18,8 +18,11 @@ Zusätzliches Archiv für MySQL Datenbanken.
 4. [Vorbereitungen](#4-vorbereitungen)
 5. [Einrichten der Instanz in IPS](#5-einrichten-der--instanz-in-ips)
 6. [PHP-Befehlsreferenz](#6-php-befehlsreferenz) 
-7. [Parameter / Modul-Infos](#7-parameter--modul-infos) 
-8. [Anhang](#8-anhang)
+7. [Parameter](#7-parameter) 
+8. [Anhang](#8-anhang)  
+    1. [GUID der Module](#1-guid-der-module)
+    2. [Changlog](#2-changlog)
+    3. [Spenden](#3-spenden)
 9. [Lizenz](#9-lizenz)
 
 ## 1. Funktionsumfang
@@ -45,7 +48,7 @@ Auslesen mit ACMySQL_* PHP-Funktionen (kompatibel mit den AC_* Befehlen).
 ## 3. Installation
 
 **IPS 4.3:**  
-   Bei privater Nutzung: Über das Modul-Control folgende URL hinzufügen.  
+   Bei privater Nutzung: Über das 'Module-Control' in IPS folgende URL hinzufügen.  
    `git://github.com/Nall-chan/IPSMySQLArchiv.git`  
 
    **Bei kommerzieller Nutzung (z.B. als Errichter oder Integrator) wenden Sie sich bitte an den Autor.**  
@@ -64,16 +67,13 @@ Auslesen mit ACMySQL_* PHP-Funktionen (kompatibel mit den AC_* Befehlen).
   - Im folgenden Dialog des Konfigurators müssen jetzt erst die Zugangsdaten zum MySQL-Server eingebene werden.  
   - Die zu loggenden Variablen müssen über den Button 'hinzufügen' und dann durch einen Klick auf den Stift ausgewählt werden.  
 
-
-
 ## 6. PHP-Funktionsreferenz  
 
 Es sind alle IPS Befehle des Original Archive-Control vorhanden.  
 Der Prefix muss nur von AC_ gegen ACMySQL_ ersetzt werden.  
 Da aktuell keine Zähler unterstützt werden, werden diese Rückgabewerte immer mit 0 übergeben.  
 
-## 7. Parameter / Modul-Infos  
-
+## 7. Parameter
 
 | Name         | Eigenschaft | Typ     | Standardwert | Funktion                          |
 | :----------: | :---------: | :-----: | :----------: | :-------------------------------: |
@@ -86,10 +86,24 @@ Da aktuell keine Zähler unterstützt werden, werden diese Rückgabewerte immer 
 
 ## 8. Anhang
 
-**Changlog:**  
+###  1. GUID der Module
+
+ 
+| Modul                 | Typ          |Prefix   | GUID                                   |
+| :-------------------: | :----------: | :-----: | :------------------------------------: |
+| Archive Control MySQL | Device       | ACmySQL | {FDCB334A-AFFF-4785-9596-D380252CEE4E} |
+
+### 2. Changlog
 
 Version 1.01:  
  - Erstes offizielles Release
+
+### 3. Spenden  
+  
+  Die Library ist für die nicht kommzerielle Nutzung kostenlos, Schenkungen als Unterstützung für den Autor werden hier akzeptiert:  
+
+<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=G2SLW2MEMQZH2" target="_blank"><img src="https://www.paypalobjects.com/de_DE/DE/i/btn/btn_donate_LG.gif" border="0" /></a>
+
 
 ## 9. Lizenz
 
