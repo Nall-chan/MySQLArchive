@@ -1,4 +1,4 @@
-<?
+<?php
 
 /*
  * @addtogroup mysqlarchiv
@@ -14,16 +14,14 @@
  */
 
 
-if (!defined("IPS_BASE"))
-{
-// --- BASE MESSAGE
+if (!defined("IPS_BASE")) {
+    // --- BASE MESSAGE
     define('IPS_BASE', 10000);                             //Base Message
     define('IPS_KERNELSTARTED', IPS_BASE + 1);             //Post Ready Message
     define('IPS_KERNELSHUTDOWN', IPS_BASE + 2);            //Pre Shutdown Message, Runlevel UNINIT Follows
 }
-if (!defined("IPS_KERNELMESSAGE"))
-{
-// --- KERNEL
+if (!defined("IPS_KERNELMESSAGE")) {
+    // --- KERNEL
     define('IPS_KERNELMESSAGE', IPS_BASE + 100);           //Kernel Message
     define('KR_CREATE', IPS_KERNELMESSAGE + 1);            //Kernel is beeing created
     define('KR_INIT', IPS_KERNELMESSAGE + 2);              //Kernel Components are beeing initialised, Modules loaded, Settings read
@@ -31,9 +29,8 @@ if (!defined("IPS_KERNELMESSAGE"))
     define('KR_UNINIT', IPS_KERNELMESSAGE + 4);            //Got Shutdown Message, unloading all stuff
     define('KR_SHUTDOWN', IPS_KERNELMESSAGE + 5);          //Uninit Complete, Destroying Kernel Inteface
 }
-if (!defined("IPS_LOGMESSAGE"))
-{
-// --- KERNEL LOGMESSAGE
+if (!defined("IPS_LOGMESSAGE")) {
+    // --- KERNEL LOGMESSAGE
     define('IPS_LOGMESSAGE', IPS_BASE + 200);              //Logmessage Message
     define('KL_MESSAGE', IPS_LOGMESSAGE + 1);              //Normal Message                      | FG: Black | BG: White  | STLYE : NONE
     define('KL_SUCCESS', IPS_LOGMESSAGE + 2);              //Success Message                     | FG: Black | BG: Green  | STYLE : NONE
@@ -43,16 +40,14 @@ if (!defined("IPS_LOGMESSAGE"))
     define('KL_DEBUG', IPS_LOGMESSAGE + 6);                //Debug Informations + Script Results | FG: Grey  | BG: White  | STLYE : NONE
     define('KL_CUSTOM', IPS_LOGMESSAGE + 7);               //User Message                        | FG: Black | BG: White  | STLYE : NONE
 }
-if (!defined("IPS_MODULEMESSAGE"))
-{
-// --- MODULE LOADER
+if (!defined("IPS_MODULEMESSAGE")) {
+    // --- MODULE LOADER
     define('IPS_MODULEMESSAGE', IPS_BASE + 300);           //ModuleLoader Message
     define('ML_LOAD', IPS_MODULEMESSAGE + 1);              //Module loaded
     define('ML_UNLOAD', IPS_MODULEMESSAGE + 2);            //Module unloaded
 }
-if (!defined("IPS_OBJECTMESSAGE"))
-{
-// --- OBJECT MANAGER
+if (!defined("IPS_OBJECTMESSAGE")) {
+    // --- OBJECT MANAGER
     define('IPS_OBJECTMESSAGE', IPS_BASE + 400);
     define('OM_REGISTER', IPS_OBJECTMESSAGE + 1);          //Object was registered
     define('OM_UNREGISTER', IPS_OBJECTMESSAGE + 2);        //Object was unregistered
@@ -69,9 +64,8 @@ if (!defined("IPS_OBJECTMESSAGE"))
     define('OM_CHILDREMOVED', IPS_OBJECTMESSAGE + 13);     //Child for Object was removed
     define('OM_CHANGEIDENT', IPS_OBJECTMESSAGE + 14);      //Ident was Changed
 }
-if (!defined("IPS_INSTANCEMESSAGE"))
-{
-// --- INSTANCE MANAGER
+if (!defined("IPS_INSTANCEMESSAGE")) {
+    // --- INSTANCE MANAGER
     define('IPS_INSTANCEMESSAGE', IPS_BASE + 500);         //Instance Manager Message
     define('IM_CREATE', IPS_INSTANCEMESSAGE + 1);          //Instance created
     define('IM_DELETE', IPS_INSTANCEMESSAGE + 2);          //Instance deleted
@@ -84,9 +78,8 @@ if (!defined("IPS_INSTANCEMESSAGE"))
     define('IM_SEARCHPROGRESS', IPS_INSTANCEMESSAGE + 9);  //Searching progress in %
     define('IM_SEARCHCOMPLETE', IPS_INSTANCEMESSAGE + 10); //Searching is complete
 }
-if (!defined("IPS_VARIABLEMESSAGE"))
-{
-// --- VARIABLE MANAGER
+if (!defined("IPS_VARIABLEMESSAGE")) {
+    // --- VARIABLE MANAGER
     define('IPS_VARIABLEMESSAGE', IPS_BASE + 600);              //Variable Manager Message
     define('VM_CREATE', IPS_VARIABLEMESSAGE + 1);               //Variable Created
     define('VM_DELETE', IPS_VARIABLEMESSAGE + 2);               //Variable Deleted
@@ -94,18 +87,16 @@ if (!defined("IPS_VARIABLEMESSAGE"))
     define('VM_CHANGEPROFILENAME', IPS_VARIABLEMESSAGE + 4);    //On Profile Name Change
     define('VM_CHANGEPROFILEACTION', IPS_VARIABLEMESSAGE + 5);  //On Profile Action Change
 }
-if (!defined("IPS_SCRIPTMESSAGE"))
-{
-// --- SCRIPT MANAGER
+if (!defined("IPS_SCRIPTMESSAGE")) {
+    // --- SCRIPT MANAGER
     define('IPS_SCRIPTMESSAGE', IPS_BASE + 700);           //Script Manager Message
     define('SM_CREATE', IPS_SCRIPTMESSAGE + 1);            //On Script Create
     define('SM_DELETE', IPS_SCRIPTMESSAGE + 2);            //On Script Delete
     define('SM_CHANGEFILE', IPS_SCRIPTMESSAGE + 3);        //On Script File changed
     define('SM_BROKEN', IPS_SCRIPTMESSAGE + 4);            //Script Broken Status changed
 }
-if (!defined("IPS_EVENTMESSAGE"))
-{
-// --- EVENT MANAGER
+if (!defined("IPS_EVENTMESSAGE")) {
+    // --- EVENT MANAGER
     define('IPS_EVENTMESSAGE', IPS_BASE + 800);             //Event Scripter Message
     define('EM_CREATE', IPS_EVENTMESSAGE + 1);             //On Event Create
     define('EM_DELETE', IPS_EVENTMESSAGE + 2);             //On Event Delete
@@ -122,9 +113,8 @@ if (!defined("IPS_EVENTMESSAGE"))
     define('EM_CHANGECYCLICTIMEFROM', IPS_EVENTMESSAGE + 13);
     define('EM_CHANGECYCLICTIMETO', IPS_EVENTMESSAGE + 14);
 }
-if (!defined("IPS_MEDIAMESSAGE"))
-{
-// --- MEDIA MANAGER
+if (!defined("IPS_MEDIAMESSAGE")) {
+    // --- MEDIA MANAGER
     define('IPS_MEDIAMESSAGE', IPS_BASE + 900);           //Media Manager Message
     define('MM_CREATE', IPS_MEDIAMESSAGE + 1);             //On Media Create
     define('MM_DELETE', IPS_MEDIAMESSAGE + 2);             //On Media Delete
@@ -132,32 +122,28 @@ if (!defined("IPS_MEDIAMESSAGE"))
     define('MM_AVAILABLE', IPS_MEDIAMESSAGE + 4);          //Media Available Status changed
     define('MM_UPDATE', IPS_MEDIAMESSAGE + 5);
 }
-if (!defined("IPS_LINKMESSAGE"))
-{
-// --- LINK MANAGER
+if (!defined("IPS_LINKMESSAGE")) {
+    // --- LINK MANAGER
     define('IPS_LINKMESSAGE', IPS_BASE + 1000);           //Link Manager Message
     define('LM_CREATE', IPS_LINKMESSAGE + 1);             //On Link Create
     define('LM_DELETE', IPS_LINKMESSAGE + 2);             //On Link Delete
     define('LM_CHANGETARGET', IPS_LINKMESSAGE + 3);       //On Link TargetID change
 }
-if (!defined("IPS_FLOWMESSAGE"))
-{
-// --- DATA HANDLER
+if (!defined("IPS_FLOWMESSAGE")) {
+    // --- DATA HANDLER
     define('IPS_FLOWMESSAGE', IPS_BASE + 1100);             //Data Handler Message
     define('FM_CONNECT', IPS_FLOWMESSAGE + 1);             //On Instance Connect
     define('FM_DISCONNECT', IPS_FLOWMESSAGE + 2);          //On Instance Disconnect
 }
-if (!defined("IPS_ENGINEMESSAGE"))
-{
-// --- SCRIPT ENGINE
+if (!defined("IPS_ENGINEMESSAGE")) {
+    // --- SCRIPT ENGINE
     define('IPS_ENGINEMESSAGE', IPS_BASE + 1200);           //Script Engine Message
     define('SE_UPDATE', IPS_ENGINEMESSAGE + 1);             //On Library Refresh
     define('SE_EXECUTE', IPS_ENGINEMESSAGE + 2);            //On Script Finished execution
     define('SE_RUNNING', IPS_ENGINEMESSAGE + 3);            //On Script Started execution
 }
-if (!defined("IPS_PROFILEMESSAGE"))
-{
-// --- PROFILE POOL
+if (!defined("IPS_PROFILEMESSAGE")) {
+    // --- PROFILE POOL
     define('IPS_PROFILEMESSAGE', IPS_BASE + 1300);
     define('PM_CREATE', IPS_PROFILEMESSAGE + 1);
     define('PM_DELETE', IPS_PROFILEMESSAGE + 2);
@@ -169,9 +155,8 @@ if (!defined("IPS_PROFILEMESSAGE"))
     define('PM_ASSOCIATIONREMOVED', IPS_PROFILEMESSAGE + 8);
     define('PM_ASSOCIATIONCHANGED', IPS_PROFILEMESSAGE + 9);
 }
-if (!defined("IPS_TIMERMESSAGE"))
-{
-// --- TIMER POOL
+if (!defined("IPS_TIMERMESSAGE")) {
+    // --- TIMER POOL
     define('IPS_TIMERMESSAGE', IPS_BASE + 1400);            //Timer Pool Message
     define('TM_REGISTER', IPS_TIMERMESSAGE + 1);
     define('TM_UNREGISTER', IPS_TIMERMESSAGE + 2);
@@ -180,8 +165,7 @@ if (!defined("IPS_TIMERMESSAGE"))
     define('TM_RUNNING', IPS_TIMERMESSAGE + 5);
 }
 
-if (!defined("IS_ACTIVE")) //Nur wenn Konstanten noch nicht bekannt sind.
-{
+if (!defined("IS_ACTIVE")) { //Nur wenn Konstanten noch nicht bekannt sind.
 // --- STATUS CODES
     define('IS_SBASE', 100);
     define('IS_CREATING', IS_SBASE + 1); //module is being created
@@ -193,8 +177,7 @@ if (!defined("IS_ACTIVE")) //Nur wenn Konstanten noch nicht bekannt sind.
     define('IS_NOTCREATED', IS_EBASE + 1); //instance could not be created
 }
 
-if (!defined("vtBoolean")) //Nur wenn Konstanten noch nicht bekannt sind.
-{
+if (!defined("vtBoolean")) { //Nur wenn Konstanten noch nicht bekannt sind.
     define('vtBoolean', 0);
     define('vtInteger', 1);
     define('vtFloat', 2);
@@ -216,13 +199,12 @@ trait Database
 
     protected function Login()
     {
-        if ($this->ReadPropertyString('Host') == '')
+        if ($this->ReadPropertyString('Host') == '') {
             return false;
-        if (!$this->isConnected)
-        {
+        }
+        if (!$this->isConnected) {
             $this->DB = @new mysqli($this->ReadPropertyString('Host'), $this->ReadPropertyString('Username'), $this->ReadPropertyString('Password'));
-            if ($this->DB->connect_errno == 0)
-            {
+            if ($this->DB->connect_errno == 0) {
                 $this->isConnected = true;
                 return true;
             }
@@ -233,29 +215,33 @@ trait Database
 
     protected function CreateDB()
     {
-        if ($this->isConnected)
+        if ($this->isConnected) {
             return $this->DB->query('CREATE DATABASE ' . $this->ReadPropertyString('Database'));
+        }
         return false;
     }
 
     protected function SelectDB()
     {
-        if ($this->isConnected)
+        if ($this->isConnected) {
             return $this->DB->select_db($this->ReadPropertyString('Database'));
+        }
         return false;
     }
 
     protected function Logout()
     {
-        if ($this->isConnected)
+        if ($this->isConnected) {
             return $this->DB->close();
+        }
         return false;
     }
 
     protected function TableExists($VarId)
     {
-        if (!$this->isConnected)
+        if (!$this->isConnected) {
             return false;
+        }
         $query = "SHOW TABLES IN " . $this->ReadPropertyString('Database') . " LIKE  'var" . $VarId . "';";
         $result = $this->DB->query($query);
         /* @var $result mysqli_result */
@@ -264,10 +250,10 @@ trait Database
 
     protected function CreateTable($VarId, $VarTyp)
     {
-        if (!$this->isConnected)
+        if (!$this->isConnected) {
             return false;
-        switch ($VarTyp)
-        {
+        }
+        switch ($VarTyp) {
             case vtInteger:
                 $Typ = 'value INT SIGNED, ';
                 break;
@@ -289,8 +275,9 @@ trait Database
 
     protected function RenameTable($OldVariableID, $NewVariableID)
     {
-        if (!$this->isConnected)
+        if (!$this->isConnected) {
             return false;
+        }
 
         $query = "RENAME TABLE " . $this->ReadPropertyString('Database') . ".var" . $OldVariableID . " TO " . $this->ReadPropertyString('Database') . ".var" . $NewVariableID . ";";
         $result = $this->DB->query($query);
@@ -300,21 +287,24 @@ trait Database
 
     protected function DeleteData($VariableID, $Startzeit, $Endzeit)
     {
-        if (!$this->isConnected)
+        if (!$this->isConnected) {
             return false;
+        }
 
         $query = "DELETE FROM var" . $VariableID . " WHERE ((timestamp >= from_unixtime(" . $Startzeit . ")) and (timestamp <= from_unixtime(" . $Endzeit . ")));";
         /* @var $result mysqli_result */
         $result = $this->DB->query($query);
-        if ($result)
+        if ($result) {
             $result = $this->DB->affected_rows;
+        }
         return $result;
     }
 
     protected function GetLoggedData($VariableID, $Startzeit, $Endzeit, $Limit)
     {
-        if (!$this->isConnected)
+        if (!$this->isConnected) {
             return false;
+        }
 
         $query = "SELECT  unix_timestamp(timestamp) AS 'TimeStamp', value AS 'Value' " .
                 "FROM  var" . $VariableID . " " .
@@ -333,8 +323,7 @@ trait Database
                 "WHERE ((TABLE_NAME = 'var" . $VariableID . "') AND (COLUMN_NAME = 'value'))";
 
         $sqlresult = $this->DB->query($query);
-        switch (strtolower($sqlresult->fetch_row()[0]))
-        {
+        switch (strtolower($sqlresult->fetch_row()[0])) {
             case 'double':
             case 'real':
                 return vtFloat;
@@ -349,8 +338,7 @@ trait Database
 
     protected function GetAggregatedData($VariableID, $Typ, $Startzeit, $Endzeit, $Limit)
     {
-        switch ($Typ)
-        {
+        switch ($Typ) {
             case 0:
                 $Time = 10000;
                 $Half = 3000;
@@ -398,15 +386,16 @@ trait Database
 
     protected function GetVariableTables()
     {
-        if (!$this->isConnected)
+        if (!$this->isConnected) {
             return array();
+        }
         $query = "SELECT right(TABLE_NAME,5) as 'VariableID' FROM information_schema.TABLES WHERE table_schema = '" . $this->ReadPropertyString('Database') . "' ORDER BY 'VariableID' ASC";
         $sqlresult = $this->DB->query($query);
-        if ($sqlresult === false)
+        if ($sqlresult === false) {
             return array();
+        }
         $Result = $sqlresult->fetch_all(MYSQLI_ASSOC);
-        foreach ($Result as &$Item)
-        {
+        foreach ($Result as &$Item) {
             $Item['VariableID'] = (int) $Item['VariableID'];
         }
         return $Result;
@@ -414,8 +403,9 @@ trait Database
 
     protected function GetSummary($VariableId)
     {
-        if (!$this->isConnected)
+        if (!$this->isConnected) {
             return false;
+        }
 
         $query = "SELECT unix_timestamp(timestamp) AS 'TimeStamp' " .
                 "FROM  var" . $VariableId . " " .
@@ -458,22 +448,18 @@ trait Database
 
     protected function WriteValue($Variable, $NewValue, $HasChanged, $Timestamp)
     {
-        if (!$HasChanged)
-        {
+        if (!$HasChanged) {
             $query = "SELECT id,value FROM var" . $Variable . " ORDER BY timestamp DESC LIMIT 2";
             /* @var $result mysqli_result */
             $result = $this->DB->query($query);
-            if ($result === false)
-            {
+            if ($result === false) {
                 echo $this->DB->error;
                 return false;
             }
 
-            if ($result->num_rows === 2)
-            {
+            if ($result->num_rows === 2) {
                 $ids = $result->fetch_all(MYSQLI_ASSOC);
-                if ($ids[0]['value'] === $ids[1]['value'])
-                {
+                if ($ids[0]['value'] === $ids[1]['value']) {
                     $query = "UPDATE var" . $Variable . " SET timestamp=from_unixtime(" . $Timestamp . ") WHERE id=" . $ids[0]['id'];
                     $result = $this->DB->query($query);
                     return $result;
@@ -482,14 +468,12 @@ trait Database
         }
         $query = "INSERT INTO var" . $Variable . " (value,timestamp) VALUES(" . $NewValue . ",from_unixtime(" . $Timestamp . "));";
         $result = $this->DB->query($query);
-        if ($result === false)
-        {
+        if ($result === false) {
             echo $this->DB->error;
             return false;
         }
         return true;
     }
-
 }
 
 trait VariableWatch
@@ -503,8 +487,9 @@ trait VariableWatch
      */
     protected function UnregisterVariableWatch($VarId)
     {
-        if ($VarId == 0)
+        if ($VarId == 0) {
             return;
+        }
 
         $this->SendDebug('UnregisterVM', $VarId, 0);
         $this->UnregisterMessage($VarId, VM_DELETE);
@@ -519,18 +504,18 @@ trait VariableWatch
      */
     protected function RegisterVariableWatch(int $VarId)
     {
-        if ($VarId == 0)
+        if ($VarId == 0) {
             return;
+        }
         $this->SendDebug('RegisterVM', $VarId, 0);
         $this->RegisterMessage($VarId, VM_DELETE);
         $this->RegisterMessage($VarId, VM_UPDATE);
     }
-
 }
 
 /**
  * DebugHelper ergänzt SendDebug um die Möglichkeit Array und Objekte auszugeben.
- * 
+ *
  */
 trait DebugHelper
 {
@@ -545,30 +530,20 @@ trait DebugHelper
      */
     protected function SendDebug($Message, $Data, $Format)
     {
-        if (is_array($Data))
-        {
-            foreach ($Data as $Key => $DebugData)
-            {
+        if (is_array($Data)) {
+            foreach ($Data as $Key => $DebugData) {
                 $this->SendDebug($Message . ":" . $Key, $DebugData, 0);
             }
-        }
-        else if (is_object($Data))
-        {
-            foreach ($Data as $Key => $DebugData)
-            {
+        } elseif (is_object($Data)) {
+            foreach ($Data as $Key => $DebugData) {
                 $this->SendDebug($Message . "." . $Key, $DebugData, 0);
             }
-        }
-        else if (is_bool($Data))
-        {
+        } elseif (is_bool($Data)) {
             parent::SendDebug($Message, ($Data ? 'TRUE' : 'FALSE'), 0);
-        }
-        else
-        {
+        } else {
             parent::SendDebug($Message, $Data, $Format);
         }
     }
-
 }
 
 /**
@@ -579,18 +554,16 @@ trait BufferHelper
 
     /**
      * Wert einer Eigenschaft aus den InstanceBuffer lesen.
-     * 
+     *
      * @access public
      * @param string $name Propertyname
      * @return mixed Value of Name
      */
     public function __get($name)
     {
-        if (strpos($name, 'Multi_') === 0)
-        {
+        if (strpos($name, 'Multi_') === 0) {
             $Lines = "";
-            foreach ($this->{"BufferListe_" . $name} as $BufferIndex)
-            {
+            foreach ($this->{"BufferListe_" . $name} as $BufferIndex) {
                 $Lines .= $this->{'Part_' . $name . $BufferIndex};
             }
             return unserialize($Lines);
@@ -600,7 +573,7 @@ trait BufferHelper
 
     /**
      * Wert einer Eigenschaft in den InstanceBuffer schreiben.
-     * 
+     *
      * @access public
      * @param string $name Propertyname
      * @param mixed Value of Name
@@ -608,28 +581,25 @@ trait BufferHelper
     public function __set($name, $value)
     {
         $Data = serialize($value);
-        if (strpos($name, 'Multi_') === 0)
-        {
+        if (strpos($name, 'Multi_') === 0) {
             $OldBuffers = $this->{"BufferListe_" . $name};
-            if ($OldBuffers == false)
+            if ($OldBuffers == false) {
                 $OldBuffers = array();
+            }
             $Lines = str_split($Data, 8000);
-            foreach ($Lines as $BufferIndex => $BufferLine)
-            {
+            foreach ($Lines as $BufferIndex => $BufferLine) {
                 $this->{'Part_' . $name . $BufferIndex} = $BufferLine;
             }
             $NewBuffers = array_keys($Lines);
             $this->{"BufferListe_" . $name} = $NewBuffers;
             $DelBuffers = array_diff_key($OldBuffers, $NewBuffers);
-            foreach ($DelBuffers as $DelBuffer)
-            {
+            foreach ($DelBuffers as $DelBuffer) {
                 $this->{'Part_' . $name . $DelBuffer} = "";
             }
             return;
         }
         $this->SetBuffer($name, $Data);
     }
-
 }
 
 /** @} */
