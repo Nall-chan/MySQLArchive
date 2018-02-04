@@ -169,7 +169,6 @@ class ArchiveControlMySQL extends ipsmodule
             {
                 if (!IPS_VariableExists($VarId))
                 {
-                    $Item['Variable'] = 'Objekt #' . $VarId . ' ist keine Variable';
                     $Item['Variable'] = sprintf($this->Translate("Object #%d is no variable"), $VarId);
                     $Item['rowColor'] = "#ff0000";
                 }
