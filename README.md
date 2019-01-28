@@ -1,7 +1,7 @@
 [![Version](https://img.shields.io/badge/Symcon-PHPModul-red.svg)](https://www.symcon.de/service/dokumentation/entwicklerbereich/sdk-tools/sdk-php/)
-[![Version](https://img.shields.io/badge/Modul%20Version-1.02-blue.svg)]()
+[![Version](https://img.shields.io/badge/Modul%20Version-2.50-blue.svg)]()
 [![License](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-green.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)  
-[![Version](https://img.shields.io/badge/Symcon%20Version-4.3%20%3E-green.svg)](https://www.symcon.de/forum/threads/30857-IP-Symcon-4-3-%28Stable%29-Changelog)
+[![Version](https://img.shields.io/badge/Symcon%20Version-5.1%20%3E-green.svg)]()
 [![StyleCI](https://styleci.io/repos/107871581/shield?style=flat)](https://styleci.io/repos/107871581)  
 
 
@@ -29,7 +29,7 @@ Zusätzliches Archiv für MySQL Datenbanken.
 ## 1. Funktionsumfang
 
 Variablenveränderungen in einer MySQL-Datenbank speichern.  
-Auslesen mit ACMySQL_* PHP-Funktionen (kompatibel mit den AC_* Befehlen).  
+Auslesen mit ACMYSQL_* PHP-Funktionen (kompatibel mit den AC_* Befehlen).  
 
 **Achtung:**  
   Dieses 'Archive Control' ersetzt nicht das Original in IPS.  
@@ -42,13 +42,13 @@ Auslesen mit ACMySQL_* PHP-Funktionen (kompatibel mit den AC_* Befehlen).
 
 ## 2. Voraussetzungen
 
- - IPS ab Version 4.3
+ - IPS ab Version 5.1
  - MySQL Server
 
 
 ## 3. Installation
 
-**IPS 4.3:**  
+**IPS 5.1:**  
    Bei privater Nutzung: Über das 'Module-Control' in IPS folgende URL hinzufügen.  
    `git://github.com/Nall-chan/IPSMySQLArchiv.git`  
 
@@ -71,7 +71,7 @@ Auslesen mit ACMySQL_* PHP-Funktionen (kompatibel mit den AC_* Befehlen).
 ## 6. PHP-Funktionsreferenz  
 
 Es sind alle IPS Befehle des Original Archive-Control vorhanden.  
-Der Prefix muss nur von AC_ gegen ACMySQL_ ersetzt werden.  
+Der Prefix muss nur von AC_ gegen ACMYSQL_ ersetzt werden.  
 Da aktuell keine Zähler unterstützt werden, werden diese Rückgabewerte immer mit 0 übergeben.  
 
 ## 7. Parameter
@@ -92,9 +92,17 @@ Da aktuell keine Zähler unterstützt werden, werden diese Rückgabewerte immer 
  
 | Modul                 | Typ          |Prefix   | GUID                                   |
 | :-------------------: | :----------: | :-----: | :------------------------------------: |
-| Archive Control MySQL | Device       | ACmySQL | {FDCB334A-AFFF-4785-9596-D380252CEE4E} |
+| Archive Control MySQL | Device       | ACMYSQL | {FDCB334A-AFFF-4785-9596-D380252CEE4E} |
 
 ### 2. Changlog
+
+Version 2.50:  
+- Anpassungen für IPS 5.1  
+
+Version 2.00:  
+ - Anpassungen für IPS 5.0
+ - Modul intern umgebaut
+ - Konfiguration für WebConsole verbessert    
 
 Version 1.02:  
  - Fixes für IPS 5.0  

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 require_once(__DIR__ . "/../libs/MySQLArchiv.php");
 
 /**
@@ -8,9 +10,9 @@ require_once(__DIR__ . "/../libs/MySQLArchiv.php");
  *
  * @package       MySQLArchiv
  * @author        Michael Tröger <micha@nall-chan.net>
- * @copyright     2017 Michael Tröger
+ * @copyright     2018 Michael Tröger
  * @license       https://creativecommons.org/licenses/by-nc-sa/4.0/ CC BY-NC-SA 4.0
- * @version       1.0
+ * @version       2.0
  * @example <b>Ohne</b>
  *
  * @property array $Vars
@@ -18,11 +20,12 @@ require_once(__DIR__ . "/../libs/MySQLArchiv.php");
  */
 class ArchiveControlMySQL extends ipsmodule
 {
-    use BufferHelper,
-        Database,
-        DebugHelper,
-        VariableWatch;
 
+    use BufferHelper,
+        DebugHelper,
+        ReferenceHelper,
+        Database,
+        VariableWatch;
     /**
      * Interne Funktion des SDK.
      *
@@ -146,21 +149,16 @@ class ArchiveControlMySQL extends ipsmodule
         for ($Index = 0; $Index < count($ConfigVars); $Index++) {
             $Item = &$ConfigVars[$Index];
             $VarId = $Item['VariableId'];
+            $Item['Variable'] = $Item['VariableId'];
             if ($Item['VariableId'] == 0) {
-                $Item['Variable'] = sprintf($this->Translate("Object #%d not exists"), 0);
                 $Item['rowColor'] = "#ff0000";
                 continue;
             }
-
             if (!IPS_ObjectExists($VarId)) {
-                $Item['Variable'] = sprintf($this->Translate("Object #%d not exists"), $VarId);
                 $Item['rowColor'] = "#ff0000";
             } else {
                 if (!IPS_VariableExists($VarId)) {
-                    $Item['Variable'] = sprintf($this->Translate("Object #%d is no variable"), $VarId);
                     $Item['rowColor'] = "#ff0000";
-                } else {
-                    $Item['Variable'] = IPS_GetLocation($VarId);
                 }
             }
             if ($Database) {
@@ -220,13 +218,12 @@ class ArchiveControlMySQL extends ipsmodule
 //            $ConfigVars[] = $Item;
 //        }
         //$this->SendDebug('FORM', $ConfigVars, 0);
-        $form['elements'][4]['values'] = $ConfigVars;
+        $form['elements'][1]['values'] = $ConfigVars;
         $this->Logout();
         return json_encode($form);
     }
 
     ################## PRIVATE
-
     /**
      * Werte loggen
      *
@@ -297,9 +294,8 @@ class ArchiveControlMySQL extends ipsmodule
     }
 
     ################## PUBLIC
-
     /**
-     * IPS-Instant-Funktion ACMySQL_ChangeVariableID
+     * IPS-Instant-Funktion ACMYSQL_ChangeVariableID
      * Zum überführen von geloggten Daten auf eine neue Variable.
      *
      * @access public
@@ -358,7 +354,7 @@ class ArchiveControlMySQL extends ipsmodule
     }
 
     /**
-     * IPS-Instant-Funktion ACMySQL_DeleteVariableData
+     * IPS-Instant-Funktion ACMYSQL_DeleteVariableData
      * Zum löschen einer Zeitspanne von Werten.
      *
      * @access public
@@ -390,7 +386,7 @@ class ArchiveControlMySQL extends ipsmodule
     }
 
     /**
-     * IPS-Instant-Funktion ACMySQL_GetLoggedValues
+     * IPS-Instant-Funktion ACMYSQL_GetLoggedValues
      * Liefert geloggte Daten einer Variable
      *
      * @access public
@@ -402,7 +398,7 @@ class ArchiveControlMySQL extends ipsmodule
      */
     public function GetLoggedValues(int $VariableID, int $Startzeit, int $Endzeit, int $Limit)
     {
-        if (($Limit > IPS_GetOption('ArchiveRecordLimit')) or ($Limit == 0)) {
+        if (($Limit > IPS_GetOption('ArchiveRecordLimit')) or ( $Limit == 0)) {
             $Limit = IPS_GetOption('ArchiveRecordLimit');
         }
 
@@ -458,7 +454,7 @@ class ArchiveControlMySQL extends ipsmodule
     }
 
     /**
-     * IPS-Instant-Funktion ACMySQL_GetLoggingStatus
+     * IPS-Instant-Funktion ACMYSQL_GetLoggingStatus
      * Liefert ob eine Variable aktuell geloggt wird.
      *
      * @access public
@@ -472,7 +468,7 @@ class ArchiveControlMySQL extends ipsmodule
     }
 
     /**
-     * IPS-Instant-Funktion ACMySQL_SetLoggingStatus
+     * IPS-Instant-Funktion ACMYSQL_SetLoggingStatus
      * De-/Aktiviert das logging einer Variable.
      * Wird erst nach IPS_Applychanges($MySQLArchivID) aktiv.
      *
@@ -518,7 +514,7 @@ class ArchiveControlMySQL extends ipsmodule
     }
 
     /**
-     * IPS-Instant-Funktion ACMySQL_GetAggregationType
+     * IPS-Instant-Funktion ACMYSQL_GetAggregationType
      * Liefert immer 0, da Typ Zähler nicht unterstützt wird.
      *
      * @access public
@@ -540,7 +536,7 @@ class ArchiveControlMySQL extends ipsmodule
     }
 
     /**
-     * IPS-Instant-Funktion ACMySQL_GetGraphStatus
+     * IPS-Instant-Funktion ACMYSQL_GetGraphStatus
      * Liefert immer true, da diese Funktion nicht unterstützt wird.
      *
      * @access public
@@ -562,7 +558,7 @@ class ArchiveControlMySQL extends ipsmodule
     }
 
     /**
-     * IPS-Instant-Funktion ACMySQL_SetGraphStatus
+     * IPS-Instant-Funktion ACMYSQL_SetGraphStatus
      * Liefert immer true, da diese Funktion nicht unterstützt wird.
      *
      * @access public
@@ -585,7 +581,7 @@ class ArchiveControlMySQL extends ipsmodule
     }
 
     /**
-     * IPS-Instant-Funktion ACMySQL_GetAggregatedValues
+     * IPS-Instant-Funktion ACMYSQL_GetAggregatedValues
      * Liefert aggregierte Daten einer geloggte Variable
      *
      * @access public
@@ -598,7 +594,7 @@ class ArchiveControlMySQL extends ipsmodule
      */
     public function GetAggregatedValues(int $VariableID, int $Aggregationsstufe, int $Startzeit, int $Endzeit, int $Limit)
     {
-        if (($Limit > IPS_GetOption('ArchiveRecordLimit')) or ($Limit == 0)) {
+        if (($Limit > IPS_GetOption('ArchiveRecordLimit')) or ( $Limit == 0)) {
             $Limit = IPS_GetOption('ArchiveRecordLimit');
         }
 
@@ -606,7 +602,7 @@ class ArchiveControlMySQL extends ipsmodule
             $Endzeit = time();
         }
 
-        if (($Aggregationsstufe < 0) or ($Aggregationsstufe > 6)) {
+        if (($Aggregationsstufe < 0) or ( $Aggregationsstufe > 6)) {
             trigger_error($this->Translate('Invalid Aggregationsstage'), E_USER_NOTICE);
             return false;
         }
@@ -666,7 +662,7 @@ class ArchiveControlMySQL extends ipsmodule
     }
 
     /**
-     * IPS-Instant-Funktion ACMySQL_GetAggregationVariables
+     * IPS-Instant-Funktion ACMYSQL_GetAggregationVariables
      * Liefert eine Übersicht über alle geloggte Daten.
      *
      * @access public
@@ -703,6 +699,7 @@ class ArchiveControlMySQL extends ipsmodule
           AggregationActive	boolean	Gibt an ob das Logging für diese Variable Aktiv ist. Siehe auch AC_GetLoggingStatus
          */
     }
+
 }
 
 /** @} */
