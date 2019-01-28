@@ -1463,15 +1463,15 @@
         //*1000 da JS in [ms] angebgeben wird un php in [s]
         /*		$TooltipString="function() {
                                         var serieIndex = this.series.index;
-        
+
                                         if (this.series.type == 'pie')
                                         {
                                        var pointIndex = this.point.x;
                                             var unit = [".$s. "][serieIndex][pointIndex];
-        
+
                                             if (!unit)
                                               unit = [".$s. "][serieIndex][0];
-        
+
                                             return '<b>' + this.point.name +': </b> '+ unit +'<br/>= ' + this.percentage.toFixed(1) + ' %';
                                         }
                                         else
@@ -1479,18 +1479,18 @@
                                        var pointIndex = 0;
                                             var unit = [".$s. "][serieIndex][pointIndex];
                                             var offset = [".$offset. "][serieIndex] * 1000;
-        
+
                                             var offsetInfo ='';
                                             if (offset != 0)
                                                 offsetInfo = '<br/>(Achtung Zeitwert hat einen Offset)';
                                             else
                                                 offsetInfo ='';
-        
+
                                             return '<b>' + this.series.name + ': </b> '+ unit + '<br/>'
                                                 + Highcharts.dateFormat('%A %d.%m.%Y %H:%M', this.x - offset)
                                                 + offsetInfo;
-        
-        
+
+
                                         }
                                 } ";
         */
