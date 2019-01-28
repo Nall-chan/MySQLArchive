@@ -13,5 +13,4 @@ trait ReferenceHelper
             parent::RegisterReference($id);
         }
     }
-
 }
