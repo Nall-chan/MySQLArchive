@@ -22,7 +22,6 @@ class ArchiveControlMySQL extends ipsmodule
 {
     use BufferHelper,
         DebugHelper,
-        ReferenceHelper,
         Database,
         VariableWatch;
     /**
