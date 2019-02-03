@@ -294,7 +294,7 @@ class ArchiveControlMySQL extends ipsmodule
 
     ################## PUBLIC
     /**
-     * IPS-Instant-Funktion ACMYSQL_ChangeVariableID
+     * IPS-Instant-Funktion ACmySQL_ChangeVariableID
      * Zum überführen von geloggten Daten auf eine neue Variable.
      *
      * @access public
@@ -353,7 +353,7 @@ class ArchiveControlMySQL extends ipsmodule
     }
 
     /**
-     * IPS-Instant-Funktion ACMYSQL_DeleteVariableData
+     * IPS-Instant-Funktion ACmySQL_DeleteVariableData
      * Zum löschen einer Zeitspanne von Werten.
      *
      * @access public
@@ -385,7 +385,7 @@ class ArchiveControlMySQL extends ipsmodule
     }
 
     /**
-     * IPS-Instant-Funktion ACMYSQL_GetLoggedValues
+     * IPS-Instant-Funktion ACmySQL_GetLoggedValues
      * Liefert geloggte Daten einer Variable
      *
      * @access public
@@ -453,7 +453,7 @@ class ArchiveControlMySQL extends ipsmodule
     }
 
     /**
-     * IPS-Instant-Funktion ACMYSQL_GetLoggingStatus
+     * IPS-Instant-Funktion ACmySQL_GetLoggingStatus
      * Liefert ob eine Variable aktuell geloggt wird.
      *
      * @access public
@@ -467,7 +467,7 @@ class ArchiveControlMySQL extends ipsmodule
     }
 
     /**
-     * IPS-Instant-Funktion ACMYSQL_SetLoggingStatus
+     * IPS-Instant-Funktion ACmySQL_SetLoggingStatus
      * De-/Aktiviert das logging einer Variable.
      * Wird erst nach IPS_Applychanges($MySQLArchivID) aktiv.
      *
@@ -513,7 +513,7 @@ class ArchiveControlMySQL extends ipsmodule
     }
 
     /**
-     * IPS-Instant-Funktion ACMYSQL_GetAggregationType
+     * IPS-Instant-Funktion ACmySQL_GetAggregationType
      * Liefert immer 0, da Typ Zähler nicht unterstützt wird.
      *
      * @access public
@@ -535,7 +535,7 @@ class ArchiveControlMySQL extends ipsmodule
     }
 
     /**
-     * IPS-Instant-Funktion ACMYSQL_GetGraphStatus
+     * IPS-Instant-Funktion ACmySQL_GetGraphStatus
      * Liefert immer true, da diese Funktion nicht unterstützt wird.
      *
      * @access public
@@ -557,7 +557,7 @@ class ArchiveControlMySQL extends ipsmodule
     }
 
     /**
-     * IPS-Instant-Funktion ACMYSQL_SetGraphStatus
+     * IPS-Instant-Funktion ACmySQL_SetGraphStatus
      * Liefert immer true, da diese Funktion nicht unterstützt wird.
      *
      * @access public
@@ -580,7 +580,7 @@ class ArchiveControlMySQL extends ipsmodule
     }
 
     /**
-     * IPS-Instant-Funktion ACMYSQL_GetAggregatedValues
+     * IPS-Instant-Funktion ACmySQL_GetAggregatedValues
      * Liefert aggregierte Daten einer geloggte Variable
      *
      * @access public
@@ -661,7 +661,7 @@ class ArchiveControlMySQL extends ipsmodule
     }
 
     /**
-     * IPS-Instant-Funktion ACMYSQL_GetAggregationVariables
+     * IPS-Instant-Funktion ACmySQL_GetAggregationVariables
      * Liefert eine Übersicht über alle geloggte Daten.
      *
      * @access public
