@@ -21,11 +21,12 @@ require_once(__DIR__ . "/../libs/MySQLArchiv.php");
  */
 class ArchiveControlMySQL extends ipsmodule
 {
+
     use BufferHelper,
         DebugHelper,
         Database,
         VariableWatch;
-    public $Runtime;
+    private $Runtime;
 
     public function __construct($InstanceID)
     {
@@ -159,10 +160,22 @@ class ArchiveControlMySQL extends ipsmodule
         $this->Buffer = [];
         //Time critical end
         $this->SendDebug('LogData [' . $_IPS['THREAD'] . ']', count($Buffer) . ' entries', 0);
+        if (!$this->Login()) {
+            if ($this->DB) {
+                echo $this->DB->connect_error;
+            }
+            return;
+        }
+        if (!$this->SelectDB()) {
+            echo $this->DB->error;
+            return;
+        }
         foreach ($Buffer as $Data) {
             $this->LogValue($Data[0], $Data[1], $Data[2], $Data[3]);
             $this->SendDebug('LogData [' . $_IPS['THREAD'] . ']', sprintf('%.3f', ((microtime(true) - $this->Runtime) * 1000)) . ' ms', 0);
         }
+        $this->Logout();
+        return;
     }
 
     /**
@@ -272,16 +285,6 @@ class ArchiveControlMySQL extends ipsmodule
         if (!array_key_exists($Variable, $Vars)) {
             return false;
         }
-        if (!$this->Login()) {
-            if ($this->DB) {
-                echo $this->DB->connect_error;
-            }
-            return false;
-        }
-        if (!$this->SelectDB()) {
-            echo $this->DB->error;
-            return false;
-        }
         switch ($Vars[$Variable]) {
             case vtBoolean:
                 $result = $this->WriteValue($Variable, (int) $NewValue, $HasChanged, $Timestamp);
@@ -299,7 +302,6 @@ class ArchiveControlMySQL extends ipsmodule
         if (!$result) {
             $this->SendDebug('Error on write [' . $_IPS['THREAD'] . ']', $Variable, 0);
         }
-        return $this->Logout();
     }
 
     /**
@@ -431,7 +433,7 @@ class ArchiveControlMySQL extends ipsmodule
      */
     public function GetLoggedValues(int $VariableID, int $Startzeit, int $Endzeit, int $Limit)
     {
-        if (($Limit > IPS_GetOption('ArchiveRecordLimit')) or ($Limit == 0)) {
+        if (($Limit > IPS_GetOption('ArchiveRecordLimit')) or ( $Limit == 0)) {
             $Limit = IPS_GetOption('ArchiveRecordLimit');
         }
 
@@ -627,7 +629,7 @@ class ArchiveControlMySQL extends ipsmodule
      */
     public function GetAggregatedValues(int $VariableID, int $Aggregationsstufe, int $Startzeit, int $Endzeit, int $Limit)
     {
-        if (($Limit > IPS_GetOption('ArchiveRecordLimit')) or ($Limit == 0)) {
+        if (($Limit > IPS_GetOption('ArchiveRecordLimit')) or ( $Limit == 0)) {
             $Limit = IPS_GetOption('ArchiveRecordLimit');
         }
 
@@ -635,7 +637,7 @@ class ArchiveControlMySQL extends ipsmodule
             $Endzeit = time();
         }
 
-        if (($Aggregationsstufe < 0) or ($Aggregationsstufe > 6)) {
+        if (($Aggregationsstufe < 0) or ( $Aggregationsstufe > 6)) {
             trigger_error($this->Translate('Invalid Aggregationsstage'), E_USER_NOTICE);
             return false;
         }
@@ -732,6 +734,7 @@ class ArchiveControlMySQL extends ipsmodule
           AggregationActive	boolean	Gibt an ob das Logging für diese Variable Aktiv ist. Siehe auch AC_GetLoggingStatus
          */
     }
+
 }
 
 /** @} */
