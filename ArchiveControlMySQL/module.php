@@ -21,12 +21,11 @@ require_once(__DIR__ . "/../libs/MySQLArchiv.php");
  */
 class ArchiveControlMySQL extends ipsmodule
 {
-
     use BufferHelper,
         DebugHelper,
         Database,
         VariableWatch;
-    var $Runtime;
+    public $Runtime;
 
     public function __construct($InstanceID)
     {
@@ -155,10 +154,10 @@ class ArchiveControlMySQL extends ipsmodule
     {
         $this->SendDebug('Timer [' . $_IPS['THREAD'] . ']', 'Stop', 0);
         $this->SetTimerInterval('LogData', 0);
-//Time critical start
+        //Time critical start
         $Buffer = $this->Buffer;
         $this->Buffer = [];
-//Time critical end
+        //Time critical end
         $this->SendDebug('LogData [' . $_IPS['THREAD'] . ']', count($Buffer) . ' entries', 0);
         foreach ($Buffer as $Data) {
             $this->LogValue($Data[0], $Data[1], $Data[2], $Data[3]);
@@ -225,8 +224,8 @@ class ArchiveControlMySQL extends ipsmodule
             $Found[] = $VarId;
         }
         unset($Item);
-// Hier fehlen nicht mehr geloggte Variablen von denen aber noch Tabellen vorhanden sind
-//$ConfigVars = array_values($ConfigVars);
+        // Hier fehlen nicht mehr geloggte Variablen von denen aber noch Tabellen vorhanden sind
+        //$ConfigVars = array_values($ConfigVars);
 //        foreach ($TableVarIDs as $Var)
 //        {
 //            $Item = array('VariableId' => -1, 'Variable' => '');
@@ -251,13 +250,13 @@ class ArchiveControlMySQL extends ipsmodule
 //            }
 //            $ConfigVars[] = $Item;
 //        }
-//$this->SendDebug('FORM', $ConfigVars, 0);
+        //$this->SendDebug('FORM', $ConfigVars, 0);
         $form['elements'][1]['values'] = $ConfigVars;
         $this->Logout();
         return json_encode($form);
     }
 
-################## PRIVATE
+    ################## PRIVATE
     /**
      * Werte loggen
      *
@@ -327,7 +326,7 @@ class ArchiveControlMySQL extends ipsmodule
         return true;
     }
 
-################## PUBLIC
+    ################## PUBLIC
     /**
      * IPS-Instant-Funktion ACmySQL_ChangeVariableID
      * Zum überführen von geloggten Daten auf eine neue Variable.
@@ -432,7 +431,7 @@ class ArchiveControlMySQL extends ipsmodule
      */
     public function GetLoggedValues(int $VariableID, int $Startzeit, int $Endzeit, int $Limit)
     {
-        if (($Limit > IPS_GetOption('ArchiveRecordLimit')) or ( $Limit == 0)) {
+        if (($Limit > IPS_GetOption('ArchiveRecordLimit')) or ($Limit == 0)) {
             $Limit = IPS_GetOption('ArchiveRecordLimit');
         }
 
@@ -628,7 +627,7 @@ class ArchiveControlMySQL extends ipsmodule
      */
     public function GetAggregatedValues(int $VariableID, int $Aggregationsstufe, int $Startzeit, int $Endzeit, int $Limit)
     {
-        if (($Limit > IPS_GetOption('ArchiveRecordLimit')) or ( $Limit == 0)) {
+        if (($Limit > IPS_GetOption('ArchiveRecordLimit')) or ($Limit == 0)) {
             $Limit = IPS_GetOption('ArchiveRecordLimit');
         }
 
@@ -636,7 +635,7 @@ class ArchiveControlMySQL extends ipsmodule
             $Endzeit = time();
         }
 
-        if (($Aggregationsstufe < 0) or ( $Aggregationsstufe > 6)) {
+        if (($Aggregationsstufe < 0) or ($Aggregationsstufe > 6)) {
             trigger_error($this->Translate('Invalid Aggregationsstage'), E_USER_NOTICE);
             return false;
         }
@@ -733,7 +732,6 @@ class ArchiveControlMySQL extends ipsmodule
           AggregationActive	boolean	Gibt an ob das Logging für diese Variable Aktiv ist. Siehe auch AC_GetLoggingStatus
          */
     }
-
 }
 
 /** @} */
