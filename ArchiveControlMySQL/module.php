@@ -10,20 +10,30 @@ require_once(__DIR__ . "/../libs/MySQLArchiv.php");
  *
  * @package       MySQLArchiv
  * @author        Michael Tröger <micha@nall-chan.net>
- * @copyright     2018 Michael Tröger
+ * @copyright     2019 Michael Tröger
  * @license       https://creativecommons.org/licenses/by-nc-sa/4.0/ CC BY-NC-SA 4.0
- * @version       2.0
+ * @version       3.0
  * @example <b>Ohne</b>
  *
  * @property array $Vars
+ * @property array $Buffer
  * @property mysqli $DB
  */
 class ArchiveControlMySQL extends ipsmodule
 {
+
     use BufferHelper,
         DebugHelper,
         Database,
         VariableWatch;
+    var $Runtime;
+
+    public function __construct($InstanceID)
+    {
+        $this->Runtime = microtime(true);
+        parent::__construct($InstanceID);
+    }
+
     /**
      * Interne Funktion des SDK.
      *
@@ -38,8 +48,9 @@ class ArchiveControlMySQL extends ipsmodule
         $this->RegisterPropertyString('Password', '');
         $this->RegisterPropertyString('Database', 'IPS');
         $this->RegisterPropertyString('Variables', json_encode(array()));
-
-        $this->Vars = array();
+        $this->RegisterTimer('LogData', 0, 'ACmySQL_LogData($_IPS[\'TARGET\']);');
+        $this->Vars = [];
+        $this->Buffer = [];
     }
 
     /**
@@ -49,9 +60,17 @@ class ArchiveControlMySQL extends ipsmodule
      */
     public function MessageSink($TimeStamp, $SenderID, $Message, $Data)
     {
+        //Time critical start
         switch ($Message) {
             case VM_UPDATE:
-                $this->LogValue($SenderID, $Data[0], $Data[1], $Data[3]);
+                $Buffer = $this->Buffer;
+                $Buffer[] = [$SenderID, $Data[0], $Data[1], $Data[3]];
+                $this->Buffer = $Buffer;
+                $this->SendDebug('FetchData [' . $_IPS['THREAD'] . ']', 'Done', 0);
+                if (count($Buffer) == 1) {
+                    $this->SendDebug('Timer [' . $_IPS['THREAD'] . ']', 'Start', 0);
+                    $this->SetTimerInterval('LogData', 5);
+                }
                 break;
             case VM_DELETE:
                 $this->UnregisterVariableWatch($SenderID);
@@ -60,6 +79,8 @@ class ArchiveControlMySQL extends ipsmodule
                 $this->Vars = $Vars;
                 break;
         }
+        $this->SendDebug('MessageTime [' . $_IPS['THREAD'] . ']', sprintf('%.3f', ((microtime(true) - $this->Runtime) * 1000)) . ' ms', 0);
+        //Time critical end
     }
 
     /**
@@ -130,6 +151,21 @@ class ArchiveControlMySQL extends ipsmodule
         $this->Logout();
     }
 
+    public function LogData()
+    {
+        $this->SendDebug('Timer [' . $_IPS['THREAD'] . ']', 'Stop', 0);
+        $this->SetTimerInterval('LogData', 0);
+//Time critical start
+        $Buffer = $this->Buffer;
+        $this->Buffer = [];
+//Time critical end
+        $this->SendDebug('LogData [' . $_IPS['THREAD'] . ']', count($Buffer) . ' entries', 0);
+        foreach ($Buffer as $Data) {
+            $this->LogValue($Data[0], $Data[1], $Data[2], $Data[3]);
+            $this->SendDebug('LogData [' . $_IPS['THREAD'] . ']', sprintf('%.3f', ((microtime(true) - $this->Runtime) * 1000)) . ' ms', 0);
+        }
+    }
+
     /**
      * Interne Funktion des SDK.
      *
@@ -170,7 +206,7 @@ class ArchiveControlMySQL extends ipsmodule
                     $Item['Count'] = $Result['Count'];
                     $Item['FirstTimestamp'] = strftime('%c', $Result['FirstTimestamp']);
                     $Item['LastTimestamp'] = strftime('%c', $Result['LastTimestamp']);
-                    $Item['Size'] = sprintf('%.2f MB', ((int) $Result['Size'] / 1024 / 1024), 2);
+                    $Item['Size'] = sprintf('%.2f MB', ($Result['Size'] / 1024 / 1024), 2);
                     $Key = array_search(array('VariableID' => $VarId), $TableVarIDs);
                     if ($Key !== false) {
                         unset($TableVarIDs[$Key]);
@@ -189,8 +225,8 @@ class ArchiveControlMySQL extends ipsmodule
             $Found[] = $VarId;
         }
         unset($Item);
-        // Hier fehlen nicht mehr geloggte Variablen von denen aber noch Tabellen vorhanden sind
-        //$ConfigVars = array_values($ConfigVars);
+// Hier fehlen nicht mehr geloggte Variablen von denen aber noch Tabellen vorhanden sind
+//$ConfigVars = array_values($ConfigVars);
 //        foreach ($TableVarIDs as $Var)
 //        {
 //            $Item = array('VariableId' => -1, 'Variable' => '');
@@ -215,13 +251,13 @@ class ArchiveControlMySQL extends ipsmodule
 //            }
 //            $ConfigVars[] = $Item;
 //        }
-        //$this->SendDebug('FORM', $ConfigVars, 0);
+//$this->SendDebug('FORM', $ConfigVars, 0);
         $form['elements'][1]['values'] = $ConfigVars;
         $this->Logout();
         return json_encode($form);
     }
 
-    ################## PRIVATE
+################## PRIVATE
     /**
      * Werte loggen
      *
@@ -262,7 +298,7 @@ class ArchiveControlMySQL extends ipsmodule
                 break;
         }
         if (!$result) {
-            $this->SendDebug('Error on write', $Variable, 0);
+            $this->SendDebug('Error on write [' . $_IPS['THREAD'] . ']', $Variable, 0);
         }
         return $this->Logout();
     }
@@ -291,7 +327,7 @@ class ArchiveControlMySQL extends ipsmodule
         return true;
     }
 
-    ################## PUBLIC
+################## PUBLIC
     /**
      * IPS-Instant-Funktion ACmySQL_ChangeVariableID
      * Zum überführen von geloggten Daten auf eine neue Variable.
@@ -396,7 +432,7 @@ class ArchiveControlMySQL extends ipsmodule
      */
     public function GetLoggedValues(int $VariableID, int $Startzeit, int $Endzeit, int $Limit)
     {
-        if (($Limit > IPS_GetOption('ArchiveRecordLimit')) or ($Limit == 0)) {
+        if (($Limit > IPS_GetOption('ArchiveRecordLimit')) or ( $Limit == 0)) {
             $Limit = IPS_GetOption('ArchiveRecordLimit');
         }
 
@@ -592,7 +628,7 @@ class ArchiveControlMySQL extends ipsmodule
      */
     public function GetAggregatedValues(int $VariableID, int $Aggregationsstufe, int $Startzeit, int $Endzeit, int $Limit)
     {
-        if (($Limit > IPS_GetOption('ArchiveRecordLimit')) or ($Limit == 0)) {
+        if (($Limit > IPS_GetOption('ArchiveRecordLimit')) or ( $Limit == 0)) {
             $Limit = IPS_GetOption('ArchiveRecordLimit');
         }
 
@@ -600,7 +636,7 @@ class ArchiveControlMySQL extends ipsmodule
             $Endzeit = time();
         }
 
-        if (($Aggregationsstufe < 0) or ($Aggregationsstufe > 6)) {
+        if (($Aggregationsstufe < 0) or ( $Aggregationsstufe > 6)) {
             trigger_error($this->Translate('Invalid Aggregationsstage'), E_USER_NOTICE);
             return false;
         }
@@ -697,6 +733,7 @@ class ArchiveControlMySQL extends ipsmodule
           AggregationActive	boolean	Gibt an ob das Logging für diese Variable Aktiv ist. Siehe auch AC_GetLoggingStatus
          */
     }
+
 }
 
 /** @} */

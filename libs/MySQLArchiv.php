@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types = 1);
 require_once(__DIR__ . "/../libs/ConstHelper.php");
 require_once(__DIR__ . "/../libs/BufferHelper.php");
@@ -11,9 +12,9 @@ require_once(__DIR__ . "/../libs/DebugHelper.php");
  * @package       MySQLArchiv
  * @file          module.php
  * @author        Michael Tröger <micha@nall-chan.net>
- * @copyright     2018 Michael Tröger
+ * @copyright     2019 Michael Tröger
  * @license       https://creativecommons.org/licenses/by-nc-sa/4.0/ CC BY-NC-SA 4.0
- * @version       2.00
+ * @version       3.00
  *
  */
 
@@ -35,9 +36,11 @@ trait Database
             return false;
         }
         if (!$this->isConnected) {
-            $this->DB = @new mysqli($this->ReadPropertyString('Host'), $this->ReadPropertyString('Username'), $this->ReadPropertyString('Password'));
+            $this->SendDebug('Connect [' . $_IPS['THREAD'] . ']', 'Start', 0);
+            $this->DB = @new mysqli('p:' . $this->ReadPropertyString('Host'), $this->ReadPropertyString('Username'), $this->ReadPropertyString('Password'));
             if ($this->DB->connect_errno == 0) {
                 $this->isConnected = true;
+                $this->SendDebug('Login [' . $_IPS['THREAD'] . ']', sprintf('%.3f', ((microtime(true) - $this->Runtime) * 1000)) . ' ms', 0);
                 return true;
             }
             return false;
@@ -246,7 +249,7 @@ trait Database
         /* @var $sqlresult mysqli_result */
 
         $sqlresult = $this->DB->query($query);
-        $Result['FirstTimestamp'] = $sqlresult->fetch_row()[0];
+        $Result['FirstTimestamp'] = (int) $sqlresult->fetch_row()[0];
 
         $query = "SELECT unix_timestamp(timestamp) AS 'TimeStamp' " .
                 "FROM  var" . $VariableId . " " .
@@ -254,19 +257,19 @@ trait Database
                 "LIMIT 1";
         /* @var $sqlresult mysqli_result */
         $sqlresult = $this->DB->query($query);
-        $Result['LastTimestamp'] = $sqlresult->fetch_row()[0];
+        $Result['LastTimestamp'] = (int) $sqlresult->fetch_row()[0];
 
         $query = "SELECT count(*) AS 'Count' " .
                 "FROM  var" . $VariableId . " ";
         /* @var $sqlresult mysqli_result */
         $sqlresult = $this->DB->query($query);
-        $Result['Count'] = $sqlresult->fetch_row()[0];
+        $Result['Count'] = (int) $sqlresult->fetch_row()[0];
 
         $query = "SELECT count(*) AS 'Count' " .
                 "FROM  var" . $VariableId . " ";
         /* @var $sqlresult mysqli_result */
         $sqlresult = $this->DB->query($query);
-        $Result['Count'] = $sqlresult->fetch_row()[0];
+        $Result['Count'] = (int) $sqlresult->fetch_row()[0];
 
         $query = "SELECT data_length AS 'Size' " .
                 "FROM information_schema.TABLES " .
@@ -274,7 +277,7 @@ trait Database
                 "AND table_name = 'var" . $VariableId . "' ";
         /* @var $sqlresult mysqli_result */
         $sqlresult = $this->DB->query($query);
-        $Result['Size'] = $sqlresult->fetch_row()[0];
+        $Result['Size'] = (int) $sqlresult->fetch_row()[0];
         return $Result;
     }
 
@@ -306,6 +309,7 @@ trait Database
         }
         return true;
     }
+
 }
 
 trait VariableWatch
@@ -344,6 +348,7 @@ trait VariableWatch
         $this->RegisterMessage($VarId, VM_DELETE);
         $this->RegisterMessage($VarId, VM_UPDATE);
     }
+
 }
 
 /** @} */
