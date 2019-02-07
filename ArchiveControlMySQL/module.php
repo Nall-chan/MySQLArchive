@@ -21,7 +21,6 @@ require_once(__DIR__ . "/../libs/MySQLArchiv.php");
  */
 class ArchiveControlMySQL extends ipsmodule
 {
-
     use BufferHelper,
         DebugHelper,
         Database,
@@ -433,7 +432,7 @@ class ArchiveControlMySQL extends ipsmodule
      */
     public function GetLoggedValues(int $VariableID, int $Startzeit, int $Endzeit, int $Limit)
     {
-        if (($Limit > IPS_GetOption('ArchiveRecordLimit')) or ( $Limit == 0)) {
+        if (($Limit > IPS_GetOption('ArchiveRecordLimit')) or ($Limit == 0)) {
             $Limit = IPS_GetOption('ArchiveRecordLimit');
         }
 
@@ -629,7 +628,7 @@ class ArchiveControlMySQL extends ipsmodule
      */
     public function GetAggregatedValues(int $VariableID, int $Aggregationsstufe, int $Startzeit, int $Endzeit, int $Limit)
     {
-        if (($Limit > IPS_GetOption('ArchiveRecordLimit')) or ( $Limit == 0)) {
+        if (($Limit > IPS_GetOption('ArchiveRecordLimit')) or ($Limit == 0)) {
             $Limit = IPS_GetOption('ArchiveRecordLimit');
         }
 
@@ -637,7 +636,7 @@ class ArchiveControlMySQL extends ipsmodule
             $Endzeit = time();
         }
 
-        if (($Aggregationsstufe < 0) or ( $Aggregationsstufe > 6)) {
+        if (($Aggregationsstufe < 0) or ($Aggregationsstufe > 6)) {
             trigger_error($this->Translate('Invalid Aggregationsstage'), E_USER_NOTICE);
             return false;
         }
@@ -734,7 +733,6 @@ class ArchiveControlMySQL extends ipsmodule
           AggregationActive	boolean	Gibt an ob das Logging für diese Variable Aktiv ist. Siehe auch AC_GetLoggingStatus
          */
     }
-
 }
 
 /** @} */
