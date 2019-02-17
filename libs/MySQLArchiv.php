@@ -14,7 +14,7 @@ require_once(__DIR__ . "/../libs/DebugHelper.php");
  * @author        Michael Tröger <micha@nall-chan.net>
  * @copyright     2019 Michael Tröger
  * @license       https://creativecommons.org/licenses/by-nc-sa/4.0/ CC BY-NC-SA 4.0
- * @version       3.00
+ * @version       3.10
  *
  */
 
@@ -36,7 +36,7 @@ trait Database
             return false;
         }
         if (!$this->isConnected) {
-            $this->SendDebug('Connect [' . $_IPS['THREAD'] . ']', 'Start', 0);
+            $this->SendDebug('Connect [' . $_IPS['THREAD'] . ']', 'Start ' . sprintf('%.3f', ((microtime(true) - $this->Runtime) * 1000)) . ' ms', 0);
             $this->DB = @new mysqli('p:' . $this->ReadPropertyString('Host'), $this->ReadPropertyString('Username'), $this->ReadPropertyString('Password'));
             if ($this->DB->connect_errno == 0) {
                 $this->isConnected = true;
@@ -309,6 +309,7 @@ trait Database
         }
         return true;
     }
+
 }
 
 trait VariableWatch
@@ -347,6 +348,7 @@ trait VariableWatch
         $this->RegisterMessage($VarId, VM_DELETE);
         $this->RegisterMessage($VarId, VM_UPDATE);
     }
+
 }
 
 /** @} */

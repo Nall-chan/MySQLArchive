@@ -2,6 +2,7 @@
 
 declare(strict_types = 1);
 
+require_once(__DIR__ . "/../libs/SemaphoreHelper.php");
 require_once(__DIR__ . "/../libs/MySQLArchiv.php");
 
 /**
@@ -12,7 +13,7 @@ require_once(__DIR__ . "/../libs/MySQLArchiv.php");
  * @author        Michael Tröger <micha@nall-chan.net>
  * @copyright     2019 Michael Tröger
  * @license       https://creativecommons.org/licenses/by-nc-sa/4.0/ CC BY-NC-SA 4.0
- * @version       3.0
+ * @version       3.10
  * @example <b>Ohne</b>
  *
  * @property array $Vars
@@ -21,7 +22,9 @@ require_once(__DIR__ . "/../libs/MySQLArchiv.php");
  */
 class ArchiveControlMySQL extends ipsmodule
 {
-    use BufferHelper,
+
+    use Semaphore,
+        BufferHelper,
         DebugHelper,
         Database,
         VariableWatch;
@@ -62,9 +65,11 @@ class ArchiveControlMySQL extends ipsmodule
         //Time critical start
         switch ($Message) {
             case VM_UPDATE:
+                $this->lock('Buffer');
                 $Buffer = $this->Buffer;
                 $Buffer[] = [$SenderID, $Data[0], $Data[1], $Data[3]];
                 $this->Buffer = $Buffer;
+                $this->unlock('Buffer');
                 $this->SendDebug('FetchData [' . $_IPS['THREAD'] . ']', 'Done', 0);
                 if (count($Buffer) == 1) {
                     $this->SendDebug('Timer [' . $_IPS['THREAD'] . ']', 'Start', 0);
@@ -155,8 +160,10 @@ class ArchiveControlMySQL extends ipsmodule
         $this->SendDebug('Timer [' . $_IPS['THREAD'] . ']', 'Stop', 0);
         $this->SetTimerInterval('LogData', 0);
         //Time critical start
+        $this->lock('Buffer');
         $Buffer = $this->Buffer;
         $this->Buffer = [];
+        $this->unlock('Buffer');
         //Time critical end
         $this->SendDebug('LogData [' . $_IPS['THREAD'] . ']', count($Buffer) . ' entries', 0);
         if (!$this->Login()) {
@@ -170,8 +177,11 @@ class ArchiveControlMySQL extends ipsmodule
             return;
         }
         foreach ($Buffer as $Data) {
+            $Runtime = microtime(true);
             $this->LogValue($Data[0], $Data[1], $Data[2], $Data[3]);
-            $this->SendDebug('LogData [' . $_IPS['THREAD'] . ']', sprintf('%.3f', ((microtime(true) - $this->Runtime) * 1000)) . ' ms', 0);
+            $this->SendDebug('LogData [' . $_IPS['THREAD'] . ']', sprintf('%.3f', ((microtime(true) - $Runtime) * 1000))
+                    . ' ms ('
+                    . sprintf('%.3f', ((microtime(true) - $this->Runtime) * 1000)) . ' ms)', 0);
         }
         $this->Logout();
         return;
@@ -432,7 +442,7 @@ class ArchiveControlMySQL extends ipsmodule
      */
     public function GetLoggedValues(int $VariableID, int $Startzeit, int $Endzeit, int $Limit)
     {
-        if (($Limit > IPS_GetOption('ArchiveRecordLimit')) or ($Limit == 0)) {
+        if (($Limit > IPS_GetOption('ArchiveRecordLimit')) or ( $Limit == 0)) {
             $Limit = IPS_GetOption('ArchiveRecordLimit');
         }
 
@@ -628,7 +638,7 @@ class ArchiveControlMySQL extends ipsmodule
      */
     public function GetAggregatedValues(int $VariableID, int $Aggregationsstufe, int $Startzeit, int $Endzeit, int $Limit)
     {
-        if (($Limit > IPS_GetOption('ArchiveRecordLimit')) or ($Limit == 0)) {
+        if (($Limit > IPS_GetOption('ArchiveRecordLimit')) or ( $Limit == 0)) {
             $Limit = IPS_GetOption('ArchiveRecordLimit');
         }
 
@@ -636,7 +646,7 @@ class ArchiveControlMySQL extends ipsmodule
             $Endzeit = time();
         }
 
-        if (($Aggregationsstufe < 0) or ($Aggregationsstufe > 6)) {
+        if (($Aggregationsstufe < 0) or ( $Aggregationsstufe > 6)) {
             trigger_error($this->Translate('Invalid Aggregationsstage'), E_USER_NOTICE);
             return false;
         }
@@ -733,6 +743,7 @@ class ArchiveControlMySQL extends ipsmodule
           AggregationActive	boolean	Gibt an ob das Logging für diese Variable Aktiv ist. Siehe auch AC_GetLoggingStatus
          */
     }
+
 }
 
 /** @} */

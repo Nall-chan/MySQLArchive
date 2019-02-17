@@ -1,5 +1,5 @@
 [![Version](https://img.shields.io/badge/Symcon-PHPModul-red.svg)](https://www.symcon.de/service/dokumentation/entwicklerbereich/sdk-tools/sdk-php/)
-[![Version](https://img.shields.io/badge/Modul%20Version-3.00-blue.svg)]()
+[![Version](https://img.shields.io/badge/Modul%20Version-3.10-blue.svg)]()
 [![License](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-green.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)  
 [![Version](https://img.shields.io/badge/Symcon%20Version-5.1%20%3E-green.svg)]()
 [![StyleCI](https://styleci.io/repos/107871581/shield?style=flat)](https://styleci.io/repos/107871581)  
@@ -96,8 +96,11 @@ Da aktuell keine Zähler unterstützt werden, werden diese Rückgabewerte immer 
 
 ### 2. Changlog
 
+Version 3.10:  
+- Buffer Tread-Safe mit Semaphore abgesichert.     
+
 Version 3.00:  
-- Loggen der Daten von Nachrichtenschlange entkoppelt  
+- Loggen der Daten von Nachrichtenschlange entkoppelt.  
 
 Version 2.50:  
 - Anpassungen für IPS 5.1  
