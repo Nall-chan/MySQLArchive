@@ -309,7 +309,6 @@ trait Database
         }
         return true;
     }
-
 }
 
 trait VariableWatch
@@ -348,7 +347,6 @@ trait VariableWatch
         $this->RegisterMessage($VarId, VM_DELETE);
         $this->RegisterMessage($VarId, VM_UPDATE);
     }
-
 }
 
 /** @} */
