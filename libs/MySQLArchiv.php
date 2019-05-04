@@ -1,9 +1,11 @@
 <?php
 
-declare(strict_types = 1);
-require_once(__DIR__ . "/../libs/ConstHelper.php");
-require_once(__DIR__ . "/../libs/BufferHelper.php");
-require_once(__DIR__ . "/../libs/DebugHelper.php");
+declare(strict_types=1);
+
+namespace MySqlArchive;
+
+eval('namespace MySqlArchive {?>' . file_get_contents(__DIR__ . '/../libs/helper/BufferHelper.php') . '}');
+eval('namespace MySqlArchive {?>' . file_get_contents(__DIR__ . '/../libs/helper/DebugHelper.php') . '}');
 
 /*
  * @addtogroup mysqlarchiv
@@ -14,7 +16,7 @@ require_once(__DIR__ . "/../libs/DebugHelper.php");
  * @author        Michael Tröger <micha@nall-chan.net>
  * @copyright     2019 Michael Tröger
  * @license       https://creativecommons.org/licenses/by-nc-sa/4.0/ CC BY-NC-SA 4.0
- * @version       3.10
+ * @version       3.20
  *
  */
 
@@ -37,7 +39,7 @@ trait Database
         }
         if (!$this->isConnected) {
             $this->SendDebug('Connect [' . $_IPS['THREAD'] . ']', 'Start ' . sprintf('%.3f', ((microtime(true) - $this->Runtime) * 1000)) . ' ms', 0);
-            $this->DB = @new mysqli('p:' . $this->ReadPropertyString('Host'), $this->ReadPropertyString('Username'), $this->ReadPropertyString('Password'));
+            $this->DB = @new \mysqli('p:' . $this->ReadPropertyString('Host'), $this->ReadPropertyString('Username'), $this->ReadPropertyString('Password'));
             if ($this->DB->connect_errno == 0) {
                 $this->isConnected = true;
                 $this->SendDebug('Login [' . $_IPS['THREAD'] . ']', sprintf('%.3f', ((microtime(true) - $this->Runtime) * 1000)) . ' ms', 0);
@@ -89,16 +91,16 @@ trait Database
             return false;
         }
         switch ($VarTyp) {
-            case vtInteger:
+            case VARIABLETYPE_INTEGER:
                 $Typ = 'value INT SIGNED, ';
                 break;
-            case vtFloat:
+            case VARIABLETYPE_FLOAT:
                 $Typ = 'value REAL, ';
                 break;
-            case vtBoolean:
+            case VARIABLETYPE_BOOLEAN:
                 $Typ = 'value BIT(1), ';
                 break;
-            case vtString:
+            case VARIABLETYPE_STRING:
                 $Typ = 'value MEDIUMBLOB, ';
                 break;
         }
@@ -222,12 +224,12 @@ trait Database
     protected function GetVariableTables()
     {
         if (!$this->isConnected) {
-            return array();
+            return [];
         }
         $query = "SELECT right(TABLE_NAME,5) as 'VariableID' FROM information_schema.TABLES WHERE table_schema = '" . $this->ReadPropertyString('Database') . "' ORDER BY 'VariableID' ASC";
         $sqlresult = $this->DB->query($query);
         if ($sqlresult === false) {
-            return array();
+            return [];
         }
         $Result = $sqlresult->fetch_all(MYSQLI_ASSOC);
         foreach ($Result as &$Item) {
@@ -309,6 +311,7 @@ trait Database
         }
         return true;
     }
+
 }
 
 trait VariableWatch
@@ -347,6 +350,7 @@ trait VariableWatch
         $this->RegisterMessage($VarId, VM_DELETE);
         $this->RegisterMessage($VarId, VM_UPDATE);
     }
+
 }
 
 /** @} */

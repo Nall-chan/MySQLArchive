@@ -31,7 +31,9 @@
             "No data or VariableID found.": "Keine Daten für VariableID gefunden.",
             "Error on delete data.": "Fehler beim löschen von Daten.",
             "Error on fetch data.": "Fehler beim holen der Daten.",
-            "Invalid Aggregationsstage": "Ungültige Aggregationsstufe"
+            "Invalid Aggregationsstage": "Ungültige Aggregationsstufe",
+            "Done": "Erledigt",
+            "Create Highcharts Script": "Erzeuge Highcharts Script"
         }
     }
 }

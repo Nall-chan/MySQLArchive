@@ -1,9 +1,9 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
-require_once(__DIR__ . "/../libs/SemaphoreHelper.php");
-require_once(__DIR__ . "/../libs/MySQLArchiv.php");
+require_once __DIR__ . '/../libs/MySQLArchiv.php';  // diverse Klassen
+eval('namespace MySqlArchive {?>' . file_get_contents(__DIR__ . '/../libs/helper/SemaphoreHelper.php') . '}');
 
 /**
  * ArchiveControlMySQL Klasse für die das loggen von Variablen in einer MySQL Datenbank.
@@ -13,7 +13,7 @@ require_once(__DIR__ . "/../libs/MySQLArchiv.php");
  * @author        Michael Tröger <micha@nall-chan.net>
  * @copyright     2019 Michael Tröger
  * @license       https://creativecommons.org/licenses/by-nc-sa/4.0/ CC BY-NC-SA 4.0
- * @version       3.10
+ * @version       3.20
  * @example <b>Ohne</b>
  *
  * @property array $Vars
@@ -22,11 +22,14 @@ require_once(__DIR__ . "/../libs/MySQLArchiv.php");
  */
 class ArchiveControlMySQL extends ipsmodule
 {
-    use Semaphore,
-        BufferHelper,
-        DebugHelper,
-        Database,
-        VariableWatch;
+
+    use \MySqlArchive\Semaphore,
+        \MySqlArchive\BufferHelper,
+        \MySqlArchive\DebugHelper,
+        \MySqlArchive\Database,
+        \MySqlArchive\VariableWatch {
+        \MySqlArchive\Semaphore::lock as TraitLock;
+    }
     private $Runtime;
 
     public function __construct($InstanceID)
@@ -48,7 +51,7 @@ class ArchiveControlMySQL extends ipsmodule
         $this->RegisterPropertyString('Username', '');
         $this->RegisterPropertyString('Password', '');
         $this->RegisterPropertyString('Database', 'IPS');
-        $this->RegisterPropertyString('Variables', json_encode(array()));
+        $this->RegisterPropertyString('Variables', json_encode([]));
         $this->RegisterTimer('LogData', 0, 'ACmySQL_LogData($_IPS[\'TARGET\']);');
         $this->Vars = [];
         $this->Buffer = [];
@@ -100,8 +103,8 @@ class ArchiveControlMySQL extends ipsmodule
         foreach (array_keys($Vars) as $VarId) {
             $this->UnregisterVariableWatch($VarId);
         }
-        $this->Vars = array();
-        $Vars = array();
+        $this->Vars = [];
+        $Vars = [];
 
         foreach ($ConfigVars as $Item) {
             $VarId = $Item['VariableId'];
@@ -125,13 +128,13 @@ class ArchiveControlMySQL extends ipsmodule
         }
 
         if (!$this->Login()) {
-            echo $this->Translate("Cannot connect to database.");
+            echo $this->Translate('Cannot connect to database.');
             $this->SetStatus(IS_EBASE + 2);
             return;
         }
         if (!$this->SelectDB()) {
             if (!$this->CreateDB()) {
-                echo $this->Translate("Create database failed.");
+                echo $this->Translate('Create database failed.');
                 $this->SetStatus(IS_EBASE + 2);
                 $this->Logout();
                 return;
@@ -144,7 +147,7 @@ class ArchiveControlMySQL extends ipsmodule
             }
         }
         if (!$Result) {
-            echo $this->Translate("Error on create tables.");
+            echo $this->Translate('Error on create tables.');
             $this->SetStatus(IS_EBASE + 3);
             $this->Logout();
             return;
@@ -187,32 +190,46 @@ class ArchiveControlMySQL extends ipsmodule
     }
 
     /**
+     * Versucht eine Semaphore zu setzen und wiederholt dies bei Misserfolg bis zu 100 mal.
+     * @param string $ident Ein String der den Lock bezeichnet.
+     * @return boolean TRUE bei Erfolg, FALSE bei Misserfolg.
+     */
+    private function lock($ident)
+    {
+        $Runtime = microtime(true);
+        $Result = $this->TraitLock($ident);
+        $this->SendDebug('WaitLock [' . $_IPS['THREAD'] . ']', sprintf('%.3f', ((microtime(true) - $Runtime) * 1000))
+                . ' ms', 0);
+        return $Result;
+    }
+
+    /**
      * Interne Funktion des SDK.
      *
      * @access public
      */
     public function GetConfigurationForm()
     {
-        $form = json_decode(file_get_contents(__DIR__ . "/form.json"), true);
+        $form = json_decode(file_get_contents(__DIR__ . '/form.json'), true);
 
         $ConfigVars = json_decode($this->ReadPropertyString('Variables'), true);
         $this->Login();
         $Database = $this->SelectDB();
-        $Found = array();
+        $Found = [];
         $TableVarIDs = $this->GetVariableTables();
         for ($Index = 0; $Index < count($ConfigVars); $Index++) {
             $Item = &$ConfigVars[$Index];
             $VarId = $Item['VariableId'];
             $Item['Variable'] = $Item['VariableId'];
             if ($Item['VariableId'] == 0) {
-                $Item['rowColor'] = "#ff0000";
+                $Item['rowColor'] = '#ff0000';
                 continue;
             }
             if (!IPS_ObjectExists($VarId)) {
-                $Item['rowColor'] = "#ff0000";
+                $Item['rowColor'] = '#ff0000';
             } else {
                 if (!IPS_VariableExists($VarId)) {
-                    $Item['rowColor'] = "#ff0000";
+                    $Item['rowColor'] = '#ff0000';
                 }
             }
             if ($Database) {
@@ -239,7 +256,7 @@ class ArchiveControlMySQL extends ipsmodule
                 $Item['Size'] = $this->Translate('unknown');
             }
             if (in_array($VarId, $Found)) {
-                $Item['rowColor'] = "#ffff00";
+                $Item['rowColor'] = '#ffff00';
                 continue;
             }
             $Found[] = $VarId;
@@ -267,13 +284,19 @@ class ArchiveControlMySQL extends ipsmodule
 //                $Item['FirstTimestamp'] = strftime('%c', $Result['FirstTimestamp']);
 //                $Item['LastTimestamp'] = strftime('%c', $Result['LastTimestamp']);
 //                $Item['Size'] = sprintf('%.2f MB', ((int) $Result['Size'] / 1024 / 1024), 2);
-//                $Item['rowColor'] = "#ff0000";
+//                $Item['rowColor'] = '#ff0000';
 //            }
 //            $ConfigVars[] = $Item;
 //        }
         //$this->SendDebug('FORM', $ConfigVars, 0);
         $form['elements'][1]['values'] = $ConfigVars;
+        $form['actions'][0]['onClick'] = '$id=IPS_CreateScript(0);'
+                . 'IPS_SetParent($id, ' . $this->InstanceID . ');'
+                . 'IPS_SetName($id,"Highcharts.ips.php");'
+                . 'IPS_SetScriptContent($id, file_get_contents("' . __DIR__ . '/../docs/Highcharts.ips.php"));'
+                . 'echo "' . $this->Translate('Done') . '";';
         $this->Logout();
+
         return json_encode($form);
     }
 
@@ -294,16 +317,16 @@ class ArchiveControlMySQL extends ipsmodule
             return false;
         }
         switch ($Vars[$Variable]) {
-            case vtBoolean:
+            case VARIABLETYPE_BOOLEAN:
                 $result = $this->WriteValue($Variable, (int) $NewValue, $HasChanged, $Timestamp);
                 break;
-            case vtInteger:
+            case VARIABLETYPE_INTEGER:
                 $result = $this->WriteValue($Variable, $NewValue, $HasChanged, $Timestamp);
                 break;
-            case vtFloat:
+            case VARIABLETYPE_FLOAT:
                 $result = $this->WriteValue($Variable, sprintf('%F', $NewValue), $HasChanged, $Timestamp);
                 break;
-            case vtString:
+            case VARIABLETYPE_STRING:
                 $result = $this->WriteValue($Variable, "'" . $this->DB->real_escape_string($NewValue) . "'", $HasChanged, $Timestamp);
                 break;
         }
@@ -441,7 +464,7 @@ class ArchiveControlMySQL extends ipsmodule
      */
     public function GetLoggedValues(int $VariableID, int $Startzeit, int $Endzeit, int $Limit)
     {
-        if (($Limit > IPS_GetOption('ArchiveRecordLimit')) or ($Limit == 0)) {
+        if (($Limit > IPS_GetOption('ArchiveRecordLimit')) or ( $Limit == 0)) {
             $Limit = IPS_GetOption('ArchiveRecordLimit');
         }
 
@@ -533,7 +556,7 @@ class ArchiveControlMySQL extends ipsmodule
                 return false;
             }
             $ConfigVars = json_decode($this->ReadPropertyString('Variables'), true);
-            $ConfigVars[] = array('VariableId' => $VariableID);
+            $ConfigVars[] = ['VariableId' => $VariableID];
             $Variables = json_encode($ConfigVars);
             IPS_SetProperty($this->InstanceID, 'Variables', $Variables);
             return true;
@@ -637,7 +660,7 @@ class ArchiveControlMySQL extends ipsmodule
      */
     public function GetAggregatedValues(int $VariableID, int $Aggregationsstufe, int $Startzeit, int $Endzeit, int $Limit)
     {
-        if (($Limit > IPS_GetOption('ArchiveRecordLimit')) or ($Limit == 0)) {
+        if (($Limit > IPS_GetOption('ArchiveRecordLimit')) or ( $Limit == 0)) {
             $Limit = IPS_GetOption('ArchiveRecordLimit');
         }
 
@@ -645,7 +668,7 @@ class ArchiveControlMySQL extends ipsmodule
             $Endzeit = time();
         }
 
-        if (($Aggregationsstufe < 0) or ($Aggregationsstufe > 6)) {
+        if (($Aggregationsstufe < 0) or ( $Aggregationsstufe > 6)) {
             trigger_error($this->Translate('Invalid Aggregationsstage'), E_USER_NOTICE);
             return false;
         }
@@ -742,6 +765,7 @@ class ArchiveControlMySQL extends ipsmodule
           AggregationActive	boolean	Gibt an ob das Logging für diese Variable Aktiv ist. Siehe auch AC_GetLoggingStatus
          */
     }
+
 }
 
 /** @} */

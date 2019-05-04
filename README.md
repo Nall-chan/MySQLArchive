@@ -1,11 +1,11 @@
 [![Version](https://img.shields.io/badge/Symcon-PHPModul-red.svg)](https://www.symcon.de/service/dokumentation/entwicklerbereich/sdk-tools/sdk-php/)
-[![Version](https://img.shields.io/badge/Modul%20Version-3.10-blue.svg)]()
+[![Version](https://img.shields.io/badge/Modul%20Version-3.20-blue.svg)]()
 [![License](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-green.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)  
-[![Version](https://img.shields.io/badge/Symcon%20Version-5.1%20%3E-green.svg)]()
+[![Version](https://img.shields.io/badge/Symcon%20Version-5.1%20%3E-green.svg)](https://www.symcon.de/forum/threads/30857-IP-Symcon-5-1-%28Stable%29-Changelog)
 [![StyleCI](https://styleci.io/repos/107871581/shield?style=flat)](https://styleci.io/repos/107871581)  
 
 
-# IPSMySQLArchiv
+# Symcon-Modul: MySQL Archiv
 
 Zusätzliches Archiv für MySQL Datenbanken.
 
@@ -38,7 +38,7 @@ Auslesen mit ACmySQL_* PHP-Funktionen (kompatibel mit den AC_* Befehlen).
   Der Typ Zähler ist aktuell nicht verfügbar.
 
   Um die gespeicherten Daten darzustellen, müssen Umsetzungen von dritten (wie z.B. Highcharts) genutzt werden.  
-  Eine angepaßte Highcharts.ips.php ist unter 'docs' beigefügt.  
+  Eine angepaßte Highcharts.ips.php ist unter 'docs' beigefügt und kann über die Konfiguration der Instanz in den Objektbaum kopiert werden.  
 
 ## 2. Voraussetzungen
 
@@ -95,6 +95,9 @@ Da aktuell keine Zähler unterstützt werden, werden diese Rückgabewerte immer 
 | Archive Control MySQL | Device       | ACmySQL | {FDCB334A-AFFF-4785-9596-D380252CEE4E} |
 
 ### 2. Changlog
+
+Version 3.20:  
+- Release für IPS 5.1 und den Module-Store   
 
 Version 3.10:  
 - Buffer Tread-Safe mit Semaphore abgesichert.     

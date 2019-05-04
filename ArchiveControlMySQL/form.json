@@ -89,6 +89,14 @@
                     "values": []
                 }
             ],
+    "actions":
+            [
+                {
+                    "type": "Button",
+                    "caption": "Create Highcharts Script",
+                    "onClick": ""
+                }
+            ],
     "status":
             [
                 {
