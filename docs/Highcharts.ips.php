@@ -1,5 +1,7 @@
 <?php
-    $version = "MySQL3.01"; $versionDate = "22.10.2017";
+
+declare(strict_types=1);
+$version = 'MySQL3.01'; $versionDate = '22.10.2017';
 
     //ToDo:
     //FEATURE: Plotbands. Timestamp in From und To
@@ -57,7 +59,6 @@
     //--------------------------------------------------------------------------------------------------------------------------------
     // 22.10.2017  Nall  FORK     Fork für die Verwendung mit dem 'Archive Control MySQL'
 
-
    function RunHighcharts($cfg)
    {
        if (isset($_IPS['getHTML'])) {
@@ -71,14 +72,13 @@
 
     function GetDataString($cfg)
     {
-        DebugModuleName($cfg, "GetDataString");
+        DebugModuleName($cfg, 'GetDataString');
         if (isset($_IPS['start'])) {
             $cfg['AggregatedValues']['WeekValues'] = -1;
             $cfg['StartTime'] = $_IPS['start'] / 1000;
             $cfg['EndTime'] = $_IPS['end'] / 1000;
 
             $range = $_IPS['end'] - $_IPS['start'];
-
 
             // 10 days range loads minute data
             if ($range < 10 * 24 * 3600 * 1000) {
@@ -105,7 +105,7 @@
 
    function GetFullHtmlString($cfg)
    {
-       DebugModuleName($cfg, "GetFullHtmlString");
+       DebugModuleName($cfg, 'GetFullHtmlString');
 
        $cfg = CheckConfig($cfg);
 
@@ -113,35 +113,35 @@
        $hcScripts = GetHtmlForScripts($cfg);
        $hcThemes = GetHtmlForTheme($cfg);
 
-       if ($cfg['Ips']['ChartType'] == "Highstock") {
-           $hcChartType = "StockChart";
+       if ($cfg['Ips']['ChartType'] == 'Highstock') {
+           $hcChartType = 'StockChart';
        } else {
-           $hcChartType = "Chart";
+           $hcChartType = 'Chart';
        }
 
        $hcHtmlScript = isset($cfg['Ips']['HtmlScript'])
            ? $cfg['Ips']['HtmlScript']
-           : 	'<script type="text/javascript">
-						var chart = new Highcharts.'.$hcChartType.'(%%%%);
+           : '<script type="text/javascript">
+						var chart = new Highcharts.' . $hcChartType . '(%%%%);
 					</script>';
 
        $s = '<html>
 			    <head>
 			         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-					   '.$hcScripts.'
-					   '.$hcThemes.'
-						'.$hcSetOptions.'
+					   ' . $hcScripts . '
+					   ' . $hcThemes . '
+						' . $hcSetOptions . '
 			    </head>
 			    <body>
 					<div id="container" style="width: 100%; height: 100%; margin: 0 auto"></div>
-					'.$hcHtmlScript.'
+					' . $hcHtmlScript . '
 			    	</body>
 				</html>';
 
-       $pos = strpos($s, "%%%%");
+       $pos = strpos($s, '%%%%');
        if ($pos !== false) {
            $hcRenderOptions = GetHighChartsCfgFile($cfg);
-           $s = str_replace("%%%%", $hcRenderOptions, $s);
+           $s = str_replace('%%%%', $hcRenderOptions, $s);
        }
 
        return $s;
@@ -149,10 +149,10 @@
 
    function GetHtmlForTheme($cfg)
    {
-       DebugModuleName($cfg, "GetHtmlForTheme");
+       DebugModuleName($cfg, 'GetHtmlForTheme');
 
        if (!isset($cfg['HighChart']['Theme'])) {
-           return "";
+           return '';
        }
 
        $path = isset($cfg['Ips']['ScriptsTheme'])
@@ -164,16 +164,16 @@
 
     function GetHtmlForScripts($cfg)
     {
-        DebugModuleName($cfg, "GetHtmlForScripts");
+        DebugModuleName($cfg, 'GetHtmlForScripts');
 
         $s = isset($cfg['Ips']['Scriptsjquery'])
-               ? GenerateScriptLineBy($cfg['Ips']['Scriptsjquery'] ."/", 'jquery.min.js')
+               ? GenerateScriptLineBy($cfg['Ips']['Scriptsjquery'] . '/', 'jquery.min.js')
                : GenerateScriptLineBy('http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/', 'jquery.min.js');
 
         if ($cfg['Ips']['ChartType'] == 'Highcharts') {
             $path = isset($cfg['Ips']['ScriptsHighCharts'])
-              ? $cfg['Ips']['ScriptsHighCharts'] . "/"
-              : "http://code.highcharts.com/";
+              ? $cfg['Ips']['ScriptsHighCharts'] . '/'
+              : 'http://code.highcharts.com/';
 
             $s .= GenerateScriptLineBy($path, 'highcharts.js');
             $s .= GenerateScriptLineBy($path, 'highcharts-more.js');
@@ -193,8 +193,8 @@
             }
         } elseif ($cfg['Ips']['ChartType'] == 'Highstock') {
             $path = isset($cfg['Ips']['ScriptsHighstock'])
-              ? $cfg['Ips']['ScriptsHighstock'] . "/"
-              : "http://code.highcharts.com/stock/";
+              ? $cfg['Ips']['ScriptsHighstock'] . '/'
+              : 'http://code.highcharts.com/stock/';
 
             $s .= GenerateScriptLineBy($path, 'highstock.js');
             $s .= GenerateScriptLineBy($path, 'highcharts-more.js');
@@ -203,7 +203,7 @@
             }
         }
 
-        return $s ;
+        return $s;
     }
 
     function GenerateScriptLineBy($path, $scriptName)
@@ -211,10 +211,9 @@
         return '<script type="text/javascript" src="' . $path . $scriptName . '"></script>';
     }
 
-
     function WriteContent($cfg)
     {
-        DebugModuleName($cfg, "WriteContent");
+        DebugModuleName($cfg, 'WriteContent');
 
         $cfg = CheckConfig($cfg);
 
@@ -238,14 +237,14 @@
     function CreateContentString($cfg, $fullfilename)
     {
         return "<iframe src='$fullfilename' " .
-                    " width=". $cfg["HighChart"]["Width"] .
-                    " height=". $cfg["HighChart"]["Height"] .
+                    ' width=' . $cfg['HighChart']['Width'] .
+                    ' height=' . $cfg['HighChart']['Height'] .
                     " frameborder='0' scrolling='no' ></iframe>";
     }
 
     function CreateFilenameForContentString($filename, $paramter = false)
     {
-        $s = "./user/" . $filename;
+        $s = './user/' . $filename;
         if ($paramter != false) {
             $s .= "?$paramter";
         }
@@ -254,15 +253,15 @@
 
     function WriteContentForDashboard($cfg)
     {
-        DebugModuleName($cfg, "WriteContentForDashboard");
+        DebugModuleName($cfg, 'WriteContentForDashboard');
 
         if (isset($cfg['Ips']['Dashboard']['Ip']) && isset($cfg['Ips']['Dashboard']['Port'])) {
             $scriptId = $_IPS['SELF'];
 
-            $s = "http://" . $cfg['Ips']['Dashboard']['Ip'] . ":" . $cfg['Ips']['Dashboard']['Port'] .
+            $s = 'http://' . $cfg['Ips']['Dashboard']['Ip'] . ':' . $cfg['Ips']['Dashboard']['Port'] .
                 "/user/IPS-Highcharts.php?ScriptId=$scriptId " .
-                " width=". $cfg["HighChart"]["Width"] .
-                " height=". $cfg["HighChart"]["Height"] + 16 .
+                ' width=' . $cfg['HighChart']['Width'] .
+                ' height=' . $cfg['HighChart']['Height'] + 16 .
                 " ' frameborder='1' scrolling='no'";
 
             SetValueString($cfg['ContentVarableId'], $s);
@@ -272,8 +271,8 @@
 
     function WriteFileAndSetContent($cfg)
     {
-        DebugModuleName($cfg, "WriteFileAndSetContent");
-        if ($cfg['RunMode'] == "file") {
+        DebugModuleName($cfg, 'WriteFileAndSetContent');
+        if ($cfg['RunMode'] == 'file') {
             $scriptId = $_IPS['SELF'];
             $filename = CreateNewHighchartsFile(GetFullHtmlString($cfg), $scriptId);
             $fullfilename = CreateFilenameForContentString($filename);
@@ -288,10 +287,10 @@
 
     function WriteContentForScript($cfg)
     {
-        DebugModuleName($cfg, "WriteContentForScript");
-        if ($cfg['RunMode'] == "script") {
+        DebugModuleName($cfg, 'WriteContentForScript');
+        if ($cfg['RunMode'] == 'script') {
             $scriptId = $_IPS['SELF'];
-            $fullfilename = CreateFilenameForContentString("IPS-Highcharts.php", "ScriptId=$scriptId");
+            $fullfilename = CreateFilenameForContentString('IPS-Highcharts.php', "ScriptId=$scriptId");
 
             $s = CreateContentString($cfg, $fullfilename);
 
@@ -303,10 +302,10 @@
 
     function PopupContent($cfg)
     {
-        DebugModuleName($cfg, "PopupContent");
-        if ($cfg['RunMode'] == "popup") {
+        DebugModuleName($cfg, 'PopupContent');
+        if ($cfg['RunMode'] == 'popup') {
             $scriptId = $_IPS['SELF'];
-            $fullfilename = CreateFilenameForContentString("IPS-Highcharts.php", "ScriptId=$scriptId");
+            $fullfilename = CreateFilenameForContentString('IPS-Highcharts.php', "ScriptId=$scriptId");
 
             $s = CreateContentString($cfg, $fullfilename);
 
@@ -320,13 +319,13 @@
 
     function CreateNewHighchartsFile($s, $scriptId)
     {
-        $filename =  "IPS-Highcharts" . "-ScriptId_$scriptId.html";
+        $filename = 'IPS-Highcharts' . "-ScriptId_$scriptId.html";
 
         // Standard-Dateiname .....
         $fullFilename = IPS_GetKernelDir() . "webfront\user\\" . $filename;
 
         // schreiben der Daten
-        $handle = fopen($fullFilename, "w");
+        $handle = fopen($fullFilename, 'w');
         fwrite($handle, $s);
         fclose($handle);
 
@@ -341,7 +340,7 @@
     // ------------------------------------------------------------------------
     function CheckConfig($cfg)
     {
-        DebugModuleName($cfg, "CheckConfig");
+        DebugModuleName($cfg, 'CheckConfig');
 
         $cfg = CheckCfgDaten($cfg);
         $cfg = CompatibilityCheck($cfg);
@@ -351,7 +350,7 @@
 
     function CheckCfgDaten($cfg)
     {
-        DebugModuleName($cfg, "CheckCfgDaten");
+        DebugModuleName($cfg, 'CheckCfgDaten');
 
         // Debugging
         IfNotIssetSetValue($cfg['Ips']['Debug']['Modules'], false);
@@ -362,18 +361,18 @@
         // ChartType
         IfNotIssetSetValue($cfg['Ips']['ChartType'], 'Highcharts');
 
-        if (!in_array($cfg['Ips']['ChartType'], array("Highcharts", "Highstock"))) {
-            die("Abbruch! Für ChartType sind nur folgende Möglichkeiten zulässig: Highcharts, Highstock");
+        if (!in_array($cfg['Ips']['ChartType'], ['Highcharts', 'Highstock'])) {
+            die('Abbruch! Für ChartType sind nur folgende Möglichkeiten zulässig: Highcharts, Highstock');
         }
 
         // RunMode
-        IfNotIssetSetValue($cfg['RunMode'], "script");
+        IfNotIssetSetValue($cfg['RunMode'], 'script');
 
-        if (!in_array($cfg['RunMode'], array("script", "file", "popup"))) {
-            die("Abbruch! Für RunMode sind nur folgende Möglichkeiten zulässig: Script, File, Popup");
+        if (!in_array($cfg['RunMode'], ['script', 'file', 'popup'])) {
+            die('Abbruch! Für RunMode sind nur folgende Möglichkeiten zulässig: Script, File, Popup');
         }
 
-        if ($_IPS['SENDER'] != "WebInterface" && $cfg['RunMode'] != "popup") {
+        if ($_IPS['SENDER'] != 'WebInterface' && $cfg['RunMode'] != 'popup') {
             $cfg = Check_ContentVariable($cfg, $_IPS['SELF']);
         }
 
@@ -382,7 +381,7 @@
 
     function CompatibilityCheck($cfg)
     {
-        DebugModuleName($cfg, "CompatibilityCheck");
+        DebugModuleName($cfg, 'CompatibilityCheck');
 
         // Series
         if (isset($cfg['Series']) && isset($cfg['series'])) {
@@ -413,7 +412,7 @@
 
         // yAxis
         if (isset($cfg['yAxis'])) {
-            $axisArr = array();
+            $axisArr = [];
             foreach ($cfg['yAxis'] as $Axis) {
                 $cfgAxis = $Axis;
 
@@ -442,9 +441,9 @@
 
         // ips Theme
         if (isset($cfg['HighChart']['Theme'])
-            && $cfg['HighChart']['Theme'] == "ips.js"
+            && $cfg['HighChart']['Theme'] == 'ips.js'
             && !isset($cfg['Ips']['ScriptsTheme'])) {
-            $cfg['Ips']['ScriptsTheme'] = "Highcharts/js/themes";
+            $cfg['Ips']['ScriptsTheme'] = 'Highcharts/js/themes';
         }
 
         return $cfg;
@@ -458,7 +457,7 @@
     // ------------------------------------------------------------------------
     function CheckAndCompleteConfig($cfg)
     {
-        DebugModuleName($cfg, "CheckCfg");
+        DebugModuleName($cfg, 'CheckCfg');
 
         $cfg = CheckCfg_Common($cfg);
         $cfg = CheckCfg_AreaHighChart($cfg);
@@ -478,10 +477,10 @@
     // ------------------------------------------------------------------------
     function CheckCfg_Common($cfg)
     {
-        DebugModuleName($cfg, "CheckCfg_Common");
+        DebugModuleName($cfg, 'CheckCfg_Common');
 
         if (!isset($cfg['series'])) {
-            die("Abbruch - Es wurden keine Serien definiert.");
+            die('Abbruch - Es wurden keine Serien definiert.');
         }
 
         // Id des ArchiveHandler auslesen
@@ -491,11 +490,11 @@
         }
         // Prüfen des ArchiveHandlers
         $instance = @IPS_GetInstance($cfg['ArchiveHandlerId']);
-        if ($instance['ModuleInfo']['ModuleID'] != "{FDCB334A-AFFF-4785-9596-D380252CEE4E}") {
-            die("Abbruch - 'ArchiveHandlerId' (".$cfg['ArchiveHandlerId'].") ist keine Instance eines ArchiveHandler.");
+        if ($instance['ModuleInfo']['ModuleID'] != '{FDCB334A-AFFF-4785-9596-D380252CEE4E}') {
+            die("Abbruch - 'ArchiveHandlerId' (" . $cfg['ArchiveHandlerId'] . ') ist keine Instance eines ArchiveHandler.');
         }
 
-        if ($cfg['RunMode'] == "popup") {
+        if ($cfg['RunMode'] == 'popup') {
             // keine Webfront Id
             if (!isset($cfg['WebFrontConfigId'])) {
                 die("Abbruch - Konfiguration von 'WebFrontConfigId' fehlt.");
@@ -503,19 +502,18 @@
 
             // prüfen ob die übergebene Id ein WebFront ist
             $instance = @IPS_GetInstance($cfg['WebFrontConfigId']);
-            if ($instance['ModuleInfo']['ModuleID'] != "{3565B1F2-8F7B-4311-A4B6-1BF1D868F39E}") {
+            if ($instance['ModuleInfo']['ModuleID'] != '{3565B1F2-8F7B-4311-A4B6-1BF1D868F39E}') {
                 die("Abbruch - 'WebFrontConfigId' ist keine WebFrontId");
             }
 
-            IfNotIssetSetValue($cfg['WFCPopupTitle'], "");
+            IfNotIssetSetValue($cfg['WFCPopupTitle'], '');
         }
 
         // wenn der Tooltipformater genutz wird kann damit das Format des DateTime festgelegt werden
-        IfNotIssetSetValue($cfg['TooltipDateTimeFormat'], "%A %d.%m.%Y %H:%M");
+        IfNotIssetSetValue($cfg['TooltipDateTimeFormat'], '%A %d.%m.%Y %H:%M');
 
         return $cfg;
     }
-
 
     // ------------------------------------------------------------------------
     // Check_ContentVariable
@@ -525,7 +523,7 @@
     // ------------------------------------------------------------------------
     function Check_ContentVariable($cfg, $scriptId)
     {
-        DebugModuleName($cfg, "Check_ContentVariable");
+        DebugModuleName($cfg, 'Check_ContentVariable');
 
         // wenn keine Id übergeben wurde wird das übergeordnete Objekt als Content verwendet
         if (!isset($cfg['ContentVarableId']) || $cfg['ContentVarableId'] <= 0) {
@@ -535,14 +533,14 @@
 
         $variable = @IPS_GetVariable($cfg['ContentVarableId']);
         if ($variable == false) {
-            die("Abbruch - Content-Variable nicht gefunden.");
+            die('Abbruch - Content-Variable nicht gefunden.');
         }
 
         if ($variable['VariableType'] != 3) {
-            die("Abbruch - Content-Variable ist keine STRING-Variable.");
+            die('Abbruch - Content-Variable ist keine STRING-Variable.');
         }
 
-        if ($variable['VariableCustomProfile'] != "~HTMLBox") {
+        if ($variable['VariableCustomProfile'] != '~HTMLBox') {
             die("Abbruch - Content-Variable muss als Profil '~HTMLBox' verwenden.");
         }
 
@@ -566,7 +564,7 @@
                 continue;
             }
 
-            if ($variable['VariableCustomProfile'] != "~HTMLBox") {
+            if ($variable['VariableCustomProfile'] != '~HTMLBox') {
                 continue;
             }
 
@@ -583,13 +581,13 @@
     // ------------------------------------------------------------------------
     function CheckCfg_AreaHighChart($cfg)
     {
-        DebugModuleName($cfg, "CheckCfg_AreaHighChart");
+        DebugModuleName($cfg, 'CheckCfg_AreaHighChart');
 
-        IfNotIssetSetValue($cfg['HighChart']['Width'], "100%");
+        IfNotIssetSetValue($cfg['HighChart']['Width'], '100%');
         IfNotIssetSetValue($cfg['HighChart']['Height'], 400);
 
         if ($cfg['HighChart']['Width'] == 0) {
-            $cfg['HighChart']['Width'] = "100%";
+            $cfg['HighChart']['Width'] = '100%';
         }
 
         return $cfg;
@@ -603,7 +601,7 @@
     // ------------------------------------------------------------------------
     function CheckCfg_StartEndTime($cfg)
     {
-        DebugModuleName($cfg, "CheckCfg_StartEndTime");
+        DebugModuleName($cfg, 'CheckCfg_StartEndTime');
 
         $cfg['Ips']['ChartStartTime'] = $cfg['StartTime'];
         $cfg['Ips']['ChartEndTime'] = $cfg['EndTime'];
@@ -625,13 +623,13 @@
                 $cfg['Ips']['ChartEndTime'] = $Serie['EndTime'];
             }
 
-            $Serie['Ips']['EndTimeString'] = date("/r", $Serie['EndTime']);
-            $Serie['Ips']['StartTimeString']= date("/r", $Serie['StartTime']);
+            $Serie['Ips']['EndTimeString'] = date('/r', $Serie['EndTime']);
+            $Serie['Ips']['StartTimeString'] = date('/r', $Serie['StartTime']);
 
             $cfg['series'][$i] = $Serie;
 
             if (isset($Serie['Offset']) && $Serie['Offset'] != 0) {
-                $offsetExistsAtSerie =true;
+                $offsetExistsAtSerie = true;
             }
         }
 
@@ -652,27 +650,27 @@
     // ------------------------------------------------------------------------
     function CheckCfg_Series($cfg)
     {
-        DebugModuleName($cfg, "CheckCfg_Series");
+        DebugModuleName($cfg, 'CheckCfg_Series');
 
         $Id_AH = $cfg['ArchiveHandlerId'];
 
-        $series = array();
+        $series = [];
         foreach ($cfg['series'] as $Serie) {
             $VariableId = @$Serie['Id'];
 
             // hier wird nur geprüft ob Wert von Eingabe passen könnte (wenn vorhanden)
-            if (isset($Serie['AggType']) && ($Serie['AggType']<0 || $Serie['AggType']>4)) {
+            if (isset($Serie['AggType']) && ($Serie['AggType'] < 0 || $Serie['AggType'] > 4)) {
                 die("Abbruch - 'AggType' hat keinen korrekten Wert");
             }
 
             $Serie['Ips']['IsCounter'] = $VariableId && (@ACmySQL_GetAggregationType($Id_AH, $VariableId) == 1);
 
             // über AggValue kann Min/Max oder Avg vorgewählt werden (zum Lesen der AggregValues)
-            IfNotIssetSetValue($Serie['AggValue'], "Avg");
+            IfNotIssetSetValue($Serie['AggValue'], 'Avg');
 
-            if ($Serie['AggValue'] != "Avg"
-                && $Serie['AggValue'] != "Min"
-                && $Serie['AggValue'] != "Max") {
+            if ($Serie['AggValue'] != 'Avg'
+                && $Serie['AggValue'] != 'Min'
+                && $Serie['AggValue'] != 'Max') {
                 die("Abbruch - 'AggValue' hat keinen gültigen Wert");
             }
 
@@ -691,12 +689,11 @@
                 if (isset($Serie['Id'])) {
                     $Serie['name'] = @IPS_GetName($Serie['Id']);
                 } else {
-                    $Serie['name'] = "";
+                    $Serie['name'] = '';
                 }
             }
 
-
-            IfNotIssetSetValue($Serie['name'], "");
+            IfNotIssetSetValue($Serie['name'], '');
 
             //KHC 28.04.2014 keine Prüfung des Types
             // type & Parameter
@@ -708,11 +705,11 @@
             }
 
             // Mögliche Charttypen
-            $allowedSeriesTypes = array();
+            $allowedSeriesTypes = [];
             if ($cfg['Ips']['ChartType'] == 'Highcharts') {
-                $allowedSeriesTypes = array('area','areaspline','bar','column','line','pie','scatter','spline', 'gauge', 'columnrange', 'arearange');
+                $allowedSeriesTypes = ['area', 'areaspline', 'bar', 'column', 'line', 'pie', 'scatter', 'spline', 'gauge', 'columnrange', 'arearange'];
             } elseif ($cfg['Ips']['ChartType'] == 'Highstock') {
-                $allowedSeriesTypes = array('area','areaspline','bar','column','line','pie','scatter','spline','ohlc','candlestick');
+                $allowedSeriesTypes = ['area', 'areaspline', 'bar', 'column', 'line', 'pie', 'scatter', 'spline', 'ohlc', 'candlestick'];
             }
 
             if (!isset($Serie['type']) && isset($Serie['Param'])) {
@@ -729,9 +726,8 @@
                 $Serie['Ips']['Type'] = $Serie['type'];
             }
             if (!isset($Serie['Ips']['Type'])) {
-                die("Abbruch - Serien-Type nicht erkennbar.");
+                die('Abbruch - Serien-Type nicht erkennbar.');
             }
-
 
             // data
             if (isset($Serie['Data']) && isset($Serie['data'])) {
@@ -746,21 +742,21 @@
             if ($Serie['Ips']['Type'] == 'pie') {
                 if (isset($Serie['Id'])) {
                     if (!isset($Serie['AggType'])) {
-                        die("Abbruch - Wird ein Pie über Id definiert muss auch AggType parametriert werden");
+                        die('Abbruch - Wird ein Pie über Id definiert muss auch AggType parametriert werden');
                     }
 
                     // wenn nichts angegeben wird 'AggNameFormat: automatisch abhängig vom 'AggType' berechnet
                     if (!isset($Serie['AggNameFormat'])) {
                         if ($Serie['AggType'] == 0) {   //0=Hour
-                            $Serie['AggNameFormat'] = "d.m.Y H:i";
+                            $Serie['AggNameFormat'] = 'd.m.Y H:i';
                         } elseif ($Serie['AggType'] == 1) { //1=Day
-                            $Serie['AggNameFormat'] = "d.m.Y";
+                            $Serie['AggNameFormat'] = 'd.m.Y';
                         } elseif ($Serie['AggType'] == 2) { //2=Week
                             $Serie['AggNameFormat'] = "\K\WW Y";
                         } elseif ($Serie['AggType'] == 3) { //3=Month
-                            $Serie['AggNameFormat'] = "M Y";
+                            $Serie['AggNameFormat'] = 'M Y';
                         } elseif ($Serie['AggType'] == 4) { //4=Year
-                            $Serie['AggNameFormat'] = "Y";
+                            $Serie['AggNameFormat'] = 'Y';
                         }
                     }
                 } elseif (isset($Serie['data'])) {
@@ -794,10 +790,10 @@
     // ------------------------------------------------------------------------
     function CheckCfg_AggregatedValues($cfg)
     {
-        DebugModuleName($cfg, "CheckCfg_AggregatedValues");
+        DebugModuleName($cfg, 'CheckCfg_AggregatedValues');
 
         if (!isset($cfg['AggregatedValues'])) {
-            $cfg['AggregatedValues'] = array();
+            $cfg['AggregatedValues'] = [];
         }
 
         // Default - wenn nichts vorbelegt
@@ -809,7 +805,7 @@
         IfNotIssetSetValue($cfg['AggregatedValues']['YearValues'], -1);
         IfNotIssetSetValue($cfg['AggregatedValues']['NoLoggedValues'], 100);
 
-        $series = array();
+        $series = [];
         foreach ($cfg['series'] as $Serie) {
             // prüfen ob für die Serie Einstellungen für AggregatedValues vorhanden sind,
             // wenn nicht Übernahme aus cfg
@@ -826,7 +822,7 @@
             }
 
             // Umrechnen der Tage in Sekunden ... für direktes addieren zum Timestamp
-            $MinPerTag = 24*60*60;
+            $MinPerTag = 24 * 60 * 60;
 
             if ($Serie['AggregatedValues']['HourValues'] != -1) {
                 $Serie['AggregatedValues']['HourValues'] *= $MinPerTag;
@@ -859,12 +855,11 @@
         return $cfg;
     }
 
-
 // ***************************************************************************************************************************
 
     function AddRootParameterWhichStartsWithLowerCase($cfg, $existingCfg)
     {
-        $result = array();
+        $result = [];
         foreach ($cfg as $key => $value) {
             $firstChar = substr($key, 0, 1);
             if ($firstChar != strtolower($firstChar)) {
@@ -886,7 +881,7 @@
     // ------------------------------------------------------------------------
     function GetHighChartsCfgFile($cfg)
     {
-        DebugModuleName($cfg, "GetHighChartsCfgFile");
+        DebugModuleName($cfg, 'GetHighChartsCfgFile');
 
         $cfgArr['chart'] = CreateArrayForChart($cfg);
         $cfgArr['credits'] = CreateArrayForCredits($cfg);
@@ -901,7 +896,7 @@
             DebugString(my_json_encode($cfgArr));
         }
 
-        $cfgArr['series'] = CreateArrayForSeries($cfg) ;
+        $cfgArr['series'] = CreateArrayForSeries($cfg);
 
         if ($cfg['Ips']['Debug']['ShowJSON_Data']) {
             DebugString(my_json_encode($cfgArr));
@@ -915,7 +910,7 @@
         $s = my_json_encode($cfgArr);
 
         // ersetzten des 'Param'-Parameters (Altlast aus V1.x)
-        $s = str_replace(",Param@@@:", ",", $s);
+        $s = str_replace(',Param@@@:', ',', $s);
 
         return $s;
     }
@@ -928,20 +923,20 @@
     // ------------------------------------------------------------------------
     function GetHtmlForHighchartsSetOptions($cfg)
     {
-        DebugModuleName($cfg, "GetHtmlForHighchartsSetOptions");
+        DebugModuleName($cfg, 'GetHtmlForHighchartsSetOptions');
 
         // Default
-        IfNotIssetSetValue($cfg['lang']['decimalPoint'], ",");
-        IfNotIssetSetValue($cfg['lang']['thousandsSep'], ".");
+        IfNotIssetSetValue($cfg['lang']['decimalPoint'], ',');
+        IfNotIssetSetValue($cfg['lang']['thousandsSep'], '.');
 
         IfNotIssetSetValue($cfg['lang']['months'], ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember']);
         IfNotIssetSetValue($cfg['lang']['shortMonths'], ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez']);
         IfNotIssetSetValue($cfg['lang']['weekdays'], ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag']);
 
-        $s = "lang:" . my_json_encode($cfg['lang']);
+        $s = 'lang:' . my_json_encode($cfg['lang']);
 
         return '<script type="text/javascript">
-						Highcharts.setOptions({'.$s.'});
+						Highcharts.setOptions({' . $s . '});
 					</script>';
     }
 
@@ -953,10 +948,10 @@
     // ------------------------------------------------------------------------
     function CreateArrayForSeries($cfg)
     {
-        DebugModuleName($cfg, "CreateArrayForSeries");
+        DebugModuleName($cfg, 'CreateArrayForSeries');
 
         // Daten für einzelne Serien erzeugen
-        $dataArr = array();
+        $dataArr = [];
         foreach ($cfg['series'] as $Serie) {
             if ($Serie['Ips']['Type'] == 'pie') {
                 $Serie['data'] = CreateDataArrayForPie($cfg, $Serie);
@@ -995,7 +990,7 @@
 
             // ersetzten des 'Param'-Parameters (Altlast aus V1.x)
             if (isset($Serie['Param'])) {
-                $serieArr['Param@@@'] = "@" . $Serie['Param'] . "@";
+                $serieArr['Param@@@'] = '@' . $Serie['Param'] . '@';
             }
 
             $dataArr[] = $serieArr;
@@ -1014,7 +1009,7 @@
     function PopulateDate($dt, $serie)
     {
         if ($dt < $serie['StartTime']) {
-            $dt = $serie['StartTime'] ;
+            $dt = $serie['StartTime'];
         }
 
         // z.B.: Date.UTC(2011,4,27,19,42,19),23.4
@@ -1047,7 +1042,6 @@
             $val = round($val, $serie['RoundValue']);
         }
 
-
         return $val;
     }
 
@@ -1059,22 +1053,22 @@
     // ------------------------------------------------------------------------
     function CreateDataArrayForPie($cfg, $serie)
     {
-        DebugModuleName($cfg, "CreateDataArrayForPie");
+        DebugModuleName($cfg, 'CreateDataArrayForPie');
 
         if (isset($serie['Id'])) {
             return ReadPieDataById($cfg, $serie);
         } elseif (isset($serie['data'])) {
-            $result = array();
+            $result = [];
             foreach ($serie['data'] as $item) {
                 if (isset($item['Id'])) {
                     $currentValue = ReadCurrentValue($item['Id']);
-                    $item['y'] = PopulateValue($currentValue['Value'], $serie) ;
+                    $item['y'] = PopulateValue($currentValue['Value'], $serie);
                 }
                 $result[] = $item;
             }
             return $result;
         } else {
-            die("Abbruch - Pie-Definition nicht korrekt");
+            die('Abbruch - Pie-Definition nicht korrekt');
         }
         return $Data;
     }
@@ -1092,7 +1086,7 @@
         $tempData = @ACmySQL_GetAggregatedValues($id_AH, $serie['Id'], $serie['AggType'], $serie['StartTime'], $serie['EndTime'], 0);
         $tempData = array_reverse($tempData);
 
-        $result = array();
+        $result = [];
         foreach ($tempData as $ValueItem) {
             $item['name'] = ReplaceToGermanDate(date($serie['AggNameFormat'], $ValueItem['TimeStamp']));
             $item['y'] = PopulateValue($ValueItem[$serie['AggValue']], $serie);
@@ -1109,20 +1103,20 @@
     //    IN: $Serie, $search : "" für alle Werte, "Hour", "Day", usw
     //    OUT: Array(StartTime,EndTime)
     // ------------------------------------------------------------------------
-    function CalculateStartAndEndTimeForAggreagtedValues($Serie, $search ="")
+    function CalculateStartAndEndTimeForAggreagtedValues($Serie, $search = '')
     {
         $start = -1;
         $ende = -1;
         $trap = false;
         $sum = 0;
 
-        if ($search == "") {
-            $search =="Values";
+        if ($search == '') {
+            $search == 'Values';
             $start = 0;
             $trap = true;
         }
         foreach ($Serie['AggregatedValues'] as $key => $value) {
-            if (strrpos($key, "Values") != false) {
+            if (strrpos($key, 'Values') != false) {
                 if ($value > 0) {
                     $sum += $value;
                 }
@@ -1143,12 +1137,12 @@
                 }
 
                 if ($start == -1) {
-                    $start =  $sum;
+                    $start = $sum;
                     continue;
                 }
 
-                if ($start != -1 && $ende ==-1) {
-                    $ende =  $sum;
+                if ($start != -1 && $ende == -1) {
+                    $ende = $sum;
                     break;
                 }
             }
@@ -1156,18 +1150,18 @@
 
         $result = false;
         if ($start != -1) {
-            $result["EndTime"] = $Serie["EndTime"] - $start;
+            $result['EndTime'] = $Serie['EndTime'] - $start;
             if ($ende == -1) {
-                $result["StartTime"] = $Serie["StartTime"];
+                $result['StartTime'] = $Serie['StartTime'];
             } else {
-                $result["StartTime"] = $Serie["EndTime"] - $ende;
+                $result['StartTime'] = $Serie['EndTime'] - $ende;
             }
 
-            if ($result["StartTime"] < $Serie["StartTime"]) {
-                $result["StartTime"] = $Serie["StartTime"];
+            if ($result['StartTime'] < $Serie['StartTime']) {
+                $result['StartTime'] = $Serie['StartTime'];
             }
 
-            if ($result["StartTime"] == $Serie["EndTime"]) {
+            if ($result['StartTime'] == $Serie['EndTime']) {
                 $result = false;
             }
         }
@@ -1183,10 +1177,10 @@
     // ------------------------------------------------------------------------
     function ReadDataFromDBAndCreateDataArray($cfg, $Serie)
     {
-        DebugModuleName($cfg, "ReadDataFromDBAndCreateDataArray");
+        DebugModuleName($cfg, 'ReadDataFromDBAndCreateDataArray');
 
         if (!isset($Serie['Id'])) {
-            return "";
+            return '';
         }
 
         // errechne die Zeitspanne
@@ -1197,8 +1191,8 @@
         }
 
         $Id_AH = $cfg['ArchiveHandlerId'];
-        $dataArray = array();
-        $VariableId = (int)$Serie['Id'];
+        $dataArray = [];
+        $VariableId = (int) $Serie['Id'];
         $Agg = -1;
         $ReadCurrentValue = true;
 
@@ -1209,65 +1203,65 @@
             }
 
             // Einzelwerte lesen
-            $dataArray = ReadAndAddToLoggedData($dataArray, $Id_AH, $VariableId, -1, $Serie["StartTime"], $Serie["EndTime"], "Value", $Serie);
+            $dataArray = ReadAndAddToLoggedData($dataArray, $Id_AH, $VariableId, -1, $Serie['StartTime'], $Serie['EndTime'], 'Value', $Serie);
         } elseif ($Serie['AggregatedValues']['MixedMode']) {    // im MixedMode werden anfangs alle Werte, dann die Stunden- und zuletzt Tageswerte ausgelesen
             // zuerst Einzelwerte
-            $result = CalculateStartAndEndTimeForAggreagtedValues($Serie, "");
+            $result = CalculateStartAndEndTimeForAggreagtedValues($Serie, '');
             if ($result != false) {
                 if ($Serie['Ips']['IsCounter']) { 						// wenn Zähler dann immer Agg.Values
-                    $dataArray = ReadAndAddToLoggedData($dataArray, $Id_AH, $VariableId, 0, $result["StartTime"], $result["EndTime"], $Serie['AggValue'], $Serie);
+                    $dataArray = ReadAndAddToLoggedData($dataArray, $Id_AH, $VariableId, 0, $result['StartTime'], $result['EndTime'], $Serie['AggValue'], $Serie);
                 } else {
-                    $dataArray = ReadAndAddToLoggedData($dataArray, $Id_AH, $VariableId, -1, $result["StartTime"], $result["EndTime"], "Value", $Serie);
+                    $dataArray = ReadAndAddToLoggedData($dataArray, $Id_AH, $VariableId, -1, $result['StartTime'], $result['EndTime'], 'Value', $Serie);
                 }
             }
 
             // -> Stundenwerte
-            $result = CalculateStartAndEndTimeForAggreagtedValues($Serie, "Hour");
+            $result = CalculateStartAndEndTimeForAggreagtedValues($Serie, 'Hour');
             if ($result != false) {
-                $dataArray = ReadAndAddToLoggedData($dataArray, $Id_AH, $VariableId, 0, $result["StartTime"], $result["EndTime"], $Serie['AggValue'], $Serie);
+                $dataArray = ReadAndAddToLoggedData($dataArray, $Id_AH, $VariableId, 0, $result['StartTime'], $result['EndTime'], $Serie['AggValue'], $Serie);
             }
 
             // -> Tageswerte
-            $result = CalculateStartAndEndTimeForAggreagtedValues($Serie, "Day");
+            $result = CalculateStartAndEndTimeForAggreagtedValues($Serie, 'Day');
             if ($result != false) {
-                $dataArray = ReadAndAddToLoggedData($dataArray, $Id_AH, $VariableId, 1, $result["StartTime"], $result["EndTime"], $Serie['AggValue'], $Serie);
+                $dataArray = ReadAndAddToLoggedData($dataArray, $Id_AH, $VariableId, 1, $result['StartTime'], $result['EndTime'], $Serie['AggValue'], $Serie);
             }
 
             // -> Wochenwerten
-            $result = CalculateStartAndEndTimeForAggreagtedValues($Serie, "Week");
+            $result = CalculateStartAndEndTimeForAggreagtedValues($Serie, 'Week');
             if ($result != false) {
-                $dataArray = ReadAndAddToLoggedData($dataArray, $Id_AH, $VariableId, 2, $result["StartTime"], $result["EndTime"], $Serie['AggValue'], $Serie);
+                $dataArray = ReadAndAddToLoggedData($dataArray, $Id_AH, $VariableId, 2, $result['StartTime'], $result['EndTime'], $Serie['AggValue'], $Serie);
             }
 
             // -> Monatswerte
-            $result = CalculateStartAndEndTimeForAggreagtedValues($Serie, "Month");
+            $result = CalculateStartAndEndTimeForAggreagtedValues($Serie, 'Month');
             if ($result != false) {
-                $dataArray = ReadAndAddToLoggedData($dataArray, $Id_AH, $VariableId, 3, $result["StartTime"], $result["EndTime"], $Serie['AggValue'], $Serie);
+                $dataArray = ReadAndAddToLoggedData($dataArray, $Id_AH, $VariableId, 3, $result['StartTime'], $result['EndTime'], $Serie['AggValue'], $Serie);
             }
 
             // -> Jahreswerte
-            $result = CalculateStartAndEndTimeForAggreagtedValues($Serie, "Year");
+            $result = CalculateStartAndEndTimeForAggreagtedValues($Serie, 'Year');
             if ($result != false) {
-                $dataArray = ReadAndAddToLoggedData($dataArray, $Id_AH, $VariableId, 4, $result["StartTime"], $result["EndTime"], $Serie['AggValue'], $Serie);
+                $dataArray = ReadAndAddToLoggedData($dataArray, $Id_AH, $VariableId, 4, $result['StartTime'], $result['EndTime'], $Serie['AggValue'], $Serie);
             }
         } else {
             $Agg = -1;	// ->  ACmySQL_GetLoggedValues
 
             if (isset($Serie['AggType'])) {   // wenn 'AggType' definiert wurde, wird dies vorrangig bearbeitet
                 $Agg = $Serie['AggType'];
-            } elseif ($Serie['AggregatedValues']['YearValues']!= -1 && $Diff > $Serie['AggregatedValues']['YearValues']) {
+            } elseif ($Serie['AggregatedValues']['YearValues'] != -1 && $Diff > $Serie['AggregatedValues']['YearValues']) {
                 $Agg = 4;
             }	//  -> ACmySQL_GetAggregatedValues [0=Hour, 1=Day, 2=Week, 3=Month, 4=Year]
-            elseif ($Serie['AggregatedValues']['MonthValues']!= -1 && $Diff > $Serie['AggregatedValues']['MonthValues']) {
+            elseif ($Serie['AggregatedValues']['MonthValues'] != -1 && $Diff > $Serie['AggregatedValues']['MonthValues']) {
                 $Agg = 3;
             }	//  -> ACmySQL_GetAggregatedValues [0=Hour, 1=Day, 2=Week, 3=Month, 4=Year]
-            elseif ($Serie['AggregatedValues']['WeekValues']!= -1 && $Diff > $Serie['AggregatedValues']['WeekValues']) {
+            elseif ($Serie['AggregatedValues']['WeekValues'] != -1 && $Diff > $Serie['AggregatedValues']['WeekValues']) {
                 $Agg = 2;
             }	//  -> ACmySQL_GetAggregatedValues [0=Hour, 1=Day, 2=Week, 3=Month, 4=Year]
-            elseif ($Serie['AggregatedValues']['DayValues']!= -1 && $Diff > $Serie['AggregatedValues']['DayValues']) {
+            elseif ($Serie['AggregatedValues']['DayValues'] != -1 && $Diff > $Serie['AggregatedValues']['DayValues']) {
                 $Agg = 1;
             }	//  -> ACmySQL_GetAggregatedValues [0=Hour, 1=Day, 2=Week, 3=Month, 4=Year]
-            elseif ($Serie['AggregatedValues']['HourValues']!= -1 && $Diff > $Serie['AggregatedValues']['HourValues']) {
+            elseif ($Serie['AggregatedValues']['HourValues'] != -1 && $Diff > $Serie['AggregatedValues']['HourValues']) {
                 $Agg = 0;
             }	//  -> ACmySQL_GetAggregatedValues [0=Hour, 1=Day, 2=Week, 3=Month, 4=Year]
 
@@ -1283,9 +1277,9 @@
                 }
 
                 // Alle Werte
-                $dataArray = ReadAndAddToLoggedData($dataArray, $Id_AH, $VariableId, -1, $Serie["StartTime"], $Serie["EndTime"], "Value", $Serie);
+                $dataArray = ReadAndAddToLoggedData($dataArray, $Id_AH, $VariableId, -1, $Serie['StartTime'], $Serie['EndTime'], 'Value', $Serie);
             } else {
-                $dataArray = ReadAndAddToLoggedData($dataArray, $Id_AH, $VariableId, $Agg, $Serie["StartTime"], $Serie["EndTime"], $Serie['AggValue'], $Serie);
+                $dataArray = ReadAndAddToLoggedData($dataArray, $Id_AH, $VariableId, $Agg, $Serie['StartTime'], $Serie['EndTime'], $Serie['AggValue'], $Serie);
                 $ReadCurrentValue = false;
             }
         }
@@ -1301,8 +1295,7 @@
             $dataArray[] = CreateDataItem($curValue['TimeStamp'], $curValue['Value'], $Serie);
         }
 
-
-        return $dataArray ;
+        return $dataArray;
     }
 
     // ------------------------------------------------------------------------
@@ -1312,7 +1305,7 @@
     // ------------------------------------------------------------------------
     function ReadCurrentValue($variableId)
     {
-        $currentVal['Value']= GetValue($variableId);
+        $currentVal['Value'] = GetValue($variableId);
         $currentVal['TimeStamp'] = time();
 
         return $currentVal;
@@ -1352,7 +1345,7 @@
         // z.B.: Date.UTC(2011,4,27,19,42,19),23.4
         $dtUTC = PopulateDate($dt, $serie);
 
-        return array("@$dtUTC@", $val);
+        return ["@$dtUTC@", $val];
     }
 
     // ------------------------------------------------------------------------
@@ -1364,11 +1357,11 @@
     // ------------------------------------------------------------------------
     function CreateDataArrayFromExternalData($arr, $Serie)
     {
-        $result = array();
+        $result = [];
         foreach ($Serie['data'] as $item) {
             if (is_array($item)) {
                 if (isset($item['TimeStamp']) && !isset($item['x'])) {
-                    $item['x'] = "@" . PopulateDate($item['TimeStamp'], $Serie) . "@";
+                    $item['x'] = '@' . PopulateDate($item['TimeStamp'], $Serie) . '@';
                     unset($item['TimeStamp']);
                 }
                 if (isset($item['Value']) && !isset($item['y'])) {
@@ -1396,16 +1389,16 @@
     // ------------------------------------------------------------------------
     function CreateTooltipFormatter($cfg)
     {
-        DebugModuleName($cfg, "CreateTooltipFormatter");
+        DebugModuleName($cfg, 'CreateTooltipFormatter');
 
         //ToDo: da sollten wir etwas lesbarer arbeiten
-        $s = "";
-        $offset ="";
+        $s = '';
+        $offset = '';
 
         foreach ($cfg['series'] as $Serie) {
             if ($Serie['Ips']['Type'] == 'pie') {
                 if (isset($Serie['data'])) {
-                    $s .= "[";
+                    $s .= '[';
                     foreach ($Serie['data'] as $data) {
                         $unit = @$Serie['Unit'];
                         if (isset($data['Unit'])) {
@@ -1414,21 +1407,21 @@
 
                         $s .= "this.y +' " . $unit . "',";
                     }
-                    $s = trim($s, ",");
-                    $s .= "][this.point.x],";
+                    $s = trim($s, ',');
+                    $s .= '][this.point.x],';
                 } else {
                     $unit = @$Serie['Unit'];
                     $s .= "[this.y + ' " . $unit . "'],";
                 }
-                $offset .= "0,";  // pies haben nie einen Offset
+                $offset .= '0,';  // pies haben nie einen Offset
             } else {
                 // hier wird das VariableCustomProfile aus IPS übernommen
                 if (!isset($Serie['Unit'])) {
                     // hole das Variablen Profil
                     $IPSProfil = @GetIPSVariableProfile($Serie['Id']);
                     if ($IPSProfil != false) {
-                        if (array_key_exists("Associations", $IPSProfil) && count($IPSProfil['Associations'])>0) {
-                            $Arr = array();
+                        if (array_key_exists('Associations', $IPSProfil) && count($IPSProfil['Associations']) > 0) {
+                            $Arr = [];
                             foreach ($IPSProfil['Associations'] as $Item) {
                                 $Arr[$Item['Value']] = $Item['Name'];
                             }
@@ -1440,25 +1433,25 @@
                             }
                         } else {
                             // Suffix als Einheit übernehmen
-                            $Serie['Unit'] = trim($IPSProfil['Suffix'], " ");
-                            $s .= "[this.y + ' ". $Serie['Unit']."'],";
+                            $Serie['Unit'] = trim($IPSProfil['Suffix'], ' ');
+                            $s .= "[this.y + ' " . $Serie['Unit'] . "'],";
                         }
                     } else {  // falls VariablenId nicht existiert
-                        $s .= "[this.y ],";
+                        $s .= '[this.y ],';
                     }
                 }
                 // es wurden Unit und ReplaceValues übergeben
                 elseif (is_array($Serie['Unit']) && is_array($Serie['ReplaceValues'])) {
                     $s .= CreateTooltipSubValues($Serie['Unit'], $Serie['ReplaceValues']);
                 } else {		// Einheit aus übergebenem Parmeter Unit
-                    $s .= "[this.y + ' ". $Serie['Unit']."'],";
+                    $s .= "[this.y + ' " . $Serie['Unit'] . "'],";
                 }
-                $offset .= $Serie['Offset'] . ",";
+                $offset .= $Serie['Offset'] . ',';
             }
         }
 
-        $s = trim($s, ",");
-        $offset = trim($offset, ",");
+        $s = trim($s, ',');
+        $offset = trim($offset, ',');
 
         //*1000 da JS in [ms] angebgeben wird un php in [s]
         /*		$TooltipString="function() {
@@ -1495,10 +1488,10 @@
                                 } ";
         */
 
-        $TooltipString = "function() {
+        $TooltipString = 'function() {
 								var serieIndex = this.series.index;
-								var unit = [".$s. "][serieIndex];
-								var offset = [".$offset. "][serieIndex] * 1000;
+								var unit = [' . $s . '][serieIndex];
+								var offset = [' . $offset . "][serieIndex] * 1000;
 								var offsetInfo ='';
 
 								if (offset != 0)
@@ -1513,12 +1506,10 @@
 								else
 			               {
 									return '<b>' + this.series.name + ': </b> '+ unit + '<br/>'
-										+ Highcharts.dateFormat('".$cfg['TooltipDateTimeFormat']."', this.x - offset)
+										+ Highcharts.dateFormat('" . $cfg['TooltipDateTimeFormat'] . "', this.x - offset)
 										+ offsetInfo;
 								}
 						} ";
-
-
 
         return $TooltipString;
     }
@@ -1532,16 +1523,16 @@
     // ------------------------------------------------------------------------
     function CreateTooltipSubValues($shownTooltipArr, $chartValueArr)
     {
-        $s="{";
+        $s = '{';
         $Count = count($shownTooltipArr);
-        for ($i = 0; $i < $Count ; $i++) {
+        for ($i = 0; $i < $Count; $i++) {
             if (isset($chartValueArr[$i]) && isset($shownTooltipArr[$i])) {
-                $s .= $chartValueArr[$i] .": '" . $shownTooltipArr[$i] ."'," ;
+                $s .= $chartValueArr[$i] . ": '" . $shownTooltipArr[$i] . "',";
             }
         }
-        $s = trim($s, ",") . "}";
+        $s = trim($s, ',') . '}';
 
-        return $s ."[this.y],";
+        return $s . '[this.y],';
     }
 
     // ------------------------------------------------------------------------
@@ -1572,8 +1563,6 @@
         }
     }
 
-
-
     // ------------------------------------------------------------------------
     // CreateArrayForChart
     //
@@ -1583,12 +1572,12 @@
     function CreateArrayForChart($cfg)
     {
         if (!isset($cfg['chart'])) {
-            $cfg['chart'] = array();
+            $cfg['chart'] = [];
         }
 
         //Default
-        IfNotIssetSetValue($cfg['chart']['renderTo'], "container");
-        IfNotIssetSetValue($cfg['chart']['zoomType'], "xy");
+        IfNotIssetSetValue($cfg['chart']['renderTo'], 'container');
+        IfNotIssetSetValue($cfg['chart']['zoomType'], 'xy');
 
         return $cfg['chart'];
     }
@@ -1602,7 +1591,7 @@
     function CreateArrayForCredits($cfg)
     {
         if (!isset($cfg['credits'])) {
-            $cfg['credits'] = array();
+            $cfg['credits'] = [];
         }
 
         //Default
@@ -1620,7 +1609,7 @@
     function CreateArrayForTitle($cfg)
     {
         if (!isset($cfg['title'])) {
-            $cfg['title'] = array();
+            $cfg['title'] = [];
         }
 
         return $cfg['title'];
@@ -1635,7 +1624,7 @@
     function CreateArrayForExporting($cfg)
     {
         if (!isset($cfg['exporting'])) {
-            $cfg['exporting'] = array();
+            $cfg['exporting'] = [];
         }
 
         //Default
@@ -1654,16 +1643,16 @@
     function CreateArrayForTooltip($cfg)
     {
         if (!isset($cfg['tooltip'])) {
-            $cfg['tooltip'] = array();
+            $cfg['tooltip'] = [];
         }
 
         //Default
         // wenn not isset -> autom. erzeugen durch IPS
         if (!isset($cfg['tooltip']['formatter'])) {
-            $cfg['tooltip']['formatter'] = "@" . CreateTooltipFormatter($cfg) . "@";
+            $cfg['tooltip']['formatter'] = '@' . CreateTooltipFormatter($cfg) . '@';
         }
         // wenn "" -> default by highcharts
-        elseif ($cfg['tooltip']['formatter'] == "") {
+        elseif ($cfg['tooltip']['formatter'] == '') {
             // do nothing
         }
 
@@ -1679,16 +1668,16 @@
     function CreateArrayForSubTitle($cfg)
     {
         if (!isset($cfg['subtitle'])) {
-            $cfg['subtitle'] = array();
+            $cfg['subtitle'] = [];
         }
 
         //Default
-        IfNotIssetSetValue($cfg['subtitle']['text'], "Zeitraum: %STARTTIME% - %ENDTIME%");
-        IfNotIssetSetValue($cfg['subtitle']['Ips']['DateTimeFormat'], "(D) d.m.Y H:i");
+        IfNotIssetSetValue($cfg['subtitle']['text'], 'Zeitraum: %STARTTIME% - %ENDTIME%');
+        IfNotIssetSetValue($cfg['subtitle']['Ips']['DateTimeFormat'], '(D) d.m.Y H:i');
 
         $s = $cfg['subtitle']['text'];
-        $s = str_ireplace("%STARTTIME%", date($cfg['subtitle']['Ips']['DateTimeFormat'], $cfg['Ips']['ChartStartTime']), $s);
-        $s = str_ireplace("%ENDTIME%", date($cfg['subtitle']['Ips']['DateTimeFormat'], $cfg['Ips']['ChartEndTime']), $s);
+        $s = str_ireplace('%STARTTIME%', date($cfg['subtitle']['Ips']['DateTimeFormat'], $cfg['Ips']['ChartStartTime']), $s);
+        $s = str_ireplace('%ENDTIME%', date($cfg['subtitle']['Ips']['DateTimeFormat'], $cfg['Ips']['ChartEndTime']), $s);
         $cfg['subtitle']['text'] = ReplaceToGermanDate($s);
 
         unset($cfg['subtitle']['Ips']);
@@ -1710,34 +1699,32 @@
         //   return null;
 
         if (!isset($cfg['xAxis'])) {
-            $cfg['xAxis'] = array();
+            $cfg['xAxis'] = [];
         }
 
         //Default
-        IfNotIssetSetValue($cfg['xAxis']['type'], "datetime");
-        IfNotIssetSetValue($cfg['xAxis']['dateTimeLabelFormats']['second'], "%H:%M:%S");
-        IfNotIssetSetValue($cfg['xAxis']['dateTimeLabelFormats']['minute'], "%H:%M");
-        IfNotIssetSetValue($cfg['xAxis']['dateTimeLabelFormats']['hour'], "%H:%M");
-        IfNotIssetSetValue($cfg['xAxis']['dateTimeLabelFormats']['day'], "%e. %b");
-        IfNotIssetSetValue($cfg['xAxis']['dateTimeLabelFormats']['week'], "%e. %b");
-        IfNotIssetSetValue($cfg['xAxis']['dateTimeLabelFormats']['month'], "%b %y");
-        IfNotIssetSetValue($cfg['xAxis']['dateTimeLabelFormats']['year'], "%Y");
+        IfNotIssetSetValue($cfg['xAxis']['type'], 'datetime');
+        IfNotIssetSetValue($cfg['xAxis']['dateTimeLabelFormats']['second'], '%H:%M:%S');
+        IfNotIssetSetValue($cfg['xAxis']['dateTimeLabelFormats']['minute'], '%H:%M');
+        IfNotIssetSetValue($cfg['xAxis']['dateTimeLabelFormats']['hour'], '%H:%M');
+        IfNotIssetSetValue($cfg['xAxis']['dateTimeLabelFormats']['day'], '%e. %b');
+        IfNotIssetSetValue($cfg['xAxis']['dateTimeLabelFormats']['week'], '%e. %b');
+        IfNotIssetSetValue($cfg['xAxis']['dateTimeLabelFormats']['month'], '%b %y');
+        IfNotIssetSetValue($cfg['xAxis']['dateTimeLabelFormats']['year'], '%Y');
 
         IfNotIssetSetValue($cfg['xAxis']['allowDecimals'], false);
 
         if (isset($cfg['xAxis']['min']) && $cfg['xAxis']['min'] == false) {
             unset($cfg['xAxis']['min']);
         } else {
-            IfNotIssetSetValue($cfg['xAxis']['min'], "@" . CreateDateUTC($cfg['Ips']['ChartStartTime']) ."@");
+            IfNotIssetSetValue($cfg['xAxis']['min'], '@' . CreateDateUTC($cfg['Ips']['ChartStartTime']) . '@');
         }
 
         if (isset($cfg['xAxis']['max']) && $cfg['xAxis']['max'] == false) {
             unset($cfg['xAxis']['max']);
         } else {
-            IfNotIssetSetValue($cfg['xAxis']['max'], "@" . CreateDateUTC($cfg['Ips']['ChartEndTime'])."@");
+            IfNotIssetSetValue($cfg['xAxis']['max'], '@' . CreateDateUTC($cfg['Ips']['ChartEndTime']) . '@');
         }
-
-
 
         return $cfg['xAxis'];
     }
@@ -1757,14 +1744,14 @@
             return null;
         }
 
-        $result = array();
+        $result = [];
 
         foreach ($cfg['yAxis'] as $Axis) {
             // erst mal alles kopieren
             $cfgAxis = $Axis;
 
             if (!isset($cfgAxis['labels']['formatter']) && isset($Axis['Unit'])) {
-                $cfgAxis['labels']['formatter'] ="@function() { return this.value +' ". $Axis['Unit']."'; }@";
+                $cfgAxis['labels']['formatter'] = "@function() { return this.value +' " . $Axis['Unit'] . "'; }@";
             }
 
             $result[] = $cfgAxis;
@@ -1782,8 +1769,8 @@
     // ------------------------------------------------------------------------
     function CreateDateUTC($timeStamp)
     {
-        $monthForJS = ((int)date("m", $timeStamp))-1 ;	// Monat -1 (PHP->JS)
-        return "Date.UTC(" . date("Y,", $timeStamp) .$monthForJS. date(",j,H,i,s", $timeStamp) .")";
+        $monthForJS = ((int) date('m', $timeStamp)) - 1;	// Monat -1 (PHP->JS)
+        return 'Date.UTC(' . date('Y,', $timeStamp) . $monthForJS . date(',j,H,i,s', $timeStamp) . ')';
     }
 
     // ------------------------------------------------------------------------
@@ -1794,7 +1781,7 @@
     // ------------------------------------------------------------------------
     function ReplaceToGermanDate($value)
     {
-        $trans = array(
+        $trans = [
                 'Monday'    => 'Montag',
                 'Tuesday'   => 'Dienstag',
                 'Wednesday' => 'Mittwoch',
@@ -1819,12 +1806,11 @@
                 'December'  => 'Dezember',
                 'Mar'     	 => 'Mär',
                 'May'       => 'Mai',
-                'Oct'   	 => 'Okt',
-                'Dec'  		 => 'Dez',
-        );
+                'Oct'   	   => 'Okt',
+                'Dec'  		   => 'Dez',
+        ];
         return  strtr($value, $trans);
     }
-
 
     // ------------------------------------------------------------------------
     // my_json_encode
@@ -1834,7 +1820,7 @@
     // ------------------------------------------------------------------------
     function my_json_encode($cfgArr)
     {
-        array_walk_recursive($cfgArr, "CheckArrayItems");
+        array_walk_recursive($cfgArr, 'CheckArrayItems');
 
         $s = json_encode($cfgArr);
 
@@ -1862,10 +1848,10 @@
     function CheckArrayItems(&$item)
     {
         if (is_string($item)) {
-            if ($item == "@" || $item == "@@") {
+            if ($item == '@' || $item == '@@') {
                 $item = "'" . $item . "'";
-            } elseif ((substr($item, 0, 1) == "@" && substr($item, -1) == "@")) {
-                $item = trim($item, "@");
+            } elseif ((substr($item, 0, 1) == '@' && substr($item, -1) == '@')) {
+                $item = trim($item, '@');
             }
             /*			else if ((substr($item,0,1) == "$" && substr($item,-1) == "$"))
                         {
@@ -1895,7 +1881,7 @@
 	      )*$/x",
           $str);
     }
-    function force_utf8($str, $inputEnc='WINDOWS-1252')
+    function force_utf8($str, $inputEnc = 'WINDOWS-1252')
     {
         if (is_utf8($str)) {
             // Nichts zu tun.
@@ -1927,11 +1913,11 @@
     // ------------------------------------------------------------------------
     function RemoveUnsupportedStrings($str)
     {
-        $str = str_replace("\\t", "", $str);
-        $str = str_replace("\\n", "", $str);
-        $str = str_replace("\\r", "", $str);
-        $str = str_ireplace("\\\u00", "\\u00", $str);  // da muss man nochmals checken
-        $str = str_replace("\\\\", "", $str);
+        $str = str_replace('\\t', '', $str);
+        $str = str_replace('\\n', '', $str);
+        $str = str_replace('\\r', '', $str);
+        $str = str_ireplace("\\\u00", '\\u00', $str);  // da muss man nochmals checken
+        $str = str_replace('\\\\', '', $str);
 
         return $str;
     }
@@ -1945,7 +1931,7 @@
     function IfNotIssetSetValue(&$item, $value)
     {
         if (!isset($item)
-            || (is_string($item) && $item == "")) {   // zusätzliche Abfrage in 2.01
+            || (is_string($item) && $item == '')) {   // zusätzliche Abfrage in 2.01
             $item = $value;
             return false;
         }
@@ -1961,12 +1947,12 @@
     // ------------------------------------------------------------------------
     function getmicrotime($short = false)
     {
-        list($usec, $sec)=explode(" ", microtime());
+        list($usec, $sec) = explode(' ', microtime());
 
         if ($short) {
-            return (float)$usec + (float)substr($sec, -1);
+            return (float) $usec + (float) substr($sec, -1);
         } else {
-            return (float)$usec + (float)$sec;
+            return (float) $usec + (float) $sec;
         }
     }
 
@@ -1994,13 +1980,13 @@
             //global $IPS_SENDER, $version, $versionDate;
             global $version, $versionDate;
 
-            IPS_LogMessage($_IPS['SENDER'] ." - " .getmicrotime(true), "Highcharts $version ($versionDate) - $name");
+            IPS_LogMessage($_IPS['SENDER'] . ' - ' . getmicrotime(true), "Highcharts $version ($versionDate) - $name");
         }
     }
     function ACmySQL_GetLoggedValuesCompatibility($instanceID, $variableID, $startTime, $endTime, $limit)
     {
         $values = ACmySQL_GetLoggedValues($instanceID, $variableID, $startTime, $endTime, $limit);
-        if ((sizeof($values) == 0) || (end($values)['TimeStamp'] > $startTime)) {
+        if ((count($values) == 0) || (end($values)['TimeStamp'] > $startTime)) {
             $previousRow = ACmySQL_GetLoggedValues($instanceID, $variableID, 0, $startTime - 1, 1);
             $values = array_merge($values, $previousRow);
         }
