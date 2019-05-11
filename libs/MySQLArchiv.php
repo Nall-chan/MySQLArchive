@@ -79,7 +79,7 @@ trait Database
         if (!$this->isConnected) {
             return false;
         }
-        $query = "SHOW TABLES IN " . $this->ReadPropertyString('Database') . " LIKE  'var" . $VarId . "';";
+        $query = 'SHOW TABLES IN ' . $this->ReadPropertyString('Database') . " LIKE  'var" . $VarId . "';";
         $result = $this->DB->query($query);
         /* @var $result mysqli_result */
         return !($result->num_rows == 0);
@@ -104,7 +104,7 @@ trait Database
                 $Typ = 'value MEDIUMBLOB, ';
                 break;
         }
-        $query = "CREATE TABLE var" . $VarId . " (id BIGINT(20) UNSIGNED AUTO_INCREMENT PRIMARY KEY, " . $Typ . "timestamp DATETIME);";
+        $query = 'CREATE TABLE var' . $VarId . ' (id BIGINT(20) UNSIGNED AUTO_INCREMENT PRIMARY KEY, ' . $Typ . 'timestamp DATETIME);';
         $result = $this->DB->query($query);
         $this->SendDebug('CreateTable', $result, 0);
         return $result;
@@ -116,7 +116,7 @@ trait Database
             return false;
         }
 
-        $query = "RENAME TABLE " . $this->ReadPropertyString('Database') . ".var" . $OldVariableID . " TO " . $this->ReadPropertyString('Database') . ".var" . $NewVariableID . ";";
+        $query = 'RENAME TABLE ' . $this->ReadPropertyString('Database') . '.var' . $OldVariableID . ' TO ' . $this->ReadPropertyString('Database') . '.var' . $NewVariableID . ';';
         $result = $this->DB->query($query);
         $this->SendDebug('RenameTable', $result, 0);
         return $result;
@@ -128,7 +128,7 @@ trait Database
             return false;
         }
 
-        $query = "DELETE FROM var" . $VariableID . " WHERE ((timestamp >= from_unixtime(" . $Startzeit . ")) and (timestamp <= from_unixtime(" . $Endzeit . ")));";
+        $query = 'DELETE FROM var' . $VariableID . ' WHERE ((timestamp >= from_unixtime(' . $Startzeit . ')) and (timestamp <= from_unixtime(' . $Endzeit . ')));';
         /* @var $result mysqli_result */
         $result = $this->DB->query($query);
         if ($result) {
@@ -144,11 +144,11 @@ trait Database
         }
 
         $query = "SELECT  unix_timestamp(timestamp) AS 'TimeStamp', value AS 'Value' " .
-                "FROM  var" . $VariableID . " " .
-                "WHERE  ((timestamp >= from_unixtime(" . $Startzeit . ")) " .
-                "and (timestamp <= from_unixtime(" . $Endzeit . "))) " .
-                "ORDER BY timestamp DESC " .
-                "LIMIT " . $Limit;
+                'FROM  var' . $VariableID . ' ' .
+                'WHERE  ((timestamp >= from_unixtime(' . $Startzeit . ')) ' .
+                'and (timestamp <= from_unixtime(' . $Endzeit . '))) ' .
+                'ORDER BY timestamp DESC ' .
+                'LIMIT ' . $Limit;
         /* @var $result mysqli_result */
         $result = $this->DB->query($query);
         return $result->fetch_all(MYSQLI_ASSOC);
@@ -156,7 +156,7 @@ trait Database
 
     protected function GetLoggedDataTyp($VariableID)
     {
-        $query = "SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS " .
+        $query = 'SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS ' .
                 "WHERE ((TABLE_NAME = 'var" . $VariableID . "') AND (COLUMN_NAME = 'value'))";
 
         $sqlresult = $this->DB->query($query);
@@ -210,12 +210,12 @@ trait Database
                 break;
         }
         $query = "SELECT MIN(value) AS 'Min', MAX(value) AS 'Max', AVG(value) AS 'Avg', " .
-                "UNIX_TIMESTAMP(convert((min(timestamp) div " . $Time . ")*" . $Time . " + " . $Half . ", datetime)) " .
-                "as 'TimeStamp' FROM var" . $VariableID . " " .
-                "WHERE timestamp BETWEEN from_unixtime(" . $Startzeit . ") " .
-                "AND from_unixtime(" . $Endzeit . ") GROUP BY timestamp div " . $Time . " " .
+                'UNIX_TIMESTAMP(convert((min(timestamp) div ' . $Time . ')*' . $Time . ' + ' . $Half . ', datetime)) ' .
+                "as 'TimeStamp' FROM var" . $VariableID . ' ' .
+                'WHERE timestamp BETWEEN from_unixtime(' . $Startzeit . ') ' .
+                'AND from_unixtime(' . $Endzeit . ') GROUP BY timestamp div ' . $Time . ' ' .
                 "ORDER BY 'TimeStamp' DESC " .
-                "LIMIT " . $Limit;
+                'LIMIT ' . $Limit;
         /* @var $result mysqli_result */
         $result = $this->DB->query($query);
         return $result->fetch_all(MYSQLI_ASSOC);
@@ -245,36 +245,36 @@ trait Database
         }
 
         $query = "SELECT unix_timestamp(timestamp) AS 'TimeStamp' " .
-                "FROM  var" . $VariableId . " " .
-                "ORDER BY timestamp ASC " .
-                "LIMIT 1";
+                'FROM  var' . $VariableId . ' ' .
+                'ORDER BY timestamp ASC ' .
+                'LIMIT 1';
         /* @var $sqlresult mysqli_result */
 
         $sqlresult = $this->DB->query($query);
         $Result['FirstTimestamp'] = (int) $sqlresult->fetch_row()[0];
 
         $query = "SELECT unix_timestamp(timestamp) AS 'TimeStamp' " .
-                "FROM  var" . $VariableId . " " .
-                "ORDER BY timestamp DESC " .
-                "LIMIT 1";
+                'FROM  var' . $VariableId . ' ' .
+                'ORDER BY timestamp DESC ' .
+                'LIMIT 1';
         /* @var $sqlresult mysqli_result */
         $sqlresult = $this->DB->query($query);
         $Result['LastTimestamp'] = (int) $sqlresult->fetch_row()[0];
 
         $query = "SELECT count(*) AS 'Count' " .
-                "FROM  var" . $VariableId . " ";
+                'FROM  var' . $VariableId . ' ';
         /* @var $sqlresult mysqli_result */
         $sqlresult = $this->DB->query($query);
         $Result['Count'] = (int) $sqlresult->fetch_row()[0];
 
         $query = "SELECT count(*) AS 'Count' " .
-                "FROM  var" . $VariableId . " ";
+                'FROM  var' . $VariableId . ' ';
         /* @var $sqlresult mysqli_result */
         $sqlresult = $this->DB->query($query);
         $Result['Count'] = (int) $sqlresult->fetch_row()[0];
 
         $query = "SELECT data_length AS 'Size' " .
-                "FROM information_schema.TABLES " .
+                'FROM information_schema.TABLES ' .
                 "WHERE table_schema = '" . $this->ReadPropertyString('Database') . "' " .
                 "AND table_name = 'var" . $VariableId . "' ";
         /* @var $sqlresult mysqli_result */
@@ -286,7 +286,7 @@ trait Database
     protected function WriteValue($Variable, $NewValue, $HasChanged, $Timestamp)
     {
         if (!$HasChanged) {
-            $query = "SELECT id,value FROM var" . $Variable . " ORDER BY timestamp DESC LIMIT 2";
+            $query = 'SELECT id,value FROM var' . $Variable . ' ORDER BY timestamp DESC LIMIT 2';
             /* @var $result mysqli_result */
             $result = $this->DB->query($query);
             if ($result === false) {
@@ -297,13 +297,13 @@ trait Database
             if ($result->num_rows === 2) {
                 $ids = $result->fetch_all(MYSQLI_ASSOC);
                 if ($ids[0]['value'] === $ids[1]['value']) {
-                    $query = "UPDATE var" . $Variable . " SET timestamp=from_unixtime(" . $Timestamp . ") WHERE id=" . $ids[0]['id'];
+                    $query = 'UPDATE var' . $Variable . ' SET timestamp=from_unixtime(' . $Timestamp . ') WHERE id=' . $ids[0]['id'];
                     $result = $this->DB->query($query);
                     return $result;
                 }
             }
         }
-        $query = "INSERT INTO var" . $Variable . " (value,timestamp) VALUES(" . $NewValue . ",from_unixtime(" . $Timestamp . "));";
+        $query = 'INSERT INTO var' . $Variable . ' (value,timestamp) VALUES(' . $NewValue . ',from_unixtime(' . $Timestamp . '));';
         $result = $this->DB->query($query);
         if ($result === false) {
             echo $this->DB->error;
@@ -318,7 +318,6 @@ trait VariableWatch
     /**
      * Deregistriert eine Überwachung einer Variable.
      *
-     * @access protected
      * @param int $VarId IPS-ID der Variable.
      */
     protected function UnregisterVariableWatch($VarId)
@@ -336,7 +335,6 @@ trait VariableWatch
     /**
      * Registriert eine Überwachung einer Variable.
      *
-     * @access protected
      * @param int $VarId IPS-ID der Variable.
      */
     protected function RegisterVariableWatch(int $VarId)
@@ -351,4 +349,4 @@ trait VariableWatch
     }
 }
 
-/** @} */
+/* @} */
