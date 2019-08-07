@@ -13,7 +13,7 @@ eval('namespace MySqlArchive {?>' . file_get_contents(__DIR__ . '/../libs/helper
  * @copyright     2019 Michael Tröger
  * @license       https://creativecommons.org/licenses/by-nc-sa/4.0/ CC BY-NC-SA 4.0
  *
- * @version       3.20
+ * @version       3.30
  *
  * @example <b>Ohne</b>
  *
@@ -482,26 +482,26 @@ class ArchiveControlMySQL extends ipsmodule
         }
 
         switch ($this->GetLoggedDataTyp($VariableID)) {
-            case vtBoolean:
+            case VARIABLETYPE_BOOLEAN:
                 foreach ($Result as &$Item) {
                     $Item['TimeStamp'] = (int) $Item['TimeStamp'];
                     $Item['Value'] = (bool) $Item['Value'];
                 }
                 break;
-            case vtInteger:
+            case VARIABLETYPE_INTEGER:
                 foreach ($Result as &$Item) {
                     $Item['TimeStamp'] = (int) $Item['TimeStamp'];
                     $Item['Value'] = (int) $Item['Value'];
                 }
 
                 break;
-            case vtFloat:
+            case VARIABLETYPE_FLOAT:
                 foreach ($Result as &$Item) {
                     $Item['TimeStamp'] = (int) $Item['TimeStamp'];
                     $Item['Value'] = (float) $Item['Value'];
                 }
                 break;
-            case vtString:
+            case VARIABLETYPE_STRING:
                 foreach ($Result as &$Item) {
                     $Item['TimeStamp'] = (int) $Item['TimeStamp'];
                 }
@@ -684,7 +684,7 @@ class ArchiveControlMySQL extends ipsmodule
         }
 
         switch ($this->GetLoggedDataTyp($VariableID)) {
-            case vtBoolean:
+            case VARIABLETYPE_BOOLEAN:
                 foreach ($Result as &$Item) {
                     $Item['TimeStamp'] = (int) $Item['TimeStamp'];
                     $Item['Min'] = (bool) $Item['Min'];
@@ -692,7 +692,7 @@ class ArchiveControlMySQL extends ipsmodule
                     $Item['Max'] = (bool) $Item['Max'];
                 }
                 break;
-            case vtInteger:
+            case VARIABLETYPE_INTEGER:
                 foreach ($Result as &$Item) {
                     $Item['TimeStamp'] = (int) $Item['TimeStamp'];
                     $Item['Min'] = (int) $Item['Min'];
@@ -701,7 +701,7 @@ class ArchiveControlMySQL extends ipsmodule
                 }
 
                 break;
-            case vtFloat:
+            case VARIABLETYPE_FLOAT:
                 foreach ($Result as &$Item) {
                     $Item['TimeStamp'] = (int) $Item['TimeStamp'];
                     $Item['Min'] = (float) $Item['Min'];
@@ -709,7 +709,7 @@ class ArchiveControlMySQL extends ipsmodule
                     $Item['Max'] = (float) $Item['Max'];
                 }
                 break;
-            case vtString:
+            case VARIABLETYPE_STRING:
                 foreach ($Result as &$Item) {
                     $Item['TimeStamp'] = (int) $Item['TimeStamp'];
                 }

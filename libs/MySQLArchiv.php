@@ -16,7 +16,7 @@ eval('namespace MySqlArchive {?>' . file_get_contents(__DIR__ . '/../libs/helper
  * @author        Michael Tröger <micha@nall-chan.net>
  * @copyright     2019 Michael Tröger
  * @license       https://creativecommons.org/licenses/by-nc-sa/4.0/ CC BY-NC-SA 4.0
- * @version       3.20
+ * @version       3.30
  *
  */
 
@@ -163,13 +163,13 @@ trait Database
         switch (strtolower($sqlresult->fetch_row()[0])) {
             case 'double':
             case 'real':
-                return vtFloat;
+                return VARIABLETYPE_FLOAT;
             case 'int':
-                return vtInteger;
+                return VARIABLETYPE_INTEGER;
             case 'bit':
-                return vtBoolean;
+                return VARIABLETYPE_BOOLEAN;
             default:
-                return vtString;
+                return VARIABLETYPE_STRING;
         }
     }
 
