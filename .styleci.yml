@@ -16,3 +16,4 @@ disabled:
 finder:
   not-path:
     - "libs"
+    - "docs"
