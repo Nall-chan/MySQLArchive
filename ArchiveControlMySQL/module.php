@@ -377,7 +377,7 @@ class ArchiveControlMySQL extends ipsmodule
         $Vars = $this->Vars;
 
         if (array_key_exists($NewVariableID, $Vars)) {
-            trigger_error($this->Translate('NewVariableID is allready logged.'), E_USER_NOTICE);
+            trigger_error($this->Translate('NewVariableID is already logged.'), E_USER_NOTICE);
             $this->Logout();
             return false;
         }
@@ -541,7 +541,7 @@ class ArchiveControlMySQL extends ipsmodule
         $Vars = $this->Vars;
         if ($Aktiv) { //aktivieren
             if (array_key_exists($VariableID, $Vars)) {
-                trigger_error($this->Translate('VariableID is allready logged.'), E_USER_NOTICE);
+                trigger_error($this->Translate('VariableID is already logged.'), E_USER_NOTICE);
                 return false;
             }
             if (!IPS_VariableExists($VariableID)) {
@@ -662,7 +662,7 @@ class ArchiveControlMySQL extends ipsmodule
         }
 
         if (($Aggregationsstufe < 0) or ($Aggregationsstufe > 6)) {
-            trigger_error($this->Translate('Invalid Aggregationsstage'), E_USER_NOTICE);
+            trigger_error($this->Translate('Invalid Aggregationstage'), E_USER_NOTICE);
             return false;
         }
 
