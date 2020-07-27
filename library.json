@@ -2,11 +2,11 @@
     "id": "{022D6B3D-0A0C-4AEB-80A1-8BC5DF7CA63C}",
     "author": "Michael Tr\u00f6ger",
     "name": "MySQLArchive Library",
-    "url": "https://github.com/Nall-chan/IPSMySQLArchive",
+    "url": "https://github.com/Nall-chan/MySQLArchive",
     "compatibility": {
         "version": "5.1"
     },
-    "version": "3.20",
-    "build": 150,
-    "date": 1556987178  
+    "version": "3.21",
+    "build": 151,
+    "date": 1595834650 
 }

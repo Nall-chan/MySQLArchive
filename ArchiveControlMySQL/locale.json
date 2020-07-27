@@ -21,8 +21,8 @@
             "No host for database": "Kein Host für Datenbank",
             "NewVariableID is no variable.": "NewVariableID ist keine Variable.",
             "VariableID is no Variable.": "VariableID ist keine Variable.",
-            "NewVariableID is allready logged.": "NewVariableID wird schon geloggt.",
-            "VariableID is allready logged.": "VariableID wird schon geloggt.",
+            "NewVariableID is already logged.": "NewVariableID wird schon geloggt.",
+            "VariableID is already logged.": "VariableID wird schon geloggt.",
             "OldVariableID was not logged.": "OldVariableID wurde nicht geloggt.",
             "VariableID was not logged.": "VariableID wurde nicht geloggt.",
             "VariableID is not logged.": "VariableID wird nicht geloggt.",
@@ -31,7 +31,7 @@
             "No data or VariableID found.": "Keine Daten für VariableID gefunden.",
             "Error on delete data.": "Fehler beim löschen von Daten.",
             "Error on fetch data.": "Fehler beim holen der Daten.",
-            "Invalid Aggregationsstage": "Ungültige Aggregationsstufe",
+            "Invalid Aggregationstage": "Ungültige Aggregationsstufe",
             "Done": "Erledigt",
             "Create Highcharts Script": "Erzeuge Highcharts Script"
         }

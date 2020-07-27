@@ -1,30 +1,30 @@
 [![Version](https://img.shields.io/badge/Symcon-PHPModul-red.svg)](https://www.symcon.de/service/dokumentation/entwicklerbereich/sdk-tools/sdk-php/)
-[![Version](https://img.shields.io/badge/Modul%20Version-3.20-blue.svg)]()
+[![Version](https://img.shields.io/badge/Modul%20Version-3.21-blue.svg)]()
 [![License](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-green.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)  
 [![Version](https://img.shields.io/badge/Symcon%20Version-5.1%20%3E-green.svg)](https://www.symcon.de/forum/threads/30857-IP-Symcon-5-1-%28Stable%29-Changelog)
-[![StyleCI](https://styleci.io/repos/107871581/shield?style=flat)](https://styleci.io/repos/107871581)  
-
+[![Check Style](https://github.com/Nall-chan/MySQLArchive/workflows/Check%20Style/badge.svg)](https://github.com/Nall-chan/MySQLArchive/actions) 
+[![Run Tests](https://github.com/Nall-chan/MySQLArchive/workflows/Run%20Tests/badge.svg)](https://github.com/Nall-chan/MySQLArchive/actions) 
 
 # Symcon-Modul: MySQL Archiv
 
 Zusätzliches Archiv für MySQL Datenbanken.
 
-## Dokumentation
+## Dokumentation <!-- omit in toc -->
 
 **Inhaltsverzeichnis**
 
-1. [Funktionsumfang](#1-funktionsumfang) 
-2. [Voraussetzungen](#2-voraussetzungen)
-3. [Installation](#3-installation)
-4. [Vorbereitungen](#4-vorbereitungen)
-5. [Einrichten der Instanz in IPS](#5-einrichten-der--instanz-in-ips)
-6. [PHP-Befehlsreferenz](#6-php-befehlsreferenz) 
-7. [Parameter](#7-parameter) 
-8. [Anhang](#8-anhang)  
-    1. [GUID der Module](#1-guid-der-module)
-    2. [Changlog](#2-changlog)
-    3. [Spenden](#3-spenden)
-9. [Lizenz](#9-lizenz)
+- [1. Funktionsumfang](#1-funktionsumfang)
+- [2. Voraussetzungen](#2-voraussetzungen)
+- [3. Installation](#3-installation)
+- [4. Vorbereitungen](#4-vorbereitungen)
+- [5. Einrichten der Instanz in IPS](#5-einrichten-der-instanz-in-ips)
+- [6. PHP-Funktionsreferenz](#6-php-funktionsreferenz)
+- [7. Parameter](#7-parameter)
+- [8. Anhang](#8-anhang)
+  - [1. GUID der Module](#1-guid-der-module)
+  - [2. Changelog](#2-changelog)
+  - [3. Spenden](#3-spenden)
+- [9. Lizenz](#9-lizenz)
 
 ## 1. Funktionsumfang
 
@@ -34,11 +34,11 @@ Auslesen mit ACmySQL_* PHP-Funktionen (kompatibel mit den AC_* Befehlen).
 **Achtung:**  
   Dieses 'Archive Control' ersetzt nicht das Original in IPS.  
   Es wird nicht zur Visualisierung der IPS eigenen Graphen genutzt.  
-  Ebenso kann das Logging-Verhalten nicht über die Einstellungen der Variable angepaßt werden, sondern nur in der Instanz 'Archiv MySQL'.  
+  Ebenso kann das Logging-Verhalten nicht über die Einstellungen der Variable angepasst werden, sondern nur in der Instanz 'Archiv MySQL'.  
   Der Typ Zähler ist aktuell nicht verfügbar.
 
   Um die gespeicherten Daten darzustellen, müssen Umsetzungen von dritten (wie z.B. Highcharts) genutzt werden.  
-  Eine angepaßte Highcharts.ips.php ist unter 'docs' beigefügt und kann über die Konfiguration der Instanz in den Objektbaum kopiert werden.  
+  Eine angepasste Highcharts.ips.php ist unter 'docs' beigefügt und kann über die Konfiguration der Instanz in den Objektbaum kopiert werden.  
 
 ## 2. Voraussetzungen
 
@@ -49,8 +49,7 @@ Auslesen mit ACmySQL_* PHP-Funktionen (kompatibel mit den AC_* Befehlen).
 ## 3. Installation
 
 **IPS 5.1:**  
-   Bei privater Nutzung: Über das 'Module-Control' in IPS folgende URL hinzufügen.  
-   `git://github.com/Nall-chan/IPSMySQLArchiv.git`  
+   Bei privater Nutzung: Über den 'Module-Store' in IPS das Modul `MySQL Archiv` hinzufügen.  
 
    **Bei kommerzieller Nutzung (z.B. als Errichter oder Integrator) wenden Sie sich bitte an den Autor.**  
 
@@ -65,7 +64,7 @@ Auslesen mit ACmySQL_* PHP-Funktionen (kompatibel mit den AC_* Befehlen).
   - In den Schnellfilter MySQL eingeben.  
   - Den Eintrag 'Archiv MySQL' wählen und mit OK bestätigen.  
   - Die Instanz über einen weiten Klick auf OK erzeugen.  
-  - Im folgenden Dialog des Konfigurators müssen jetzt erst die Zugangsdaten zum MySQL-Server eingebene werden.  
+  - Im folgenden Dialog des Konfigurator müssen jetzt erst die Zugangsdaten zum MySQL-Server eingegeben werden.  
   - Die zu loggenden Variablen müssen über den Button 'hinzufügen' und dann durch einen Klick auf den Stift ausgewählt werden.  
 
 ## 6. PHP-Funktionsreferenz  
@@ -76,13 +75,13 @@ Da aktuell keine Zähler unterstützt werden, werden diese Rückgabewerte immer 
 
 ## 7. Parameter
 
-| Name         | Eigenschaft | Typ     | Standardwert | Funktion                          |
+|     Name     | Eigenschaft |   Typ   | Standardwert |             Funktion              |
 | :----------: | :---------: | :-----: | :----------: | :-------------------------------: |
-| Host         | Host        | string  |              | Hostname / IP-Adresse             |
-| Datenbank    | Database    | string  | ips          | Name der Datenbank                |
-| Benutzername | Username    | integer |              | Benutzername MySQL                |
-| Passwort     | Password    | string  |              | Passwort MySQL                    |
-| Variablen    | Variables   | string  | {}           | JSON-String mit allen VariablenID |
+|     Host     |    Host     | string  |              |       Hostname / IP-Adresse       |
+|  Datenbank   |  Database   | string  |     ips      |        Name der Datenbank         |
+| Benutzername |  Username   | integer |              |        Benutzername MySQL         |
+|   Passwort   |  Password   | string  |              |          Passwort MySQL           |
+|  Variablen   |  Variables  | string  |      {}      | JSON-String mit allen VariablenID |
 
 
 ## 8. Anhang
@@ -90,11 +89,11 @@ Da aktuell keine Zähler unterstützt werden, werden diese Rückgabewerte immer 
 ###  1. GUID der Module
 
  
-| Modul                 | Typ          |Prefix   | GUID                                   |
-| :-------------------: | :----------: | :-----: | :------------------------------------: |
-| Archive Control MySQL | Device       | ACmySQL | {FDCB334A-AFFF-4785-9596-D380252CEE4E} |
+|         Modul         |  Typ   | Prefix  |                  GUID                  |
+| :-------------------: | :----: | :-----: | :------------------------------------: |
+| Archive Control MySQL | Device | ACmySQL | {FDCB334A-AFFF-4785-9596-D380252CEE4E} |
 
-### 2. Changlog
+### 2. Changelog
 
 Version 3.20:  
 - Release für IPS 5.1 und den Module-Store   
@@ -121,7 +120,7 @@ Version 1.01:
 
 ### 3. Spenden  
   
-  Die Library ist für die nicht kommzerielle Nutzung kostenlos, Schenkungen als Unterstützung für den Autor werden hier akzeptiert:  
+  Die Library ist für die nicht kommerzielle Nutzung kostenlos, Schenkungen als Unterstützung für den Autor werden hier akzeptiert:  
 
 <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=G2SLW2MEMQZH2" target="_blank"><img src="https://www.paypalobjects.com/de_DE/DE/i/btn/btn_donate_LG.gif" border="0" /></a>
 

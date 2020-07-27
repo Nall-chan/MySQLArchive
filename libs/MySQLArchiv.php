@@ -163,13 +163,13 @@ trait Database
         switch (strtolower($sqlresult->fetch_row()[0])) {
             case 'double':
             case 'real':
-                return vtFloat;
+                return VARIABLETYPE_FLOAT;
             case 'int':
-                return vtInteger;
+                return VARIABLETYPE_INTEGER;
             case 'bit':
-                return vtBoolean;
+                return VARIABLETYPE_BOOLEAN;
             default:
-                return vtString;
+                return VARIABLETYPE_STRING;
         }
     }
 
@@ -316,7 +316,7 @@ trait Database
 trait VariableWatch
 {
     /**
-     * Deregistriert eine Überwachung einer Variable.
+     * Unregistriert eine Überwachung einer Variable.
      *
      * @param int $VarId IPS-ID der Variable.
      */

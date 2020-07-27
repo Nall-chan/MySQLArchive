@@ -3,9 +3,12 @@
     "name": "Archive Control MySQL",
     "type": 0,
     "vendor": "",
-    "aliases": ["Archiv MySQL"],
+    "aliases": [
+        "Archiv MySQL"
+    ],
     "parentRequirements": [],
     "childRequirements": [],
     "implemented": [],
-    "prefix": "ACmySQL"
+    "prefix": "ACmySQL",
+    "url":"https://github.com/Nall-chan/MySQLArchive"
 }

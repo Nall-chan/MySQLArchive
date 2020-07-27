@@ -1,6 +1,5 @@
 <?php
 
-declare(strict_types=1);
 $version = 'MySQL3.01'; $versionDate = '22.10.2017';
 
     //ToDo:
@@ -11,7 +10,7 @@ $version = 'MySQL3.01'; $versionDate = '22.10.2017';
     //--------------------------------------------------------------------------------------------------------------------------------
     // Für die Darstellung der Graphen wird das HTML5/JS Framework "Highcharts" der Fa. Highslide Software verwendet (www.highcharts.com)
     // Alle Rechte dieses Frameworks liegen bei Highslide Software.
-    // 'Highcharts' kann unter folgenden Bedinungen kostenlos eingesetzt werden:
+    // 'Highcharts' kann unter folgenden Bedingungen kostenlos eingesetzt werden:
     // 	Namensnennung ? Sie müssen den Namen des Autors/Rechteinhabers in der von ihm festgelegten Weise nennen.
     // 	Keine kommerzielle Nutzung ? Dieses Werk bzw. dieser Inhalt darf nicht für kommerzielle Zwecke verwendet werden.
     // Download: wwww.highcharts.com/download/ ... und die Dateien einfach in das Webfront (Es sollte ein V 2.2 oder höher verwendet werden.
@@ -32,7 +31,7 @@ $version = 'MySQL3.01'; $versionDate = '22.10.2017';
     // 10.05.2012  KHC   FIX      Fehler beim Auswerten der AggregatedValues behoben (ReadDataFromDBAndCreateDataArray)
     // 12.05.2012  KHC   FIX      Tooltip für "ReplaceValues" korrigiert
     // 12.05.2012  KHC   CHANGE   Start- und Endzeitpunkt der X-Achse wurde automatisch um 5 Minuten korrigiert -> dies wurde entfernt
-    // 12.05.2012  KHC   NEU      mit ['xAxis']['min']=false und ['xAxis']['min']=false kann festeglegt werden dass Min oder Max nicht autom. festgelegt werden
+    // 12.05.2012  KHC   NEU      mit ['xAxis']['min']=false und ['xAxis']['min']=false kann festgelegt werden dass Min oder Max nicht automatisch festgelegt werden
     //	--- V2.02 ---------------------------------------------------------------------------------------------------------------------
     // 13.05.2012  KHC   FIX      RunType=file: Wenn Highstock vorgewählt wurde wurde das tmp File nicht in die Highstock-Verzeichnis geschrieben
     // 16.05.2012  KHC   NEU      Integration Highstock: ['navigator'], ['rangeSelector'] und ['scrollbar']
@@ -58,6 +57,7 @@ $version = 'MySQL3.01'; $versionDate = '22.10.2017';
     // 24.11.2016  KHC   FIX      Probleme mit Umlauten -> mb_detect_encoding an Stelle $item = utf8_encode($item);
     //--------------------------------------------------------------------------------------------------------------------------------
     // 22.10.2017  Nall  FORK     Fork für die Verwendung mit dem 'Archive Control MySQL'
+    // 27.07.2020  Nall  REFACT   Diverse Schreibfehler korrigiert.
 
    function RunHighcharts($cfg)
    {
@@ -242,11 +242,11 @@ $version = 'MySQL3.01'; $versionDate = '22.10.2017';
                     " frameborder='0' scrolling='no' ></iframe>";
     }
 
-    function CreateFilenameForContentString($filename, $paramter = false)
+    function CreateFilenameForContentString($filename, $parameter = false)
     {
         $s = './user/' . $filename;
-        if ($paramter != false) {
-            $s .= "?$paramter";
+        if ($parameter != false) {
+            $s .= "?$parameter";
         }
         return $s;
     }
@@ -264,7 +264,7 @@ $version = 'MySQL3.01'; $versionDate = '22.10.2017';
                 ' height=' . $cfg['HighChart']['Height'] + 16 .
                 " ' frameborder='1' scrolling='no'";
 
-            SetValueString($cfg['ContentVarableId'], $s);
+            SetValueString($cfg['ContentVariableId'], $s);
             return true;
         }
     }
@@ -279,7 +279,7 @@ $version = 'MySQL3.01'; $versionDate = '22.10.2017';
 
             $s = CreateContentString($cfg, $fullfilename);
 
-            SetValueString($cfg['ContentVarableId'], $s);
+            SetValueString($cfg['ContentVariableId'], $s);
 
             return true;
         }
@@ -294,7 +294,7 @@ $version = 'MySQL3.01'; $versionDate = '22.10.2017';
 
             $s = CreateContentString($cfg, $fullfilename);
 
-            SetValueString($cfg['ContentVarableId'], $s);
+            SetValueString($cfg['ContentVariableId'], $s);
 
             return true;
         }
@@ -385,7 +385,7 @@ $version = 'MySQL3.01'; $versionDate = '22.10.2017';
 
         // Series
         if (isset($cfg['Series']) && isset($cfg['series'])) {
-            die("Abbruch - Es düfen nicht gleichzeitig 'Series' und 'series' definiert werden.");
+            die("Abbruch - Es dürfen nicht gleichzeitig 'Series' und 'series' definiert werden.");
         }
         if (isset($cfg['Series']) && !isset($cfg['series'])) {
             $cfg['series'] = $cfg['Series'];
@@ -509,7 +509,7 @@ $version = 'MySQL3.01'; $versionDate = '22.10.2017';
             IfNotIssetSetValue($cfg['WFCPopupTitle'], '');
         }
 
-        // wenn der Tooltipformater genutz wird kann damit das Format des DateTime festgelegt werden
+        // wenn der TooltipFormater genutz wird kann damit das Format des DateTime festgelegt werden
         IfNotIssetSetValue($cfg['TooltipDateTimeFormat'], '%A %d.%m.%Y %H:%M');
 
         return $cfg;
@@ -526,12 +526,12 @@ $version = 'MySQL3.01'; $versionDate = '22.10.2017';
         DebugModuleName($cfg, 'Check_ContentVariable');
 
         // wenn keine Id übergeben wurde wird das übergeordnete Objekt als Content verwendet
-        if (!isset($cfg['ContentVarableId']) || $cfg['ContentVarableId'] <= 0) {
-            //	$cfg['ContentVarableId'] = IPS_GetParent($scriptId);
-            $cfg['ContentVarableId'] = TryToFindContentVariableByLookingHierachyUpstairs($scriptId);
+        if (!isset($cfg['ContentVariableId']) || $cfg['ContentVariableId'] <= 0) {
+            //	$cfg['ContentVariableId'] = IPS_GetParent($scriptId);
+            $cfg['ContentVariableId'] = TryToFindContentVariableByLookingHierachyUpstairs($scriptId);
         }
 
-        $variable = @IPS_GetVariable($cfg['ContentVarableId']);
+        $variable = @IPS_GetVariable($cfg['ContentVariableId']);
         if ($variable == false) {
             die('Abbruch - Content-Variable nicht gefunden.');
         }
@@ -1037,7 +1037,7 @@ $version = 'MySQL3.01'; $versionDate = '22.10.2017';
             $val = $val * $serie['ScaleFactor'];
         }
 
-        // Rounden von Nachkommastellen
+        // Runden von Nachkommastellen
         if (isset($serie['RoundValue'])) {
             $val = round($val, $serie['RoundValue']);
         }
@@ -1070,12 +1070,12 @@ $version = 'MySQL3.01'; $versionDate = '22.10.2017';
         } else {
             die('Abbruch - Pie-Definition nicht korrekt');
         }
-        return $Data;
+        return [];
     }
 
     // ------------------------------------------------------------------------
     // ReadPieDataById
-    //    liest die Aggregated-Werte einer einer Vriablen aus und erzeugt das entsprechende Array
+    //    liest die Aggregated-Werte einer einer Variablen aus und erzeugt das entsprechende Array
     //    IN: $cfg, $serie
     //    OUT: Config Array
     // ------------------------------------------------------------------------
@@ -1443,7 +1443,7 @@ $version = 'MySQL3.01'; $versionDate = '22.10.2017';
                 // es wurden Unit und ReplaceValues übergeben
                 elseif (is_array($Serie['Unit']) && is_array($Serie['ReplaceValues'])) {
                     $s .= CreateTooltipSubValues($Serie['Unit'], $Serie['ReplaceValues']);
-                } else {		// Einheit aus übergebenem Parmeter Unit
+                } else {		// Einheit aus übergebenem Parameter Unit
                     $s .= "[this.y + ' " . $Serie['Unit'] . "'],";
                 }
                 $offset .= $Serie['Offset'] . ',';
@@ -1453,7 +1453,7 @@ $version = 'MySQL3.01'; $versionDate = '22.10.2017';
         $s = trim($s, ',');
         $offset = trim($offset, ',');
 
-        //*1000 da JS in [ms] angebgeben wird un php in [s]
+        //*1000 da JS in [ms] angegeben wird un php in [s]
         /*		$TooltipString="function() {
                                         var serieIndex = this.series.index;
 
@@ -1486,7 +1486,7 @@ $version = 'MySQL3.01'; $versionDate = '22.10.2017';
 
                                         }
                                 } ";
-        */
+         */
 
         $TooltipString = 'function() {
 								var serieIndex = this.series.index;
@@ -1538,7 +1538,7 @@ $version = 'MySQL3.01'; $versionDate = '22.10.2017';
     // ------------------------------------------------------------------------
     // GetIPSVariableProfile
     //    Liest das Variablen Profil der übergeben Variable aus
-    //    Versucht zuerst das eigene und wenn nicht verfügbar das Standar Profil auszulesen
+    //    Versucht zuerst das eigene und wenn nicht verfügbar das Standard Profil auszulesen
     //    IN: variableId = Id der Variablen
     //    OUT: Variablen Profil
     // ------------------------------------------------------------------------
@@ -1647,7 +1647,7 @@ $version = 'MySQL3.01'; $versionDate = '22.10.2017';
         }
 
         //Default
-        // wenn not isset -> autom. erzeugen durch IPS
+        // wenn not isset -> automatisch erzeugen durch IPS
         if (!isset($cfg['tooltip']['formatter'])) {
             $cfg['tooltip']['formatter'] = '@' . CreateTooltipFormatter($cfg) . '@';
         }
@@ -1782,32 +1782,32 @@ $version = 'MySQL3.01'; $versionDate = '22.10.2017';
     function ReplaceToGermanDate($value)
     {
         $trans = [
-                'Monday'    => 'Montag',
-                'Tuesday'   => 'Dienstag',
-                'Wednesday' => 'Mittwoch',
-                'Thursday'  => 'Donnerstag',
-                'Friday'    => 'Freitag',
-                'Saturday'  => 'Samstag',
-                'Sunday'    => 'Sonntag',
-                'Mon'       => 'Mo',
-                'Tue'       => 'Di',
-                'Wed'       => 'Mi',
-                'Thu'       => 'Do',
-                'Fri'       => 'Fr',
-                'Sat'       => 'Sa',
-                'Sun'       => 'So',
-                'January'   => 'Januar',
-                'February'  => 'Februar',
-                'March'     => 'März',
-                'May'       => 'Mai',
-                'June'      => 'Juni',
-                'July'      => 'Juli',
-                'October'   => 'Oktober',
-                'December'  => 'Dezember',
-                'Mar'     	 => 'Mär',
-                'May'       => 'Mai',
-                'Oct'   	   => 'Okt',
-                'Dec'  		   => 'Dez',
+            'Monday'    => 'Montag',
+            'Tuesday'   => 'Dienstag',
+            'Wednesday' => 'Mittwoch',
+            'Thursday'  => 'Donnerstag',
+            'Friday'    => 'Freitag',
+            'Saturday'  => 'Samstag',
+            'Sunday'    => 'Sonntag',
+            'Mon'       => 'Mo',
+            'Tue'       => 'Di',
+            'Wed'       => 'Mi',
+            'Thu'       => 'Do',
+            'Fri'       => 'Fr',
+            'Sat'       => 'Sa',
+            'Sun'       => 'So',
+            'January'   => 'Januar',
+            'February'  => 'Februar',
+            'March'     => 'März',
+            'May'       => 'Mai',
+            'June'      => 'Juni',
+            'July'      => 'Juli',
+            'October'   => 'Oktober',
+            'December'  => 'Dezember',
+            'Mar'     	 => 'Mär',
+            'May'       => 'Mai',
+            'Oct'   	   => 'Okt',
+            'Dec'  		   => 'Dez',
         ];
         return  strtr($value, $trans);
     }
@@ -1924,7 +1924,7 @@ $version = 'MySQL3.01'; $versionDate = '22.10.2017';
 
     // ------------------------------------------------------------------------
     // IfNotIssetSetValue
-    //    pfüft ob isset($item), wenn nicht wird $value in &$item geschrieben
+    //    prüft ob isset($item), wenn nicht wird $value in &$item geschrieben
     //    IN: &$item, $value
     //    OUT: &$item
     // ------------------------------------------------------------------------
