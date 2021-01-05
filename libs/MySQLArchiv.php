@@ -160,6 +160,9 @@ trait Database
                 "WHERE ((TABLE_NAME = 'var" . $VariableID . "') AND (COLUMN_NAME = 'value'))";
 
         $sqlresult = $this->DB->query($query);
+        if ($sqlresult->num_rows == 0) {
+            return false;
+        } 
         switch (strtolower($sqlresult->fetch_row()[0])) {
             case 'double':
             case 'real':
@@ -251,8 +254,10 @@ trait Database
         /* @var $sqlresult mysqli_result */
 
         $sqlresult = $this->DB->query($query);
+        if ($sqlresult->num_rows == 0) {
+            return false;
+        } 
         $Result['FirstTimestamp'] = (int) $sqlresult->fetch_row()[0];
-
         $query = "SELECT unix_timestamp(timestamp) AS 'TimeStamp' " .
                 'FROM  var' . $VariableId . ' ' .
                 'ORDER BY timestamp DESC ' .
@@ -260,12 +265,6 @@ trait Database
         /* @var $sqlresult mysqli_result */
         $sqlresult = $this->DB->query($query);
         $Result['LastTimestamp'] = (int) $sqlresult->fetch_row()[0];
-
-        $query = "SELECT count(*) AS 'Count' " .
-                'FROM  var' . $VariableId . ' ';
-        /* @var $sqlresult mysqli_result */
-        $sqlresult = $this->DB->query($query);
-        $Result['Count'] = (int) $sqlresult->fetch_row()[0];
 
         $query = "SELECT count(*) AS 'Count' " .
                 'FROM  var' . $VariableId . ' ';

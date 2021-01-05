@@ -1,11 +1,12 @@
-[![Version](https://img.shields.io/badge/Symcon-PHPModul-red.svg)](https://www.symcon.de/service/dokumentation/entwicklerbereich/sdk-tools/sdk-php/)
-[![Version](https://img.shields.io/badge/Modul%20Version-3.31-blue.svg)]()
+[![SDK](https://img.shields.io/badge/Symcon-PHPModul-red.svg)](https://www.symcon.de/service/dokumentation/entwicklerbereich/sdk-tools/sdk-php/) 
+[![Version](https://img.shields.io/badge/Modul%20Version-3.35-blue.svg)]() 
 [![License](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-green.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)  
-[![Version](https://img.shields.io/badge/Symcon%20Version-5.1%20%3E-green.svg)](https://www.symcon.de/forum/threads/30857-IP-Symcon-5-1-%28Stable%29-Changelog)
+[![Version](https://img.shields.io/badge/Symcon%20Version-5.1%20%3E-green.svg)](https://www.symcon.de/forum/threads/30857) 
 [![Check Style](https://github.com/Nall-chan/MySQLArchive/workflows/Check%20Style/badge.svg)](https://github.com/Nall-chan/MySQLArchive/actions) 
-[![Run Tests](https://github.com/Nall-chan/MySQLArchive/workflows/Run%20Tests/badge.svg)](https://github.com/Nall-chan/MySQLArchive/actions) 
+[![Run Tests](https://github.com/Nall-chan/MySQLArchive/workflows/Run%20Tests/badge.svg)](https://github.com/Nall-chan/MySQLArchive/actions)  
+[![Spenden](https://www.paypalobjects.com/de_DE/DE/i/btn/btn_donate_SM.gif)](#10-spenden) 
 
-# Symcon-Modul: MySQL Archiv
+# Symcon-Modul: MySQL Archiv  <!-- omit in toc -->
 
 Zusätzliches Archiv für MySQL Datenbanken.
 
@@ -23,8 +24,8 @@ Zusätzliches Archiv für MySQL Datenbanken.
 - [8. Anhang](#8-anhang)
   - [1. GUID der Module](#1-guid-der-module)
   - [2. Changelog](#2-changelog)
-  - [3. Spenden](#3-spenden)
-- [9. Lizenz](#9-lizenz)
+- [8. Spenden](#8-spenden)
+- [10. Lizenz](#10-lizenz)
 
 ## 1. Funktionsumfang
 
@@ -95,6 +96,13 @@ Da aktuell keine Zähler unterstützt werden, werden diese Rückgabewerte immer 
 
 ### 2. Changelog
 
+Version 3.35:
+- Das Anzeigen der Konfiguration konnte fehlschlagen, wenn in einer Tabelle keine Werte vorhanden waren.  
+- ACmySQL_GetAggregationVariables konnte fehlschlagen, wenn in einer Tabelle keine Werte vorhanden waren.  
+- ACmySQL_ChangeVariableID konnte fehlschlagen,wenn in einer Tabelle keine Werte vorhanden waren.  
+- ACmySQL_GetLoggedValues konnte fehlschlagen,wenn in einer Tabelle keine Werte vorhanden waren.  
+- ACmySQL_GetAggregatedValues konnte fehlschlagen,wenn in einer Tabelle keine Werte vorhanden waren.  
+
 Version 3.31:
 - Fix für defekte 3.20 Version.  
 
@@ -121,14 +129,14 @@ Version 1.02:
 Version 1.01:  
  - Erstes offizielles Release
 
-### 3. Spenden  
+## 8. Spenden  
   
   Die Library ist für die nicht kommerzielle Nutzung kostenlos, Schenkungen als Unterstützung für den Autor werden hier akzeptiert:  
 
 <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=G2SLW2MEMQZH2" target="_blank"><img src="https://www.paypalobjects.com/de_DE/DE/i/btn/btn_donate_LG.gif" border="0" /></a>
 
 
-## 9. Lizenz
+## 10. Lizenz
 
   IPS-Modul:  
   [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)  
