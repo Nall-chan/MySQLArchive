@@ -162,7 +162,7 @@ trait Database
         $sqlresult = $this->DB->query($query);
         if ($sqlresult->num_rows == 0) {
             return false;
-        } 
+        }
         switch (strtolower($sqlresult->fetch_row()[0])) {
             case 'double':
             case 'real':
@@ -256,7 +256,7 @@ trait Database
         $sqlresult = $this->DB->query($query);
         if ($sqlresult->num_rows == 0) {
             return false;
-        } 
+        }
         $Result['FirstTimestamp'] = (int) $sqlresult->fetch_row()[0];
         $query = "SELECT unix_timestamp(timestamp) AS 'TimeStamp' " .
                 'FROM  var' . $VariableId . ' ' .

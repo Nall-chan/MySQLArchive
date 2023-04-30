@@ -184,22 +184,6 @@ class ArchiveControlMySQL extends ipsmodule
     }
 
     /**
-     * Versucht eine Semaphore zu setzen und wiederholt dies bei Misserfolg bis zu 100 mal.
-     *
-     * @param string $ident Ein String der den Lock bezeichnet.
-     *
-     * @return bool TRUE bei Erfolg, FALSE bei Misserfolg.
-     */
-    private function lock($ident)
-    {
-        $Runtime = microtime(true);
-        $Result = $this->TraitLock($ident);
-        $this->SendDebug('WaitLock [' . $_IPS['THREAD'] . ']', sprintf('%.3f', ((microtime(true) - $Runtime) * 1000))
-                . ' ms', 0);
-        return $Result;
-    }
-
-    /**
      * Interne Funktion des SDK.
      */
     public function GetConfigurationForm()
@@ -292,64 +276,6 @@ class ArchiveControlMySQL extends ipsmodule
         $this->Logout();
 
         return json_encode($form);
-    }
-
-    //################# PRIVATE
-
-    /**
-     * Werte loggen.
-     *
-     * @param int   $Variable   VariablenID
-     * @param mixed $NewValue   Neuer Wert der Variable
-     * @param bool  $HasChanged true wenn neuer Wert vom alten abweicht
-     * @param int   $Timestamp  Zeitstempel des neuen Wert
-     */
-    private function LogValue($Variable, $NewValue, $HasChanged, $Timestamp)
-    {
-        $Vars = $this->Vars;
-        if (!array_key_exists($Variable, $Vars)) {
-            return false;
-        }
-        switch ($Vars[$Variable]) {
-            case VARIABLETYPE_BOOLEAN:
-                $result = $this->WriteValue($Variable, (int) $NewValue, $HasChanged, $Timestamp);
-                break;
-            case VARIABLETYPE_INTEGER:
-                $result = $this->WriteValue($Variable, $NewValue, $HasChanged, $Timestamp);
-                break;
-            case VARIABLETYPE_FLOAT:
-                $result = $this->WriteValue($Variable, sprintf('%F', $NewValue), $HasChanged, $Timestamp);
-                break;
-            case VARIABLETYPE_STRING:
-                $result = $this->WriteValue($Variable, "'" . $this->DB->real_escape_string($NewValue) . "'", $HasChanged, $Timestamp);
-                break;
-        }
-        if (!$result) {
-            $this->SendDebug('Error on write [' . $_IPS['THREAD'] . ']', $Variable, 0);
-        }
-    }
-
-    /**
-     * Anmelden am MySQL-Server uns auswählen der Datenbank.
-     * Für alle public Methoden, welche Fehler ausgeben sollen.
-     *
-     * @return bool True bei Erfolg, sonst false.
-     */
-    private function LoginAndSelectDB()
-    {
-        if (!$this->Login()) {
-            if ($this->DB) {
-                trigger_error($this->DB->connect_error, E_USER_NOTICE);
-            } else {
-                trigger_error($this->Translate('No host for database'), E_USER_NOTICE);
-            }
-            return false;
-        }
-        if (!$this->SelectDB()) {
-            trigger_error($this->DB->error, E_USER_NOTICE);
-            return false;
-        }
-        return true;
     }
 
     //################# PUBLIC
@@ -457,7 +383,7 @@ class ArchiveControlMySQL extends ipsmodule
      */
     public function GetLoggedValues(int $VariableID, int $Startzeit, int $Endzeit, int $Limit)
     {
-        if (($Limit > IPS_GetOption('ArchiveRecordLimit')) or ($Limit == 0)) {
+        if (($Limit > IPS_GetOption('ArchiveRecordLimit')) || ($Limit == 0)) {
             $Limit = IPS_GetOption('ArchiveRecordLimit');
         }
 
@@ -653,7 +579,7 @@ class ArchiveControlMySQL extends ipsmodule
      */
     public function GetAggregatedValues(int $VariableID, int $Aggregationsstufe, int $Startzeit, int $Endzeit, int $Limit)
     {
-        if (($Limit > IPS_GetOption('ArchiveRecordLimit')) or ($Limit == 0)) {
+        if (($Limit > IPS_GetOption('ArchiveRecordLimit')) || ($Limit == 0)) {
             $Limit = IPS_GetOption('ArchiveRecordLimit');
         }
 
@@ -661,7 +587,7 @@ class ArchiveControlMySQL extends ipsmodule
             $Endzeit = time();
         }
 
-        if (($Aggregationsstufe < 0) or ($Aggregationsstufe > 6)) {
+        if (($Aggregationsstufe < 0) || ($Aggregationsstufe > 6)) {
             trigger_error($this->Translate('Invalid Aggregationstage'), E_USER_NOTICE);
             return false;
         }
@@ -757,6 +683,80 @@ class ArchiveControlMySQL extends ipsmodule
           AggregationVisible	boolean	Gibt an ob die Variable in der Visualisierung angezeigt wird. Siehe auch AC_GetGraphStatus
           AggregationActive	boolean	Gibt an ob das Logging für diese Variable Aktiv ist. Siehe auch AC_GetLoggingStatus
          */
+    }
+
+    /**
+     * Versucht eine Semaphore zu setzen und wiederholt dies bei Misserfolg bis zu 100 mal.
+     *
+     * @param string $ident Ein String der den Lock bezeichnet.
+     *
+     * @return bool TRUE bei Erfolg, FALSE bei Misserfolg.
+     */
+    private function lock($ident)
+    {
+        $Runtime = microtime(true);
+        $Result = $this->TraitLock($ident);
+        $this->SendDebug('WaitLock [' . $_IPS['THREAD'] . ']', sprintf('%.3f', ((microtime(true) - $Runtime) * 1000))
+                . ' ms', 0);
+        return $Result;
+    }
+
+    //################# PRIVATE
+
+    /**
+     * Werte loggen.
+     *
+     * @param int   $Variable   VariablenID
+     * @param mixed $NewValue   Neuer Wert der Variable
+     * @param bool  $HasChanged true wenn neuer Wert vom alten abweicht
+     * @param int   $Timestamp  Zeitstempel des neuen Wert
+     */
+    private function LogValue($Variable, $NewValue, $HasChanged, $Timestamp)
+    {
+        $Vars = $this->Vars;
+        if (!array_key_exists($Variable, $Vars)) {
+            return false;
+        }
+        switch ($Vars[$Variable]) {
+            case VARIABLETYPE_BOOLEAN:
+                $result = $this->WriteValue($Variable, (int) $NewValue, $HasChanged, $Timestamp);
+                break;
+            case VARIABLETYPE_INTEGER:
+                $result = $this->WriteValue($Variable, $NewValue, $HasChanged, $Timestamp);
+                break;
+            case VARIABLETYPE_FLOAT:
+                $result = $this->WriteValue($Variable, sprintf('%F', $NewValue), $HasChanged, $Timestamp);
+                break;
+            case VARIABLETYPE_STRING:
+                $result = $this->WriteValue($Variable, "'" . $this->DB->real_escape_string($NewValue) . "'", $HasChanged, $Timestamp);
+                break;
+        }
+        if (!$result) {
+            $this->SendDebug('Error on write [' . $_IPS['THREAD'] . ']', $Variable, 0);
+        }
+    }
+
+    /**
+     * Anmelden am MySQL-Server uns auswählen der Datenbank.
+     * Für alle public Methoden, welche Fehler ausgeben sollen.
+     *
+     * @return bool True bei Erfolg, sonst false.
+     */
+    private function LoginAndSelectDB()
+    {
+        if (!$this->Login()) {
+            if ($this->DB) {
+                trigger_error($this->DB->connect_error, E_USER_NOTICE);
+            } else {
+                trigger_error($this->Translate('No host for database'), E_USER_NOTICE);
+            }
+            return false;
+        }
+        if (!$this->SelectDB()) {
+            trigger_error($this->DB->error, E_USER_NOTICE);
+            return false;
+        }
+        return true;
     }
 }
 

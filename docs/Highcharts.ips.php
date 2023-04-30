@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 $version = 'MySQL3.01'; $versionDate = '22.10.2017';
 
     //ToDo:

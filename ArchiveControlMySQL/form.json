@@ -1,123 +1,127 @@
 {
-    "elements":
-            [
+    "elements": [
+        {
+            "type": "ExpansionPanel",
+            "caption": "Connection",
+            "items": [
                 {
-                    "type": "ExpansionPanel",
-                    "caption": "Connection",
+                    "type": "RowLayout",
                     "items": [
-
                         {
-                            "type": "RowLayout",
-                            "items": [
-                                {
-                                    "name": "Host",
-                                    "type": "ValidationTextBox",
-                                    "caption": "Host"
-                                }, 
-                                {
-                                    "name": "Database",
-                                    "type": "ValidationTextBox",
-                                    "caption": "Database"
-                                }]
+                            "name": "Host",
+                            "type": "ValidationTextBox",
+                            "caption": "Host"
                         },
                         {
-                            "type": "RowLayout",
-                            "items": [
-
-                                {
-                                    "name": "Username",
-                                    "type": "ValidationTextBox",
-                                    "caption": "Username"
-                                },
-                                {
-                                    "name": "Password",
-                                    "type": "PasswordTextBox",
-                                    "caption": "Password"
-                                }]
-                        }]
-                },
-                {
-                    "type": "List",
-                    "name": "Variables",
-                    "rowCount": 20,
-                    "add": true,
-                    "delete": true,
-                    "sort": {
-                        "column": "VariableId",
-                        "direction": "ascending"
-                    },
-                    "columns": [{
-                            "caption": "VariableID",
-                            "name": "Variable",
-                            "width": "100px",
-                            "add": "",
-                            "save": false
-                        }, {
-                            "caption": "Variable",
-                            "name": "VariableId",
-                            "width": "auto",
-                            "add": 0,
-                            "edit": {
-                                "type": "SelectVariable"
-                            }
-                        }, {
-                            "caption": "First value",
-                            "name": "FirstTimestamp",
-                            "width": "200px",
-                            "add": "",
-                            "save": false
-                        }, {
-                            "caption": "Last value",
-                            "name": "LastTimestamp",
-                            "width": "200px",
-                            "add": "",
-                            "save": false
-                        }, {
-                            "caption": "Count",
-                            "name": "Count",
-                            "width": "100px",
-                            "add": "",
-                            "save": false
-                        }, {
-                            "caption": "Size",
-                            "name": "Size",
-                            "width": "100px",
-                            "add": "",
-                            "save": false
+                            "name": "Database",
+                            "type": "ValidationTextBox",
+                            "caption": "Database"
                         }
-                    ],
-                    "values": []
-                }
-            ],
-    "actions":
-            [
-                {
-                    "type": "Button",
-                    "caption": "Create Highcharts Script",
-                    "onClick": ""
-                }
-            ],
-    "status":
-            [
-                {
-                    "code": 102,
-                    "icon": "active",
-                    "caption": "Database connected."
+                    ]
                 },
                 {
-                    "code": 104,
-                    "icon": "inactive",
-                    "caption": "No connection."
-                },
-                {
-                    "code": 202,
-                    "icon": "error",
-                    "caption": "Cannot connect to database."
-                },
-                {
-                    "code": 203,
-                    "icon": "error",
-                    "caption": "Error on create tables."
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "name": "Username",
+                            "type": "ValidationTextBox",
+                            "caption": "Username"
+                        },
+                        {
+                            "name": "Password",
+                            "type": "PasswordTextBox",
+                            "caption": "Password"
+                        }
+                    ]
                 }
             ]
+        },
+        {
+            "type": "List",
+            "name": "Variables",
+            "rowCount": 20,
+            "add": true,
+            "delete": true,
+            "sort": {
+                "column": "VariableId",
+                "direction": "ascending"
+            },
+            "columns": [
+                {
+                    "caption": "VariableID",
+                    "name": "Variable",
+                    "width": "100px",
+                    "add": "",
+                    "save": false
+                },
+                {
+                    "caption": "Variable",
+                    "name": "VariableId",
+                    "width": "auto",
+                    "add": 0,
+                    "edit": {
+                        "type": "SelectVariable"
+                    }
+                },
+                {
+                    "caption": "First value",
+                    "name": "FirstTimestamp",
+                    "width": "200px",
+                    "add": "",
+                    "save": false
+                },
+                {
+                    "caption": "Last value",
+                    "name": "LastTimestamp",
+                    "width": "200px",
+                    "add": "",
+                    "save": false
+                },
+                {
+                    "caption": "Count",
+                    "name": "Count",
+                    "width": "100px",
+                    "add": "",
+                    "save": false
+                },
+                {
+                    "caption": "Size",
+                    "name": "Size",
+                    "width": "100px",
+                    "add": "",
+                    "save": false
+                }
+            ],
+            "values": []
+        }
+    ],
+    "actions": [
+        {
+            "type": "Button",
+            "caption": "Create Highcharts Script",
+            "onClick": ""
+        }
+    ],
+    "status": [
+        {
+            "code": 102,
+            "icon": "active",
+            "caption": "Database connected."
+        },
+        {
+            "code": 104,
+            "icon": "inactive",
+            "caption": "No connection."
+        },
+        {
+            "code": 202,
+            "icon": "error",
+            "caption": "Cannot connect to database."
+        },
+        {
+            "code": 203,
+            "icon": "error",
+            "caption": "Error on create tables."
+        }
+    ]
 }
