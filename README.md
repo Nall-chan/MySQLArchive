@@ -4,7 +4,7 @@
 [![Version](https://img.shields.io/badge/Symcon%20Version-5.1%20%3E-green.svg)](https://www.symcon.de/forum/threads/30857) 
 [![Check Style](https://github.com/Nall-chan/MySQLArchive/workflows/Check%20Style/badge.svg)](https://github.com/Nall-chan/MySQLArchive/actions) 
 [![Run Tests](https://github.com/Nall-chan/MySQLArchive/workflows/Run%20Tests/badge.svg)](https://github.com/Nall-chan/MySQLArchive/actions)  
-[![Spenden](https://www.paypalobjects.com/de_DE/DE/i/btn/btn_donate_SM.gif)](#10-spenden) 
+[![Spenden](https://www.paypalobjects.com/de_DE/DE/i/btn/btn_donate_SM.gif)](#9-spenden) 
 
 # Symcon-Modul: MySQL Archiv  <!-- omit in toc -->
 
@@ -24,7 +24,7 @@ Zusätzliches Archiv für MySQL Datenbanken.
 - [8. Anhang](#8-anhang)
   - [1. GUID der Module](#1-guid-der-module)
   - [2. Changelog](#2-changelog)
-- [8. Spenden](#8-spenden)
+- [9. Spenden](#9-spenden)
 - [10. Lizenz](#10-lizenz)
 
 ## 1. Funktionsumfang
@@ -129,11 +129,13 @@ Version 1.02:
 Version 1.01:  
  - Erstes offizielles Release
 
-## 8. Spenden  
+## 9. Spenden  
   
   Die Library ist für die nicht kommerzielle Nutzung kostenlos, Schenkungen als Unterstützung für den Autor werden hier akzeptiert:  
 
 <a href="https://www.paypal.com/donate?hosted_button_id=G2SLW2MEMQZH2" target="_blank"><img src="https://www.paypalobjects.com/de_DE/DE/i/btn/btn_donate_LG.gif" border="0" /></a>
+
+[![Wunschliste](https://img.shields.io/badge/Wunschliste-Amazon-ff69fb.svg)](https://www.amazon.de/hz/wishlist/ls/YU4AI9AQT9F?ref_=wl_share)
 
 
 ## 10. Lizenz

@@ -33,7 +33,8 @@
             "Error on fetch data.": "Fehler beim holen der Daten.",
             "Invalid Aggregationstage": "Ungültige Aggregationsstufe",
             "Done": "Erledigt",
-            "Create Highcharts Script": "Erzeuge Highcharts Script"
+            "Create Highcharts Script": "Erzeuge Highcharts Script",
+            "This module is free for non-commercial use,\r\nDonations in support of the author are accepted here:": "Dieses Modul ist für die nicht kommerzielle Nutzung kostenlos,\r\nSchenkungen als Unterstützung für den Autor werden hier akzeptiert:"
         }
     }
 }
