@@ -50,7 +50,7 @@ class ArchiveControlMySQL extends ipsmodule
         $this->RegisterPropertyString('Password', '');
         $this->RegisterPropertyString('Database', 'IPS');
         $this->RegisterPropertyString('Variables', json_encode([]));
-        $this->RegisterTimer('LogData', 0, 'ACmySQL_LogData($_IPS[\'TARGET\']);');
+        $this->RegisterTimer('LogData', 0, 'ACMYSQL_LogData($_IPS[\'TARGET\']);');
         $this->Vars = [];
         $this->Buffer = [];
     }
@@ -281,7 +281,7 @@ class ArchiveControlMySQL extends ipsmodule
     //################# PUBLIC
 
     /**
-     * IPS-Instant-Funktion ACmySQL_ChangeVariableID
+     * IPS-Instanz-Funktion ACMYSQL_ChangeVariableID
      * Zum überführen von geloggten Daten auf eine neue Variable.
      *
      * @param int $OldVariableID Alte VariablenID
@@ -339,7 +339,7 @@ class ArchiveControlMySQL extends ipsmodule
     }
 
     /**
-     * IPS-Instant-Funktion ACmySQL_DeleteVariableData
+     * IPS-Instanz-Funktion ACMYSQL_DeleteVariableData
      * Zum löschen einer Zeitspanne von Werten.
      *
      * @param int $VariableID VariablenID der zu löschenden Daten.
@@ -371,7 +371,7 @@ class ArchiveControlMySQL extends ipsmodule
     }
 
     /**
-     * IPS-Instant-Funktion ACmySQL_GetLoggedValues
+     * IPS-Instanz-Funktion ACMYSQL_GetLoggedValues
      * Liefert geloggte Daten einer Variable.
      *
      * @param int $VariableID VariablenID der zu liefernden Daten.
@@ -439,7 +439,7 @@ class ArchiveControlMySQL extends ipsmodule
     }
 
     /**
-     * IPS-Instant-Funktion ACmySQL_GetLoggingStatus
+     * IPS-Instanz-Funktion ACMYSQL_GetLoggingStatus
      * Liefert ob eine Variable aktuell geloggt wird.
      *
      * @param int $VariableID Die zu prüfende VariablenID
@@ -453,7 +453,7 @@ class ArchiveControlMySQL extends ipsmodule
     }
 
     /**
-     * IPS-Instant-Funktion ACmySQL_SetLoggingStatus
+     * IPS-Instanz-Funktion ACMYSQL_SetLoggingStatus
      * De-/Aktiviert das logging einer Variable.
      * Wird erst nach IPS_Applychanges($MySQLArchivID) aktiv.
      *
@@ -499,7 +499,7 @@ class ArchiveControlMySQL extends ipsmodule
     }
 
     /**
-     * IPS-Instant-Funktion ACmySQL_GetAggregationType
+     * IPS-Instanz-Funktion ACMYSQL_GetAggregationType
      * Liefert immer 0, da Typ Zähler nicht unterstützt wird.
      *
      * @param int $VariableID VariablenID der zu liefernden Daten.
@@ -521,7 +521,7 @@ class ArchiveControlMySQL extends ipsmodule
     }
 
     /**
-     * IPS-Instant-Funktion ACmySQL_GetGraphStatus
+     * IPS-Instanz-Funktion ACMYSQL_GetGraphStatus
      * Liefert immer true, da diese Funktion nicht unterstützt wird.
      *
      * @param int $VariableID
@@ -543,7 +543,7 @@ class ArchiveControlMySQL extends ipsmodule
     }
 
     /**
-     * IPS-Instant-Funktion ACmySQL_SetGraphStatus
+     * IPS-Instanz-Funktion ACMYSQL_SetGraphStatus
      * Liefert immer true, da diese Funktion nicht unterstützt wird.
      *
      * @param int  $VariableID VariablenID
@@ -566,7 +566,7 @@ class ArchiveControlMySQL extends ipsmodule
     }
 
     /**
-     * IPS-Instant-Funktion ACmySQL_GetAggregatedValues
+     * IPS-Instanz-Funktion ACMYSQL_GetAggregatedValues
      * Liefert aggregierte Daten einer geloggte Variable.
      *
      * @param int $VariableID        VariablenID der zu liefernden Daten.
@@ -647,7 +647,7 @@ class ArchiveControlMySQL extends ipsmodule
     }
 
     /**
-     * IPS-Instant-Funktion ACmySQL_GetAggregationVariables
+     * IPS-Instanz-Funktion ACMYSQL_GetAggregationVariables
      * Liefert eine Übersicht über alle geloggte Daten.
      *
      * @param bool $DatenbankAbfrage ohne Funktion.

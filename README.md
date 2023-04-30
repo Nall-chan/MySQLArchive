@@ -30,7 +30,7 @@ Zusätzliches Archiv für MySQL Datenbanken.
 ## 1. Funktionsumfang
 
 Variablenveränderungen in einer MySQL-Datenbank speichern.  
-Auslesen mit ACmySQL_* PHP-Funktionen (kompatibel mit den AC_* Befehlen).  
+Auslesen mit ACMYSQL_* PHP-Funktionen (kompatibel mit den AC_* Befehlen).  
 
 **Achtung:**  
   Dieses 'Archive Control' ersetzt nicht das Original in IPS.  
@@ -71,7 +71,7 @@ Auslesen mit ACmySQL_* PHP-Funktionen (kompatibel mit den AC_* Befehlen).
 ## 6. PHP-Funktionsreferenz  
 
 Es sind alle IPS Befehle des Original Archive-Control vorhanden.  
-Der Prefix muss nur von AC_ gegen ACmySQL_ ersetzt werden.  
+Der Prefix muss nur von AC_ gegen ACMYSQL_ ersetzt werden.  
 Da aktuell keine Zähler unterstützt werden, werden diese Rückgabewerte immer mit 0 übergeben.  
 
 ## 7. Parameter
@@ -92,16 +92,16 @@ Da aktuell keine Zähler unterstützt werden, werden diese Rückgabewerte immer 
  
 |         Modul         |  Typ   | Prefix  |                  GUID                  |
 | :-------------------: | :----: | :-----: | :------------------------------------: |
-| Archive Control MySQL | Device | ACmySQL | {FDCB334A-AFFF-4785-9596-D380252CEE4E} |
+| Archive Control MySQL | Device | ACMYSQL | {FDCB334A-AFFF-4785-9596-D380252CEE4E} |
 
 ### 2. Changelog
 
 Version 3.35:
 - Das Anzeigen der Konfiguration konnte fehlschlagen, wenn in einer Tabelle keine Werte vorhanden waren.  
-- ACmySQL_GetAggregationVariables konnte fehlschlagen, wenn in einer Tabelle keine Werte vorhanden waren.  
-- ACmySQL_ChangeVariableID konnte fehlschlagen,wenn in einer Tabelle keine Werte vorhanden waren.  
-- ACmySQL_GetLoggedValues konnte fehlschlagen,wenn in einer Tabelle keine Werte vorhanden waren.  
-- ACmySQL_GetAggregatedValues konnte fehlschlagen,wenn in einer Tabelle keine Werte vorhanden waren.  
+- ACMYSQL_GetAggregationVariables konnte fehlschlagen, wenn in einer Tabelle keine Werte vorhanden waren.  
+- ACMYSQL_ChangeVariableID konnte fehlschlagen,wenn in einer Tabelle keine Werte vorhanden waren.  
+- ACMYSQL_GetLoggedValues konnte fehlschlagen,wenn in einer Tabelle keine Werte vorhanden waren.  
+- ACMYSQL_GetAggregatedValues konnte fehlschlagen,wenn in einer Tabelle keine Werte vorhanden waren.  
 
 Version 3.31:
 - Fix für defekte 3.20 Version.  

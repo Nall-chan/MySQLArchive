@@ -43,7 +43,7 @@ $version = 'MySQL3.01'; $versionDate = '22.10.2017';
     // 01.06.2012  KHC   FIX      In der Konfiguration war es nicht möglich Anführungszeichen zu übergeben -> korrigiert
     // 20.06.2012  KHC   FIX      Wenn keine Daten in ausgelesenen Array kam ein Fehler (Prüfen ob $TempData vorhanden sind)
     // 15.09.2012  KHC   NEU      neue Highcharts Version 2.3.2 -> neue Charttypen zulassen, IPS_Template angepasst
-    // 18.09.2013  KHC   FIX      mit IPS3.x (use ACmySQL_GetLoggedValuesCompatibility)
+    // 18.09.2013  KHC   FIX      mit IPS3.x (use ACMYSQL_GetLoggedValuesCompatibility)
     // 19.03.2014  KHC   NEU      Neuer Parameter ['TooltipDateTimeFormat']: Default =
     // --- V3.00 ---------------------------------------------------------------------------------------------------------------------
     // 04/2014  	KHC   NEU      Entfernen der Prüfung des Highcharts-Types --> dadurch alle Highcharts-Charttypen verwendet werden können
@@ -665,7 +665,7 @@ $version = 'MySQL3.01'; $versionDate = '22.10.2017';
                 die("Abbruch - 'AggType' hat keinen korrekten Wert");
             }
 
-            $Serie['Ips']['IsCounter'] = $VariableId && (@ACmySQL_GetAggregationType($Id_AH, $VariableId) == 1);
+            $Serie['Ips']['IsCounter'] = $VariableId && (@ACMYSQL_GetAggregationType($Id_AH, $VariableId) == 1);
 
             // über AggValue kann Min/Max oder Avg vorgewählt werden (zum Lesen der AggregValues)
             IfNotIssetSetValue($Serie['AggValue'], 'Avg');
@@ -1085,7 +1085,7 @@ $version = 'MySQL3.01'; $versionDate = '22.10.2017';
     {
         $id_AH = $cfg['ArchiveHandlerId'];
 
-        $tempData = @ACmySQL_GetAggregatedValues($id_AH, $serie['Id'], $serie['AggType'], $serie['StartTime'], $serie['EndTime'], 0);
+        $tempData = @ACMYSQL_GetAggregatedValues($id_AH, $serie['Id'], $serie['AggType'], $serie['StartTime'], $serie['EndTime'], 0);
         $tempData = array_reverse($tempData);
 
         $result = [];
@@ -1247,25 +1247,25 @@ $version = 'MySQL3.01'; $versionDate = '22.10.2017';
                 $dataArray = ReadAndAddToLoggedData($dataArray, $Id_AH, $VariableId, 4, $result['StartTime'], $result['EndTime'], $Serie['AggValue'], $Serie);
             }
         } else {
-            $Agg = -1;	// ->  ACmySQL_GetLoggedValues
+            $Agg = -1;	// ->  ACMYSQL_GetLoggedValues
 
             if (isset($Serie['AggType'])) {   // wenn 'AggType' definiert wurde, wird dies vorrangig bearbeitet
                 $Agg = $Serie['AggType'];
             } elseif ($Serie['AggregatedValues']['YearValues'] != -1 && $Diff > $Serie['AggregatedValues']['YearValues']) {
                 $Agg = 4;
-            }	//  -> ACmySQL_GetAggregatedValues [0=Hour, 1=Day, 2=Week, 3=Month, 4=Year]
+            }	//  -> ACMYSQL_GetAggregatedValues [0=Hour, 1=Day, 2=Week, 3=Month, 4=Year]
             elseif ($Serie['AggregatedValues']['MonthValues'] != -1 && $Diff > $Serie['AggregatedValues']['MonthValues']) {
                 $Agg = 3;
-            }	//  -> ACmySQL_GetAggregatedValues [0=Hour, 1=Day, 2=Week, 3=Month, 4=Year]
+            }	//  -> ACMYSQL_GetAggregatedValues [0=Hour, 1=Day, 2=Week, 3=Month, 4=Year]
             elseif ($Serie['AggregatedValues']['WeekValues'] != -1 && $Diff > $Serie['AggregatedValues']['WeekValues']) {
                 $Agg = 2;
-            }	//  -> ACmySQL_GetAggregatedValues [0=Hour, 1=Day, 2=Week, 3=Month, 4=Year]
+            }	//  -> ACMYSQL_GetAggregatedValues [0=Hour, 1=Day, 2=Week, 3=Month, 4=Year]
             elseif ($Serie['AggregatedValues']['DayValues'] != -1 && $Diff > $Serie['AggregatedValues']['DayValues']) {
                 $Agg = 1;
-            }	//  -> ACmySQL_GetAggregatedValues [0=Hour, 1=Day, 2=Week, 3=Month, 4=Year]
+            }	//  -> ACMYSQL_GetAggregatedValues [0=Hour, 1=Day, 2=Week, 3=Month, 4=Year]
             elseif ($Serie['AggregatedValues']['HourValues'] != -1 && $Diff > $Serie['AggregatedValues']['HourValues']) {
                 $Agg = 0;
-            }	//  -> ACmySQL_GetAggregatedValues [0=Hour, 1=Day, 2=Week, 3=Month, 4=Year]
+            }	//  -> ACMYSQL_GetAggregatedValues [0=Hour, 1=Day, 2=Week, 3=Month, 4=Year]
 
             // es wurde noch nichts definiert und es handelt sich um einen Zähler --> Tageswerte
             if ($Agg == -1 && $Serie['Ips']['IsCounter']) {
@@ -1323,10 +1323,10 @@ $version = 'MySQL3.01'; $versionDate = '22.10.2017';
         $cfg['Ips']['Debug']['Modules'] = true;
 
         if ($aggType >= 0) {
-            $tempData = @ACmySQL_GetAggregatedValues($id_AH, $variableId, $aggType, $startTime, $endTime, 0);
+            $tempData = @ACMYSQL_GetAggregatedValues($id_AH, $variableId, $aggType, $startTime, $endTime, 0);
         } else {
-            //			$tempData = @ACmySQL_GetLoggedValues($id_AH, $variableId, $startTime, $endTime, 0 );
-            $tempData = @ACmySQL_GetLoggedValuesCompatibility($id_AH, $variableId, $startTime, $endTime, 0);
+            //			$tempData = @ACMYSQL_GetLoggedValues($id_AH, $variableId, $startTime, $endTime, 0 );
+            $tempData = @ACMYSQL_GetLoggedValuesCompatibility($id_AH, $variableId, $startTime, $endTime, 0);
         }
 
         if ($tempData) {
@@ -1985,11 +1985,11 @@ $version = 'MySQL3.01'; $versionDate = '22.10.2017';
             IPS_LogMessage($_IPS['SENDER'] . ' - ' . getmicrotime(true), "Highcharts $version ($versionDate) - $name");
         }
     }
-    function ACmySQL_GetLoggedValuesCompatibility($instanceID, $variableID, $startTime, $endTime, $limit)
+    function ACMYSQL_GetLoggedValuesCompatibility($instanceID, $variableID, $startTime, $endTime, $limit)
     {
-        $values = ACmySQL_GetLoggedValues($instanceID, $variableID, $startTime, $endTime, $limit);
+        $values = ACMYSQL_GetLoggedValues($instanceID, $variableID, $startTime, $endTime, $limit);
         if ((count($values) == 0) || (end($values)['TimeStamp'] > $startTime)) {
-            $previousRow = ACmySQL_GetLoggedValues($instanceID, $variableID, 0, $startTime - 1, 1);
+            $previousRow = ACMYSQL_GetLoggedValues($instanceID, $variableID, 0, $startTime - 1, 1);
             $values = array_merge($values, $previousRow);
         }
         return $values;
