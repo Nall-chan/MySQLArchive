@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace MySqlArchive;
 
+use mysqli_result;
+
 eval('namespace MySqlArchive {?>' . file_get_contents(__DIR__ . '/../libs/helper/BufferHelper.php') . '}');
 eval('namespace MySqlArchive {?>' . file_get_contents(__DIR__ . '/../libs/helper/DebugHelper.php') . '}');
 
-/*
+/**
  * @addtogroup mysqlarchiv
  * @{
  *
@@ -16,24 +18,16 @@ eval('namespace MySqlArchive {?>' . file_get_contents(__DIR__ . '/../libs/helper
  * @author        Michael Tröger <micha@nall-chan.net>
  * @copyright     2019 Michael Tröger
  * @license       https://creativecommons.org/licenses/by-nc-sa/4.0/ CC BY-NC-SA 4.0
- * @version       3.30
- *
+ * @version       3.40
  */
-
 trait Database
 {
-    /**
-     * @var mysqli
-     */
-    private $DB = null;
+    private ?\mysqli $DB = null;
+    private bool $isConnected = false;
 
-    /**
-     * @var bool
-     */
-    private $isConnected = false;
-
-    protected function Login()
+    protected function Login(): bool
     {
+        /** @var array $_IPS */
         if ($this->ReadPropertyString('Host') == '') {
             return false;
         }
@@ -50,7 +44,7 @@ trait Database
         return true;
     }
 
-    protected function CreateDB()
+    protected function CreateDB(): bool|\mysqli_result
     {
         if ($this->isConnected) {
             return $this->DB->query('CREATE DATABASE ' . $this->ReadPropertyString('Database'));
@@ -58,7 +52,7 @@ trait Database
         return false;
     }
 
-    protected function SelectDB()
+    protected function SelectDB(): bool
     {
         if ($this->isConnected) {
             return $this->DB->select_db($this->ReadPropertyString('Database'));
@@ -66,7 +60,7 @@ trait Database
         return false;
     }
 
-    protected function Logout()
+    protected function Logout(): bool
     {
         if ($this->isConnected) {
             return $this->DB->close();
@@ -74,18 +68,17 @@ trait Database
         return false;
     }
 
-    protected function TableExists($VarId)
+    protected function TableExists(int $VarId): bool
     {
         if (!$this->isConnected) {
             return false;
         }
-        $query = 'SHOW TABLES IN ' . $this->ReadPropertyString('Database') . " LIKE  'var" . $VarId . "';";
+        $query = 'SHOW TABLES IN ' . $this->ReadPropertyString('Database') . " LIKE  'var" . (string) $VarId . "';";
         $result = $this->DB->query($query);
-        /* @var $result mysqli_result */
         return !($result->num_rows == 0);
     }
 
-    protected function CreateTable($VarId, $VarTyp)
+    protected function CreateTable(int $VarId, int $VarTyp): bool|mysqli_result
     {
         if (!$this->isConnected) {
             return false;
@@ -104,32 +97,29 @@ trait Database
                 $Typ = 'value MEDIUMBLOB, ';
                 break;
         }
-        $query = 'CREATE TABLE var' . $VarId . ' (id BIGINT(20) UNSIGNED AUTO_INCREMENT PRIMARY KEY, ' . $Typ . 'timestamp DATETIME);';
+        $query = 'CREATE TABLE var' . (string) $VarId . ' (id BIGINT(20) UNSIGNED AUTO_INCREMENT PRIMARY KEY, ' . $Typ . 'timestamp DATETIME);';
         $result = $this->DB->query($query);
         $this->SendDebug('CreateTable', $result, 0);
         return $result;
     }
 
-    protected function RenameTable($OldVariableID, $NewVariableID)
+    protected function RenameTable(int $OldVariableID, int $NewVariableID): bool|\mysqli_result
     {
         if (!$this->isConnected) {
             return false;
         }
-
-        $query = 'RENAME TABLE ' . $this->ReadPropertyString('Database') . '.var' . $OldVariableID . ' TO ' . $this->ReadPropertyString('Database') . '.var' . $NewVariableID . ';';
+        $query = 'RENAME TABLE ' . $this->ReadPropertyString('Database') . '.var' . (string) $OldVariableID . ' TO ' . $this->ReadPropertyString('Database') . '.var' . (string) $NewVariableID . ';';
         $result = $this->DB->query($query);
         $this->SendDebug('RenameTable', $result, 0);
         return $result;
     }
 
-    protected function DeleteData($VariableID, $Startzeit, $Endzeit)
+    protected function DeleteData(int $VariableID, int $Startzeit, int $Endzeit): false|int
     {
         if (!$this->isConnected) {
             return false;
         }
-
-        $query = 'DELETE FROM var' . $VariableID . ' WHERE ((timestamp >= from_unixtime(' . $Startzeit . ')) and (timestamp <= from_unixtime(' . $Endzeit . ')));';
-        /* @var $result mysqli_result */
+        $query = 'DELETE FROM var' . (string) $VariableID . ' WHERE ((timestamp >= from_unixtime(' . (string) $Startzeit . ')) and (timestamp <= from_unixtime(' . (string) $Endzeit . ')));';
         $result = $this->DB->query($query);
         if ($result) {
             $result = $this->DB->affected_rows;
@@ -137,33 +127,31 @@ trait Database
         return $result;
     }
 
-    protected function GetLoggedData($VariableID, $Startzeit, $Endzeit, $Limit)
+    protected function GetLoggedData(int $VariableID, int $Startzeit, int $Endzeit, int $Limit): false|array
     {
         if (!$this->isConnected) {
             return false;
         }
 
-        $query = "SELECT  unix_timestamp(timestamp) AS 'TimeStamp', value AS 'Value' " .
-                'FROM  var' . $VariableID . ' ' .
-                'WHERE  ((timestamp >= from_unixtime(' . $Startzeit . ')) ' .
-                'and (timestamp <= from_unixtime(' . $Endzeit . '))) ' .
+        $query = 'SELECT  unix_timestamp(timestamp) AS \'TimeStamp\', value AS \'Value\' ' .
+                'FROM  var' . (string) $VariableID . ' ' .
+                'WHERE  ((timestamp >= from_unixtime(' . (string) $Startzeit . ')) ' .
+                'and (timestamp <= from_unixtime(' . (string) $Endzeit . '))) ' .
                 'ORDER BY timestamp DESC ' .
-                'LIMIT ' . $Limit;
-        /* @var $result mysqli_result */
+                'LIMIT ' . (string) $Limit;
         $result = $this->DB->query($query);
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
-    protected function GetLoggedDataTyp($VariableID)
+    protected function GetLoggedDataTyp(int $VariableID): false|int
     {
         $query = 'SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS ' .
-                "WHERE ((TABLE_NAME = 'var" . $VariableID . "') AND (COLUMN_NAME = 'value'))";
-
-        $sqlresult = $this->DB->query($query);
-        if ($sqlresult->num_rows == 0) {
+                "WHERE ((TABLE_NAME = 'var" . (string) $VariableID . "') AND (COLUMN_NAME = 'value'))";
+        $result = $this->DB->query($query);
+        if ($result->num_rows == 0) {
             return false;
         }
-        switch (strtolower($sqlresult->fetch_row()[0])) {
+        switch (strtolower($result->fetch_row()[0])) {
             case 'double':
             case 'real':
                 return VARIABLETYPE_FLOAT;
@@ -176,7 +164,7 @@ trait Database
         }
     }
 
-    protected function GetAggregatedData($VariableID, $Typ, $Startzeit, $Endzeit, $Limit)
+    protected function GetAggregatedData(int $VariableID, int $Typ, int $Startzeit, int $Endzeit, int $Limit): array
     {
         switch ($Typ) {
             case 0:
@@ -214,79 +202,72 @@ trait Database
         }
         $query = "SELECT MIN(value) AS 'Min', MAX(value) AS 'Max', AVG(value) AS 'Avg', " .
                 'UNIX_TIMESTAMP(convert((min(timestamp) div ' . $Time . ')*' . $Time . ' + ' . $Half . ', datetime)) ' .
-                "as 'TimeStamp' FROM var" . $VariableID . ' ' .
-                'WHERE timestamp BETWEEN from_unixtime(' . $Startzeit . ') ' .
-                'AND from_unixtime(' . $Endzeit . ') GROUP BY timestamp div ' . $Time . ' ' .
+                "as 'TimeStamp' FROM var" . (string) $VariableID . ' ' .
+                'WHERE timestamp BETWEEN from_unixtime(' . (string) $Startzeit . ') ' .
+                'AND from_unixtime(' . (string) $Endzeit . ') GROUP BY timestamp div ' . $Time . ' ' .
                 "ORDER BY 'TimeStamp' DESC " .
-                'LIMIT ' . $Limit;
-        /* @var $result mysqli_result */
+                'LIMIT ' . (string) $Limit;
         $result = $this->DB->query($query);
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
-    protected function GetVariableTables()
+    protected function GetVariableTables(): array
     {
         if (!$this->isConnected) {
             return [];
         }
         $query = "SELECT right(TABLE_NAME,5) as 'VariableID' FROM information_schema.TABLES WHERE table_schema = '" . $this->ReadPropertyString('Database') . "' ORDER BY 'VariableID' ASC";
-        $sqlresult = $this->DB->query($query);
-        if ($sqlresult === false) {
+        $result = $this->DB->query($query);
+        if ($result === false) {
             return [];
         }
-        $Result = $sqlresult->fetch_all(MYSQLI_ASSOC);
+        $Result = $result->fetch_all(MYSQLI_ASSOC);
         foreach ($Result as &$Item) {
             $Item['VariableID'] = (int) $Item['VariableID'];
         }
         return $Result;
     }
 
-    protected function GetSummary($VariableId)
+    protected function GetSummary(int $VariableId): false|array
     {
         if (!$this->isConnected) {
             return false;
         }
 
         $query = "SELECT unix_timestamp(timestamp) AS 'TimeStamp' " .
-                'FROM  var' . $VariableId . ' ' .
+                'FROM  var' . (string) $VariableId . ' ' .
                 'ORDER BY timestamp ASC ' .
                 'LIMIT 1';
-        /* @var $sqlresult mysqli_result */
-
-        $sqlresult = $this->DB->query($query);
-        if ($sqlresult->num_rows == 0) {
+        $mysql_result = $this->DB->query($query);
+        if ($mysql_result->num_rows == 0) {
             return false;
         }
-        $Result['FirstTimestamp'] = (int) $sqlresult->fetch_row()[0];
+        $Result['FirstTimestamp'] = (int) $mysql_result->fetch_row()[0];
         $query = "SELECT unix_timestamp(timestamp) AS 'TimeStamp' " .
-                'FROM  var' . $VariableId . ' ' .
+                'FROM  var' . (string) $VariableId . ' ' .
                 'ORDER BY timestamp DESC ' .
                 'LIMIT 1';
-        /* @var $sqlresult mysqli_result */
-        $sqlresult = $this->DB->query($query);
-        $Result['LastTimestamp'] = (int) $sqlresult->fetch_row()[0];
+        $mysql_result = $this->DB->query($query);
+        $Result['LastTimestamp'] = (int) $mysql_result->fetch_row()[0];
 
         $query = "SELECT count(*) AS 'Count' " .
-                'FROM  var' . $VariableId . ' ';
-        /* @var $sqlresult mysqli_result */
-        $sqlresult = $this->DB->query($query);
-        $Result['Count'] = (int) $sqlresult->fetch_row()[0];
+                'FROM  var' . (string) $VariableId . ' ';
+        $mysql_result = $this->DB->query($query);
+        $Result['Count'] = (int) $mysql_result->fetch_row()[0];
 
         $query = "SELECT data_length AS 'Size' " .
                 'FROM information_schema.TABLES ' .
                 "WHERE table_schema = '" . $this->ReadPropertyString('Database') . "' " .
-                "AND table_name = 'var" . $VariableId . "' ";
-        /* @var $sqlresult mysqli_result */
-        $sqlresult = $this->DB->query($query);
-        $Result['Size'] = (int) $sqlresult->fetch_row()[0];
+                "AND table_name = 'var" . (string) $VariableId . "' ";
+        $mysql_result = $this->DB->query($query);
+        $Result['Size'] = (int) $mysql_result->fetch_row()[0];
         return $Result;
     }
 
-    protected function WriteValue($Variable, $NewValue, $HasChanged, $Timestamp)
+    protected function WriteValue($Variable, $NewValue, $HasChanged, $Timestamp): bool|\mysqli_result
     {
         if (!$HasChanged) {
             $query = 'SELECT id,value FROM var' . $Variable . ' ORDER BY timestamp DESC LIMIT 2';
-            /* @var $result mysqli_result */
             $result = $this->DB->query($query);
             if ($result === false) {
                 echo $this->DB->error;

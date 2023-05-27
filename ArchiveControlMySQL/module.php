@@ -13,35 +13,40 @@ eval('namespace MySqlArchive {?>' . file_get_contents(__DIR__ . '/../libs/helper
  * @copyright     2019 Michael Tröger
  * @license       https://creativecommons.org/licenses/by-nc-sa/4.0/ CC BY-NC-SA 4.0
  *
- * @version       3.30
+ * @version       3.40
  *
  * @example <b>Ohne</b>
  *
  * @property array $Vars
  * @property array $Buffer
- * @property mysqli $DB
+ * @property \mysqli $DB
+ * @method bool TraitLock(string $ident)
+ * @method void unlock(string $ident)
+ * @method bool SendDebug(string $Message, mixed $Data, int $Format)
  */
-class ArchiveControlMySQL extends ipsmodule
+class ArchiveControlMySQL extends IPSModuleStrict
 {
     use \MySqlArchive\Semaphore,
         \MySqlArchive\BufferHelper,
         \MySqlArchive\DebugHelper,
         \MySqlArchive\Database,
         \MySqlArchive\VariableWatch {
-        \MySqlArchive\Semaphore::lock as TraitLock;
-    }
+            \MySqlArchive\Semaphore::lock as TraitLock;
+        }
     private $Runtime;
 
     public function __construct($InstanceID)
     {
         $this->Runtime = microtime(true);
+        $driver = new mysqli_driver();
+        $driver->report_mode = MYSQLI_REPORT_OFF;
         parent::__construct($InstanceID);
     }
 
     /**
      * Interne Funktion des SDK.
      */
-    public function Create()
+    public function Create(): void
     {
         parent::Create();
 
@@ -57,9 +62,11 @@ class ArchiveControlMySQL extends ipsmodule
 
     /**
      * Interne Funktion des SDK.
+     *
      */
-    public function MessageSink($TimeStamp, $SenderID, $Message, $Data)
+    public function MessageSink(int $TimeStamp, int $SenderID, int $Message, array $Data): void
     {
+        /** @var array $_IPS */
         //Time critical start
         switch ($Message) {
             case VM_UPDATE:
@@ -88,7 +95,7 @@ class ArchiveControlMySQL extends ipsmodule
     /**
      * Interne Funktion des SDK.
      */
-    public function ApplyChanges()
+    public function ApplyChanges(): void
     {
         parent::ApplyChanges();
 
@@ -151,8 +158,9 @@ class ArchiveControlMySQL extends ipsmodule
         $this->Logout();
     }
 
-    public function LogData()
+    public function LogData(): void
     {
+        /** @var array $_IPS */
         $this->SendDebug('Timer [' . $_IPS['THREAD'] . ']', 'Stop', 0);
         $this->SetTimerInterval('LogData', 0);
         //Time critical start
@@ -186,7 +194,7 @@ class ArchiveControlMySQL extends ipsmodule
     /**
      * Interne Funktion des SDK.
      */
-    public function GetConfigurationForm()
+    public function GetConfigurationForm(): string
     {
         $form = json_decode(file_get_contents(__DIR__ . '/form.json'), true);
 
@@ -289,7 +297,7 @@ class ArchiveControlMySQL extends ipsmodule
      *
      * @return bool True bei Erfolg, sonst false.
      */
-    public function ChangeVariableID(int $OldVariableID, int $NewVariableID)
+    public function ChangeVariableID(int $OldVariableID, int $NewVariableID): bool
     {
         if (!IPS_VariableExists($NewVariableID)) {
             trigger_error($this->Translate('NewVariableID is no variable.'), E_USER_NOTICE);
@@ -346,9 +354,9 @@ class ArchiveControlMySQL extends ipsmodule
      * @param int $Startzeit  Startzeitpunkt als UnixTimestamp
      * @param int $Endzeit    Endzeitpunkt als UnixTimestamp
      *
-     * @return bool True bei Erfolg, sonst false.
+     * @return false|int gibt die Anzahl der gelöschten Datensätze zurück
      */
-    public function DeleteVariableData(int $VariableID, int $Startzeit, int $Endzeit)
+    public function DeleteVariableData(int $VariableID, int $Startzeit, int $Endzeit): bool
     {
         if (!$this->LoginAndSelectDB()) {
             return false;
@@ -381,7 +389,7 @@ class ArchiveControlMySQL extends ipsmodule
      *
      * @return array Datensätze
      */
-    public function GetLoggedValues(int $VariableID, int $Startzeit, int $Endzeit, int $Limit)
+    public function GetLoggedValues(int $VariableID, int $Startzeit, int $Endzeit, int $Limit): false|array
     {
         if (($Limit > IPS_GetOption('ArchiveRecordLimit')) || ($Limit == 0)) {
             $Limit = IPS_GetOption('ArchiveRecordLimit');
@@ -446,7 +454,7 @@ class ArchiveControlMySQL extends ipsmodule
      *
      * @return bool True wenn logging aktiv ist.
      */
-    public function GetLoggingStatus(int $VariableID)
+    public function GetLoggingStatus(int $VariableID): bool
     {
         $Vars = $this->Vars;
         return array_key_exists($VariableID, $Vars);
@@ -462,7 +470,7 @@ class ArchiveControlMySQL extends ipsmodule
      *
      * @return bool True bei Erfolg, sonst false.
      */
-    public function SetLoggingStatus(int $VariableID, bool $Aktiv)
+    public function SetLoggingStatus(int $VariableID, bool $Aktiv): bool
     {
         $Vars = $this->Vars;
         if ($Aktiv) { //aktivieren
@@ -506,7 +514,7 @@ class ArchiveControlMySQL extends ipsmodule
      *
      * @return int
      */
-    public function GetAggregationType(int $VariableID)
+    public function GetAggregationType(int $VariableID): int
     {
         if (!$this->LoginAndSelectDB()) {
             return false;
@@ -528,7 +536,7 @@ class ArchiveControlMySQL extends ipsmodule
      *
      * @return bool immer True, außer VariableID wird nicht geloggt.
      */
-    public function GetGraphStatus(int $VariableID)
+    public function GetGraphStatus(int $VariableID): bool
     {
         if (!$this->LoginAndSelectDB()) {
             return false;
@@ -551,7 +559,7 @@ class ArchiveControlMySQL extends ipsmodule
      *
      * @return bool immer True, außer VariableID wird nicht geloggt.
      */
-    public function SetGraphStatus(int $VariableID, bool $Aktiv)
+    public function SetGraphStatus(int $VariableID, bool $Aktiv): bool
     {
         if (!$this->LoginAndSelectDB()) {
             return false;
@@ -577,7 +585,7 @@ class ArchiveControlMySQL extends ipsmodule
      *
      * @return array Datensätze
      */
-    public function GetAggregatedValues(int $VariableID, int $Aggregationsstufe, int $Startzeit, int $Endzeit, int $Limit)
+    public function GetAggregatedValues(int $VariableID, int $Aggregationsstufe, int $Startzeit, int $Endzeit, int $Limit): false|array
     {
         if (($Limit > IPS_GetOption('ArchiveRecordLimit')) || ($Limit == 0)) {
             $Limit = IPS_GetOption('ArchiveRecordLimit');
@@ -654,7 +662,7 @@ class ArchiveControlMySQL extends ipsmodule
      *
      * @return array Datensätze
      */
-    public function GetAggregationVariables(bool $DatenbankAbfrage)
+    public function GetAggregationVariables(bool $DatenbankAbfrage): false|array
     {
         if (!$this->LoginAndSelectDB()) {
             return false;
@@ -692,8 +700,9 @@ class ArchiveControlMySQL extends ipsmodule
      *
      * @return bool TRUE bei Erfolg, FALSE bei Misserfolg.
      */
-    private function lock($ident)
+    private function lock(string $ident): bool
     {
+        /** @var array $_IPS */
         $Runtime = microtime(true);
         $Result = $this->TraitLock($ident);
         $this->SendDebug('WaitLock [' . $_IPS['THREAD'] . ']', sprintf('%.3f', ((microtime(true) - $Runtime) * 1000))
@@ -711,11 +720,12 @@ class ArchiveControlMySQL extends ipsmodule
      * @param bool  $HasChanged true wenn neuer Wert vom alten abweicht
      * @param int   $Timestamp  Zeitstempel des neuen Wert
      */
-    private function LogValue($Variable, $NewValue, $HasChanged, $Timestamp)
+    private function LogValue(int $Variable, mixed $NewValue, bool $HasChanged, int $Timestamp): void
     {
+        /** @var array $_IPS */
         $Vars = $this->Vars;
         if (!array_key_exists($Variable, $Vars)) {
-            return false;
+            return;
         }
         switch ($Vars[$Variable]) {
             case VARIABLETYPE_BOOLEAN:
@@ -742,7 +752,7 @@ class ArchiveControlMySQL extends ipsmodule
      *
      * @return bool True bei Erfolg, sonst false.
      */
-    private function LoginAndSelectDB()
+    private function LoginAndSelectDB(): bool
     {
         if (!$this->Login()) {
             if ($this->DB) {
