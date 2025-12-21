@@ -4,9 +4,9 @@
     "name": "MySQLArchive Library",
     "url": "https://github.com/Nall-chan/MySQLArchive",
     "compatibility": {
-        "version": "7.0"
+        "version": "8.1"
     },
-    "version": "3.40",
-    "build": 340,
-    "date": 1685188345
+    "version": "3.50",
+    "build": 350,
+    "date": 1765736445
 }

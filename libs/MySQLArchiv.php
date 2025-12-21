@@ -16,15 +16,23 @@ eval('namespace MySqlArchive {?>' . file_get_contents(__DIR__ . '/../libs/helper
  * @package       MySQLArchiv
  * @file          module.php
  * @author        Michael Tröger <micha@nall-chan.net>
- * @copyright     2019 Michael Tröger
+ * @copyright     2025 Michael Tröger
  * @license       https://creativecommons.org/licenses/by-nc-sa/4.0/ CC BY-NC-SA 4.0
- * @version       3.40
+ * @version       3.50
  */
 trait Database
 {
+    /** @var ?\mysqli $DB */
     private ?\mysqli $DB = null;
+
+    /** @var bool $isConnected */
     private bool $isConnected = false;
 
+    /**
+     * Login
+     *
+     * @return bool
+     */
     protected function Login(): bool
     {
         /** @var array $_IPS */
@@ -33,7 +41,9 @@ trait Database
         }
         if (!$this->isConnected) {
             $this->SendDebug('Connect [' . $_IPS['THREAD'] . ']', 'Start ' . sprintf('%.3f', ((microtime(true) - $this->Runtime) * 1000)) . ' ms', 0);
-            $this->DB = @new \mysqli('p:' . $this->ReadPropertyString('Host'), $this->ReadPropertyString('Username'), $this->ReadPropertyString('Password'));
+            $this->DB = mysqli_init();
+            $this->DB->options(MYSQLI_OPT_CONNECT_TIMEOUT, 2);
+            $this->DB->real_connect('p:' . $this->ReadPropertyString('Host'), $this->ReadPropertyString('Username'), $this->ReadPropertyString('Password'));
             if ($this->DB->connect_errno == 0) {
                 $this->isConnected = true;
                 $this->SendDebug('Login [' . $_IPS['THREAD'] . ']', sprintf('%.3f', ((microtime(true) - $this->Runtime) * 1000)) . ' ms', 0);
@@ -44,6 +54,11 @@ trait Database
         return true;
     }
 
+    /**
+     * CreateDB
+     *
+     * @return bool
+     */
     protected function CreateDB(): bool|\mysqli_result
     {
         if ($this->isConnected) {
@@ -52,6 +67,11 @@ trait Database
         return false;
     }
 
+    /**
+     * SelectDB
+     *
+     * @return bool
+     */
     protected function SelectDB(): bool
     {
         if ($this->isConnected) {
@@ -60,6 +80,11 @@ trait Database
         return false;
     }
 
+    /**
+     * Logout
+     *
+     * @return bool
+     */
     protected function Logout(): bool
     {
         if ($this->isConnected) {
@@ -68,6 +93,12 @@ trait Database
         return false;
     }
 
+    /**
+     * TableExists
+     *
+     * @param  int $VarId
+     * @return bool
+     */
     protected function TableExists(int $VarId): bool
     {
         if (!$this->isConnected) {
@@ -78,6 +109,13 @@ trait Database
         return !($result->num_rows == 0);
     }
 
+    /**
+     * CreateTable
+     *
+     * @param  int $VarId
+     * @param  int $VarTyp
+     * @return bool
+     */
     protected function CreateTable(int $VarId, int $VarTyp): bool|mysqli_result
     {
         if (!$this->isConnected) {
@@ -103,6 +141,13 @@ trait Database
         return $result;
     }
 
+    /**
+     * RenameTable
+     *
+     * @param  int $OldVariableID
+     * @param  int $NewVariableID
+     * @return bool
+     */
     protected function RenameTable(int $OldVariableID, int $NewVariableID): bool|\mysqli_result
     {
         if (!$this->isConnected) {
@@ -114,6 +159,31 @@ trait Database
         return $result;
     }
 
+    /**
+     * DeleteTable
+     *
+     * @param  int $VariableID
+     * @return bool
+     */
+    protected function DeleteTable(int $VariableID): bool|\mysqli_result
+    {
+        if (!$this->isConnected) {
+            return false;
+        }
+        $query = 'DROP TABLE ' . $this->ReadPropertyString('Database') . '.var' . (string) $VariableID . ';';
+        $result = $this->DB->query($query);
+        $this->SendDebug('DeleteTable', $result, 0);
+        return $result;
+    }
+
+    /**
+     * DeleteData
+     *
+     * @param  int $VariableID
+     * @param  int $Startzeit
+     * @param  int $Endzeit
+     * @return false
+     */
     protected function DeleteData(int $VariableID, int $Startzeit, int $Endzeit): false|int
     {
         if (!$this->isConnected) {
@@ -127,6 +197,15 @@ trait Database
         return $result;
     }
 
+    /**
+     * GetLoggedData
+     *
+     * @param  int $VariableID
+     * @param  int $Startzeit
+     * @param  int $Endzeit
+     * @param  int $Limit
+     * @return false
+     */
     protected function GetLoggedData(int $VariableID, int $Startzeit, int $Endzeit, int $Limit): false|array
     {
         if (!$this->isConnected) {
@@ -143,6 +222,12 @@ trait Database
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
+    /**
+     * GetLoggedDataTyp
+     *
+     * @param  int $VariableID
+     * @return false
+     */
     protected function GetLoggedDataTyp(int $VariableID): false|int
     {
         $query = 'SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS ' .
@@ -164,6 +249,16 @@ trait Database
         }
     }
 
+    /**
+     * GetAggregatedData
+     *
+     * @param  int $VariableID
+     * @param  int $Typ
+     * @param  int $Startzeit
+     * @param  int $Endzeit
+     * @param  int $Limit
+     * @return array
+     */
     protected function GetAggregatedData(int $VariableID, int $Typ, int $Startzeit, int $Endzeit, int $Limit): array
     {
         switch ($Typ) {
@@ -211,6 +306,11 @@ trait Database
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
+    /**
+     * GetVariableTables
+     *
+     * @return array
+     */
     protected function GetVariableTables(): array
     {
         if (!$this->isConnected) {
@@ -228,33 +328,34 @@ trait Database
         return $Result;
     }
 
+    /**
+     * GetSummary
+     *
+     * @param  int $VariableId
+     * @return false
+     */
     protected function GetSummary(int $VariableId): false|array
     {
         if (!$this->isConnected) {
             return false;
         }
-
-        $query = "SELECT unix_timestamp(timestamp) AS 'TimeStamp' " .
-                'FROM  var' . (string) $VariableId . ' ' .
-                'ORDER BY timestamp ASC ' .
-                'LIMIT 1';
+        $query = 'SELECT unix_timestamp(MIN(timestamp)) AS "TimeStamp" FROM var' . (string) $VariableId . ';';
         $mysql_result = $this->DB->query($query);
+        if ($mysql_result === false) {
+            return false;
+        }
+        $Result = [];
         if ($mysql_result->num_rows == 0) {
             return false;
         }
         $Result['FirstTimestamp'] = (int) $mysql_result->fetch_row()[0];
-        $query = "SELECT unix_timestamp(timestamp) AS 'TimeStamp' " .
-                'FROM  var' . (string) $VariableId . ' ' .
-                'ORDER BY timestamp DESC ' .
-                'LIMIT 1';
+        $query = 'SELECT unix_timestamp(MAX(timestamp)) AS "TimeStamp" FROM var' . (string) $VariableId . ';';
         $mysql_result = $this->DB->query($query);
         $Result['LastTimestamp'] = (int) $mysql_result->fetch_row()[0];
-
         $query = "SELECT count(*) AS 'Count' " .
                 'FROM  var' . (string) $VariableId . ' ';
         $mysql_result = $this->DB->query($query);
         $Result['Count'] = (int) $mysql_result->fetch_row()[0];
-
         $query = "SELECT data_length AS 'Size' " .
                 'FROM information_schema.TABLES ' .
                 "WHERE table_schema = '" . $this->ReadPropertyString('Database') . "' " .
@@ -264,7 +365,16 @@ trait Database
         return $Result;
     }
 
-    protected function WriteValue($Variable, $NewValue, $HasChanged, $Timestamp): bool|\mysqli_result
+    /**
+     * WriteValue
+     *
+     * @param  mixed $Variable
+     * @param  mixed $NewValue
+     * @param  mixed $HasChanged
+     * @param  mixed $Timestamp
+     * @return bool
+     */
+    protected function WriteValue($Variable, $NewValue, $HasChanged, $Timestamp): bool
     {
         if (!$HasChanged) {
             $query = 'SELECT id,value FROM var' . $Variable . ' ORDER BY timestamp DESC LIMIT 2';
@@ -279,7 +389,11 @@ trait Database
                 if ($ids[0]['value'] === $ids[1]['value']) {
                     $query = 'UPDATE var' . $Variable . ' SET timestamp=from_unixtime(' . $Timestamp . ') WHERE id=' . $ids[0]['id'];
                     $result = $this->DB->query($query);
-                    return $result;
+                    if ($result === false) {
+                        echo $this->DB->error;
+                        return false;
+                    }
+                    return true;
                 }
             }
         }
