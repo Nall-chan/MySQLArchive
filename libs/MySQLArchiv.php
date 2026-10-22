@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace MySqlArchive;
 
+/** MySQL Fehlernummer: Tabelle existiert nicht */
+const TableNotFoundError = 1146;
+
 use mysqli_result;
 
 eval('namespace MySqlArchive {?>' . file_get_contents(__DIR__ . '/../libs/helper/BufferHelper.php') . '}');
@@ -16,8 +19,8 @@ eval('namespace MySqlArchive {?>' . file_get_contents(__DIR__ . '/../libs/helper
  * @package       MySQLArchiv
  * @file          module.php
  * @author        Michael Tröger <micha@nall-chan.net>
- * @copyright     2025 Michael Tröger
- * @license       https://creativecommons.org/licenses/by-nc-sa/4.0/ CC BY-NC-SA 4.0
+ * @copyright     2026 Michael Tröger
+ * @license       Custom Non-Commercial Share-Alike License (see LICENSE)
  * @version       3.50
  */
 trait Database
@@ -55,6 +58,18 @@ trait Database
     }
 
     /**
+     * GetQuotedDatabase
+     *
+     * Liefert den Datenbanknamen als korrekt gequoteten SQL-Bezeichner (Backticks).
+     *
+     * @return string
+     */
+    protected function GetQuotedDatabase(): string
+    {
+        return '`' . str_replace('`', '``', $this->ReadPropertyString('Database')) . '`';
+    }
+
+    /**
      * CreateDB
      *
      * @return bool
@@ -62,7 +77,7 @@ trait Database
     protected function CreateDB(): bool|\mysqli_result
     {
         if ($this->isConnected) {
-            return $this->DB->query('CREATE DATABASE ' . $this->ReadPropertyString('Database'));
+            return $this->DB->query('CREATE DATABASE ' . $this->GetQuotedDatabase());
         }
         return false;
     }
@@ -104,9 +119,9 @@ trait Database
         if (!$this->isConnected) {
             return false;
         }
-        $query = 'SHOW TABLES IN ' . $this->ReadPropertyString('Database') . " LIKE  'var" . (string) $VarId . "';";
+        $query = 'SHOW TABLES IN ' . $this->GetQuotedDatabase() . " LIKE 'var" . (string) $VarId . "';";
         $result = $this->DB->query($query);
-        return !($result->num_rows == 0);
+        return ($result instanceof mysqli_result) && ($result->num_rows != 0);
     }
 
     /**
@@ -134,6 +149,8 @@ trait Database
             case VARIABLETYPE_STRING:
                 $Typ = 'value MEDIUMBLOB, ';
                 break;
+            default:
+                return false;
         }
         $query = 'CREATE TABLE var' . (string) $VarId . ' (id BIGINT(20) UNSIGNED AUTO_INCREMENT PRIMARY KEY, ' . $Typ . 'timestamp DATETIME);';
         $result = $this->DB->query($query);
@@ -153,7 +170,7 @@ trait Database
         if (!$this->isConnected) {
             return false;
         }
-        $query = 'RENAME TABLE ' . $this->ReadPropertyString('Database') . '.var' . (string) $OldVariableID . ' TO ' . $this->ReadPropertyString('Database') . '.var' . (string) $NewVariableID . ';';
+        $query = 'RENAME TABLE ' . $this->GetQuotedDatabase() . '.var' . (string) $OldVariableID . ' TO ' . $this->GetQuotedDatabase() . '.var' . (string) $NewVariableID . ';';
         $result = $this->DB->query($query);
         $this->SendDebug('RenameTable', $result, 0);
         return $result;
@@ -170,7 +187,7 @@ trait Database
         if (!$this->isConnected) {
             return false;
         }
-        $query = 'DROP TABLE ' . $this->ReadPropertyString('Database') . '.var' . (string) $VariableID . ';';
+        $query = 'DROP TABLE ' . $this->GetQuotedDatabase() . '.var' . (string) $VariableID . ';';
         $result = $this->DB->query($query);
         $this->SendDebug('DeleteTable', $result, 0);
         return $result;
@@ -316,7 +333,7 @@ trait Database
         if (!$this->isConnected) {
             return [];
         }
-        $query = "SELECT right(TABLE_NAME,5) as 'VariableID' FROM information_schema.TABLES WHERE table_schema = '" . $this->ReadPropertyString('Database') . "' ORDER BY 'VariableID' ASC";
+        $query = "SELECT substr(TABLE_NAME,4) AS VariableID FROM information_schema.TABLES WHERE table_schema = '" . $this->DB->real_escape_string($this->ReadPropertyString('Database')) . "' AND TABLE_NAME REGEXP '^var[0-9]+$' ORDER BY CAST(substr(TABLE_NAME,4) AS UNSIGNED) ASC";
         $result = $this->DB->query($query);
         if ($result === false) {
             return [];
@@ -358,7 +375,7 @@ trait Database
         $Result['Count'] = (int) $mysql_result->fetch_row()[0];
         $query = "SELECT data_length AS 'Size' " .
                 'FROM information_schema.TABLES ' .
-                "WHERE table_schema = '" . $this->ReadPropertyString('Database') . "' " .
+                "WHERE table_schema = '" . $this->DB->real_escape_string($this->ReadPropertyString('Database')) . "' " .
                 "AND table_name = 'var" . (string) $VariableId . "' ";
         $mysql_result = $this->DB->query($query);
         $Result['Size'] = (int) $mysql_result->fetch_row()[0];
@@ -380,7 +397,10 @@ trait Database
             $query = 'SELECT id,value FROM var' . $Variable . ' ORDER BY timestamp DESC LIMIT 2';
             $result = $this->DB->query($query);
             if ($result === false) {
-                echo $this->DB->error;
+                // Fehlende Tabelle (1146) meldet der Aufrufer nicht, er legt sie an und wiederholt.
+                if ($this->DB->errno !== \MySqlArchive\TableNotFoundError) {
+                    echo $this->DB->error;
+                }
                 return false;
             }
 
@@ -400,7 +420,9 @@ trait Database
         $query = 'INSERT INTO var' . $Variable . ' (value,timestamp) VALUES(' . $NewValue . ',from_unixtime(' . $Timestamp . '));';
         $result = $this->DB->query($query);
         if ($result === false) {
-            echo $this->DB->error;
+            if ($this->DB->errno !== \MySqlArchive\TableNotFoundError) {
+                echo $this->DB->error;
+            }
             return false;
         }
         return true;

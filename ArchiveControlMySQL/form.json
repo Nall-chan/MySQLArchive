@@ -2,7 +2,9 @@
     "elements": [
         {
             "type": "ExpansionPanel",
+            "name": "ConnectionPanel",
             "caption": "Connection",
+            "onClick": "IPS_RequestAction($id, 'ShowConnectionWarning', true);",
             "items": [
                 {
                     "type": "RowLayout",
@@ -35,6 +37,25 @@
                     ]
                 }
             ]
+        },
+        {
+            "type": "PopupAlert",
+            "name": "ConnectionWarning",
+            "visible": false,
+            "popup": {
+                "caption": "Attention",
+                "closeCaption": "OK",
+                "items": [
+                    {
+                        "type": "Label",
+                        "caption": "If the host or the database is changed, the existing data is no longer accessible."
+                    },
+                    {
+                        "type": "Label",
+                        "caption": "Logging for all configured variables is continued in the new database."
+                    }
+                ]
+            }
         }
     ],
     "actions": [

@@ -2,6 +2,9 @@
     "translations": {
         "de": {
             "Connection": "Verbindung",
+            "Attention": "Achtung",
+            "If the host or the database is changed, the existing data is no longer accessible.": "Wird der Host oder die Datenbank geändert, ist der Zugriff auf die bisherigen Daten nicht mehr möglich.",
+            "Logging for all configured variables is continued in the new database.": "Das Logging aller konfigurierten Variablen erfolgt danach in der neuen Datenbank.",
             "Database": "Datenbank",
             "Username": "Benutzername",
             "Password": "Passwort",

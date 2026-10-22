@@ -1,7 +1,7 @@
 [![SDK](https://img.shields.io/badge/Symcon-PHPModul-red.svg)](https://www.symcon.de/service/dokumentation/entwicklerbereich/sdk-tools/sdk-php/) 
 [![Module Version](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2FNall-chan%2FMySQLArchive%2Frefs%2Fheads%2Fmaster%2Flibrary.json&query=%24.version&label=Modul%20Version&color=blue)](https://community.symcon.de/t/modul-archive-control-mysql/45307)
 [![Symcon Version](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2FNall-chan%2FMySQLArchive%2Frefs%2Fheads%2Fmaster%2Flibrary.json&query=%24.compatibility.version&suffix=%3E&label=Symcon%20Version&color=green)](https://www.symcon.de/de/service/dokumentation/installation/migrationen/v80-v81-q3-2025/)  
-[![License](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-green.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+[![License](https://img.shields.io/badge/License-Custom--NC--SA-green.svg)](#10-lizenz)
 [![Check Style](https://github.com/Nall-chan/MySQLArchive/workflows/Check%20Style/badge.svg)](https://github.com/Nall-chan/MySQLArchive/actions)
 [![Run Tests](https://github.com/Nall-chan/MySQLArchive/workflows/Run%20Tests/badge.svg)](https://github.com/Nall-chan/MySQLArchive/actions)  
 [![PayPal.Me](https://img.shields.io/badge/PayPal-Me-lightblue.svg)](#9-spenden)[![Wunschliste](https://img.shields.io/badge/Wunschliste-Amazon-ff69fb.svg)](#9-spenden)
@@ -98,6 +98,18 @@ Nicht unterstützte Funktionen, welche immer 0 oder true zurückliefern:
 
 ### 2. Changelog
 
+**Version 3.51:**  
+
+> [!IMPORTANT]  
+> Vor diesem Update wurden Werte von Variablen vom Typ Float und String teilweise falsch in die Datenbank geschrieben (Nachkommastellen bzw. Texte gingen verloren). Bereits gespeicherte Werte werden nicht korrigiert.  
+
+- Fehlende Tabellen werden beim ersten Schreiben eines Wertes automatisch angelegt (z.B. nach einem Wechsel der Datenbank).  
+- Datenbanknamen mit Sonderzeichen (z.B. Bindestrich oder Leerzeichen) werden unterstützt.  
+- Nachkommastellen von Float-Variablen gingen beim Loggen teilweise verloren.  
+- String-Variablen wurden teilweise nicht als Text gespeichert.  
+- Die Liste der archivierten Variablen konnte falsche oder verkürzte Variablen-IDs enthalten, wenn sich weitere Tabellen in der Datenbank befanden.  
+- Fehler beim Abfragen oder Anlegen von Tabellen führten zu PHP-Warnungen.  
+
 **Version 3.50:**  
 
 - Version für Symcon 8.1  
@@ -168,4 +180,4 @@ Nicht unterstützte Funktionen, welche immer 0 oder true zurückliefern:
 ## 10. Lizenz
 
   IPS-Modul:  
-  [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)  
+  [Custom NC-SA](LICENSE)  

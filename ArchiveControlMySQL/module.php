@@ -10,8 +10,8 @@ eval('namespace MySqlArchive {?>' . file_get_contents(__DIR__ . '/../libs/helper
  * Erweitert ipsmodule.
  *
  * @author        Michael Tröger <micha@nall-chan.net>
- * @copyright     2025 Michael Tröger
- * @license       https://creativecommons.org/licenses/by-nc-sa/4.0/ CC BY-NC-SA 4.0
+ * @copyright     2026 Michael Tröger
+ * @license       Custom Non-Commercial Share-Alike License (see LICENSE)
  *
  * @version       3.50
  *
@@ -215,6 +215,11 @@ class ArchiveControlMySQL extends IPSModuleStrict
                 break;
             case 'Reload':
                 $this->ReloadForm();
+                break;
+            case 'ShowConnectionWarning':
+                // Hinweis nur einmal je geöffnetem Formular anzeigen
+                $this->UpdateFormField('ConnectionPanel', 'onClick', '');
+                $this->UpdateFormField('ConnectionWarning', 'visible', true);
                 break;
         }
     }
@@ -592,11 +597,11 @@ class ArchiveControlMySQL extends IPSModuleStrict
         $Data = $this->GetVariableTables();
         $Vars = $this->Vars;
         foreach ($Data as &$Item) {
-            $Result = $this->GetSummary($Item['VariableID']);
-            $Item['RecordCount'] = (int) $Result['Count'];
-            $Item['FirstTime'] = (int) $Result['FirstTimestamp'];
-            $Item['LastTime'] = (int) $Result['LastTimestamp'];
-            $Item['RecordSize'] = (int) $Result['Size'];
+            $Result = $this->GetSummary($Item['VariableID']) ?: [];
+            $Item['RecordCount'] = (int) ($Result['Count'] ?? 0);
+            $Item['FirstTime'] = (int) ($Result['FirstTimestamp'] ?? 0);
+            $Item['LastTime'] = (int) ($Result['LastTimestamp'] ?? 0);
+            $Item['RecordSize'] = (int) ($Result['Size'] ?? 0);
             $Item['AggregationType'] = 0;
             $Item['AggregationVisible'] = true;
             $Item['AggregationActive'] = array_key_exists($Item['VariableID'], $Vars);
@@ -1066,7 +1071,13 @@ class ArchiveControlMySQL extends IPSModuleStrict
         if (!array_key_exists($Variable, $Vars)) {
             return false;
         }
-        switch ($Vars[$Variable]) {
+        if (!IPS_VariableExists($Variable)) {
+            return false;
+        }
+        // $Vars enthält nur die Option 'IgnoreZeros', der Datentyp kommt von der Variable selbst.
+        $VarTyp = IPS_GetVariable($Variable)['VariableType'];
+        $result = false;
+        switch ($VarTyp) {
             case VARIABLETYPE_BOOLEAN:
                 $result = $this->WriteValue($Variable, (int) $NewValue, $HasChanged, $Timestamp);
                 break;
@@ -1079,6 +1090,13 @@ class ArchiveControlMySQL extends IPSModuleStrict
             case VARIABLETYPE_STRING:
                 $result = $this->WriteValue($Variable, "'" . $this->DB->real_escape_string($NewValue) . "'", $HasChanged, $Timestamp);
                 break;
+        }
+        if (!$result && ($this->DB->errno === \MySqlArchive\TableNotFoundError)) {
+            // Tabelle fehlt (z.B. nach Wechsel der Datenbank): anlegen und Wert erneut schreiben.
+            $this->SendDebug('CreateTable', $Variable, 0);
+            if ($this->CreateTable($Variable, $VarTyp)) {
+                return $this->LogValue($Variable, $NewValue, $HasChanged, $Timestamp);
+            }
         }
         if (!$result) {
             $this->SendDebug('Error on write [' . $_IPS['THREAD'] . ']', $Variable, 0);
