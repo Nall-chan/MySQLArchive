@@ -21,7 +21,7 @@ eval('namespace MySqlArchive {?>' . file_get_contents(__DIR__ . '/../libs/helper
  * @author        Michael Tröger <micha@nall-chan.net>
  * @copyright     2026 Michael Tröger
  * @license       Custom Non-Commercial Share-Alike License (see LICENSE)
- * @version       3.50
+ * @version       3.51
  */
 trait Database
 {
